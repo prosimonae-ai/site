@@ -168,78 +168,63 @@ body::after {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 22px;
+  gap: 48px;
   text-align: center;
 }
 
-.intro-logo {
-  width: 88px; height: 60px;
+/* Nom SVG */
+.intro-name-img {
+  width: clamp(220px, 40vw, 560px);
+  height: auto;
   opacity: 0;
-  animation: fadeUp 0.5s var(--ease) 0.2s forwards;
+  animation: fadeUp 0.7s var(--ease) 0.3s forwards;
 }
-.intro-logo svg { width: 100%; height: 100%; }
 
-.lp {
-  stroke-dasharray: 300;
-  stroke-dashoffset: 300;
-  animation: draw 1s var(--ease) 0.3s forwards;
-}
-@keyframes draw { to { stroke-dashoffset: 0; } }
-
-.intro-name {
-  font-weight: 900;
+/* Question son */
+.intro-sound-label {
   font-family: degular, sans-serif;
-  font-size: clamp(54px, 12vw, 148px);
-  letter-spacing: -0.05em;
-  line-height: 1;
-}
-.intro-name span {
-  display: inline-block;
-  opacity: 0;
-  transform: translateY(80px);
-  animation: letterUp 0.5s var(--ease) forwards;
-}
-.intro-name span:nth-child(1) { animation-delay: 0.82s; }
-.intro-name span:nth-child(2) { animation-delay: 0.92s; }
-.intro-name span:nth-child(3) { animation-delay: 1.02s; }
-.intro-name span:nth-child(4) { animation-delay: 1.12s; }
-.intro-name span:nth-child(5) { animation-delay: 1.22s; }
-.intro-name span:nth-child(6) { animation-delay: 1.32s; }
-.intro-name span:nth-child(7) { animation-delay: 1.42s; }
-.intro-name span:nth-child(8) { animation-delay: 1.52s; }
-@keyframes letterUp { to { opacity: 1; transform: translateY(0); } }
-
-.intro-role {
-  font-size: 9px;
-  letter-spacing: 0.28em;
+  font-weight: 400;
+  font-size: clamp(14px, 1.4vw, 18px);
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--gray);
+  color: rgba(255,255,255,0.4);
   opacity: 0;
-  animation: fadeUp 0.5s var(--ease) 1.9s forwards;
+  animation: fadeUp 0.5s var(--ease) 0.8s forwards;
 }
 
-.intro-btn {
-  display: inline-flex;
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.18);
-  color: var(--white);
-  overflow: hidden;
-  position: relative;
+/* Boutons */
+.intro-sound-btns {
+  display: flex;
+  gap: 16px;
   opacity: 0;
-  animation: fadeUp 0.5s var(--ease) 2.2s forwards;
-  transition: border-color 300ms, color 300ms;
+  animation: fadeUp 0.5s var(--ease) 1s forwards;
 }
-.intro-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
+
+.intro-sound-btn {
+  font-family: degular, sans-serif;
+  font-weight: 900;
+  font-size: clamp(18px, 2vw, 26px);
+  letter-spacing: -0.05em;
+  border-radius: 100px;
+  padding: 14px 36px;
+  cursor: pointer;
+  transition: transform 200ms var(--ease), background 250ms, color 250ms, border-color 250ms;
+}
+.intro-sound-btn:hover { transform: scale(1.04); }
+
+.intro-sound-yes {
   background: var(--pink);
-  transform: translateX(-101%);
-  transition: transform 420ms var(--ease);
+  border: 1px solid var(--pink);
+  color: #fff;
 }
-.intro-btn:hover::before  { transform: translateX(0); }
-.intro-btn:hover          { border-color: var(--pink); color: #000; }
-.intro-btn:hover .btn-arr { transform: translate(3px, -3px); }
+.intro-sound-yes:hover { background: #e8336d; border-color: #e8336d; }
+
+.intro-sound-no {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.6);
+}
+.intro-sound-no:hover { border-color: rgba(255,255,255,0.5); color: var(--white); }
 
 .btn-inner {
   position: relative;

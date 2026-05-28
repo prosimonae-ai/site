@@ -6,7 +6,7 @@
 
   const NAV_KEY = 'navTransition';
   const fromNav = sessionStorage.getItem(NAV_KEY);
-  const introShowing = document.getElementById('intro') && !sessionStorage.getItem('introSeen');
+  const introShowing = document.getElementById('intro') && !sessionStorage.getItem('introSeen_v2');
 
   sessionStorage.removeItem(NAV_KEY);
 

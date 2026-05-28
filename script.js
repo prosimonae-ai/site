@@ -1,7 +1,26 @@
+/* ── VIDÉO HERO — ANTI-FREEZE ── */
+(function () {
+  function initHeroBg() {
+    const iframe = document.getElementById('heroBg');
+    if (!iframe || typeof Vimeo === 'undefined') {
+      setTimeout(initHeroBg, 200);
+      return;
+    }
+    const player = new Vimeo.Player(iframe);
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) player.play().catch(() => {});
+    });
+    /* Relance aussi au focus de la fenêtre */
+    window.addEventListener('focus', () => player.play().catch(() => {}));
+  }
+  initHeroBg();
+})();
+
 /* ── INTRO ── */
-const intro    = document.getElementById('intro');
-const enterBtn = document.getElementById('enterBtn');
-const site     = document.getElementById('site');
+const intro           = document.getElementById('intro');
+const enterWithSound  = document.getElementById('enterWithSound');
+const enterNoSound    = document.getElementById('enterNoSound');
+const site            = document.getElementById('site');
 
 function skipIntro() {
   intro.style.display = 'none';
@@ -9,20 +28,22 @@ function skipIntro() {
   document.body.classList.remove('no-scroll');
 }
 
-if (sessionStorage.getItem('introSeen')) {
+function enterSite(withSound) {
+  sessionStorage.setItem('introSeen_v2', '1');
+  sessionStorage.setItem('introSound', withSound ? '1' : '0');
+  intro.classList.add('leaving');
+  setTimeout(() => {
+    site.classList.add('visible');
+    document.body.classList.remove('no-scroll');
+  }, 600);
+  setTimeout(() => { intro.style.display = 'none'; }, 1200);
+}
+
+if (sessionStorage.getItem('introSeen_v2')) {
   skipIntro();
 } else {
-  enterBtn.addEventListener('click', () => {
-    sessionStorage.setItem('introSeen', '1');
-    intro.classList.add('leaving');
-    setTimeout(() => {
-      site.classList.add('visible');
-      document.body.classList.remove('no-scroll');
-    }, 600);
-    setTimeout(() => {
-      intro.style.display = 'none';
-    }, 1200);
-  });
+  enterWithSound?.addEventListener('click', () => enterSite(true));
+  enterNoSound?.addEventListener('click',   () => enterSite(false));
 }
 
 /* ── SCROLL PROGRESS + NAV + HERO FADE ── */
@@ -207,13 +228,22 @@ document.querySelectorAll('.wi').forEach(item => {
     player.setCurrentTime(0).then(() => player.play());
   });
 
-  /* État initial : son activé, lecture en attente du scroll */
-  isMuted = false;
-  player.setVolume(1);
-  setIcon(riMute, riSound);
-  setIcon(cRiMute, cRiSound);
-  muteBtn.classList.add('btn-active');
-  cornerMuteBtn.classList.add('btn-active');
+  /* État initial basé sur le choix de l'intro */
+  const wantsSound = sessionStorage.getItem('introSound') !== '0';
+  isMuted = !wantsSound;
+  if (wantsSound) {
+    player.setVolume(1);
+    setIcon(riMute, riSound);
+    setIcon(cRiMute, cRiSound);
+    muteBtn.classList.add('btn-active');
+    cornerMuteBtn.classList.add('btn-active');
+  } else {
+    player.setVolume(0);
+    setIcon(riSound, riMute);
+    setIcon(cRiSound, cRiMute);
+    muteBtn.classList.add('mute-hint');
+    cornerMuteBtn.classList.add('mute-hint');
+  }
 
   /* Lance/pause selon la visibilité dans le viewport */
   const reelSection = document.getElementById('reel');

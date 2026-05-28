@@ -21,22 +21,12 @@
   <!-- INTRO -->
   <div id="intro">
     <div class="intro-content">
-      <div class="intro-logo">
-        <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path class="lp" d="M8,72 L8,8 L52,72 L52,8" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-          <path class="lp" d="M68,72 L68,8 L112,72 L112,8" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+      <img class="intro-name-img" src="assets/name-pink.svg" alt="SIMONN.AE" />
+      <p class="intro-sound-label">Avec le son ?</p>
+      <div class="intro-sound-btns">
+        <button id="enterWithSound" class="intro-sound-btn intro-sound-yes">Oui ↗</button>
+        <button id="enterNoSound"   class="intro-sound-btn intro-sound-no">Non</button>
       </div>
-      <div class="intro-name" aria-label="SIMONNAE">
-        <span>S</span><span>I</span><span>M</span><span>O</span><span>N</span><span>N</span><span class="pk">A</span><span class="pk">E</span>
-      </div>
-      <p class="intro-role">Réalisateur · Directeur artistique · Paris</p>
-      <button id="enterBtn" class="intro-btn">
-        <span class="btn-inner">
-          <span class="btn-txt">ENTRER</span>
-          <span class="btn-arr">↗</span>
-        </span>
-      </button>
     </div>
   </div>
 
@@ -69,7 +59,7 @@
 
         <!-- Vidéo plein écran -->
         <div class="hero-video-bg">
-          <iframe src="https://player.vimeo.com/video/1190241060?background=1&autoplay=1&loop=1&muted=1"
+          <iframe id="heroBg" src="https://player.vimeo.com/video/1190241060?background=1&autoplay=1&loop=1&muted=1"
             frameborder="0" allow="autoplay; fullscreen; picture-in-picture"></iframe>
         </div>
 
