@@ -262,14 +262,16 @@ body::after {
   top: 20px;
   left: 24px;
   z-index: 200;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 28px;
-  letter-spacing: -0.18em;
-  padding-right: 0.18em;
-  color: var(--white);
-  transition: color 200ms;
+  display: flex;
+  align-items: center;
+  transition: opacity 200ms;
 }
-#site-logo:hover { color: var(--pink); }
+#site-logo img {
+  height: 32px;
+  width: auto;
+  display: block;
+}
+#site-logo:hover { opacity: 0.75; }
 
 #nav {
   position: fixed;
