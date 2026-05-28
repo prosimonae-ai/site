@@ -1,7 +1,7 @@
 (function () {
   const mask = document.createElement('div');
   mask.id = 'page-mask';
-  mask.innerHTML = '<span class="pm-logo">SIMONN<span class="pk">.AE</span></span>';
+  mask.innerHTML = '<img class="pm-logo" src="assets/logo.svg" alt="SIMONN.AE" />';
   document.body.prepend(mask);
 
   const NAV_KEY = 'navTransition';
@@ -34,4 +34,36 @@
     mask.style.transform = 'translateY(0)';
     setTimeout(() => { window.location.href = href; }, 620);
   }, true);
+})();
+
+/* ── LOGO ADAPTATIF ── */
+(function () {
+  const logoImg = document.querySelector('#site-logo img');
+  if (!logoImg) return;
+
+  const srcs = {
+    white: 'assets/logo-white.svg',
+    black: 'assets/logo-black.svg',
+    pink:  'assets/logo-pink.svg',
+  };
+  const active = new Map();
+
+  function update() {
+    const color = active.size > 0 ? [...active.values()][0] : 'pink';
+    logoImg.src = srcs[color] || srcs.white;
+  }
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) active.set(e.target, e.target.dataset.logoColor);
+      else active.delete(e.target);
+    });
+    update();
+  }, {
+    /* observe uniquement la bande du haut où se trouve le logo */
+    rootMargin: '-10px 0px -85% 0px',
+    threshold: 0,
+  });
+
+  document.querySelectorAll('[data-logo-color]').forEach(el => obs.observe(el));
 })();
