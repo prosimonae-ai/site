@@ -5,7 +5,7 @@
 /* ── LECTEUR ── */
 #proj-reel {
   padding-top: 72px;
-  background: radial-gradient(ellipse 120% 80% at 50% 0%, rgba(255,75,137,0.12) 0%, #080808 60%);
+  background: radial-gradient(ellipse 120% 80% at 50% 0%, rgba(255,75,137,0.12) 0%, #141414 60%);
 }
 
 /* ── INFO ── */
@@ -32,10 +32,11 @@
 }
 
 .pi-title {
-  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 900;
+  font-family: degular, sans-serif;
   font-size: clamp(52px, 7vw, 108px);
   line-height: 0.88;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.05em;
   opacity: 0;
   transform: translateY(18px);
   transition: opacity 700ms var(--ease), transform 700ms var(--ease);
@@ -223,9 +224,10 @@
   color: rgba(255,255,255,0.22);
 }
 .npt-title {
-  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 900;
+  font-family: degular, sans-serif;
   font-size: 22px;
-  letter-spacing: 0.06em;
+  letter-spacing: -0.05em;
   color: rgba(255,255,255,0.75);
   line-height: 1;
 }

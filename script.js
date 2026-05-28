@@ -27,14 +27,14 @@ if (sessionStorage.getItem('introSeen')) {
 
 /* ── SCROLL PROGRESS + NAV + HERO FADE ── */
 const scrollBar   = document.getElementById('scroll-bar');
-const nav         = document.getElementById('nav');
+const siteHeader  = document.getElementById('site-header');
 const heroContent = document.getElementById('heroContent');
 
 let updateScrollVolume = () => {};
 
 window.addEventListener('scroll', () => {
   const s = window.scrollY;
-  nav.classList.toggle('scrolled', s > 40);
+  siteHeader.classList.toggle('scrolled', s > 40);
   const max = document.documentElement.scrollHeight - window.innerHeight;
   scrollBar.style.width = (max > 0 ? (s / max) * 100 : 0) + '%';
   updateScrollVolume();
@@ -45,6 +45,16 @@ window.addEventListener('scroll', () => {
     heroContent.style.opacity   = Math.max(0, 1 - s / (window.innerHeight * 0.5));
   }
 }, { passive: true });
+
+
+/* ── FLÈCHE HERO → REEL ── */
+const heroArrow = document.getElementById('heroArrow');
+const reelSection = document.getElementById('reel');
+if (heroArrow && reelSection) {
+  heroArrow.addEventListener('click', () => {
+    reelSection.scrollIntoView({ behavior: 'smooth' });
+  });
+}
 
 
 /* ── WORK BG REVEAL + THUMBNAIL ── */

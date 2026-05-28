@@ -83,8 +83,15 @@ document.addEventListener('mousemove', e => {
 });
 
 /* ── NAV SCROLL ── */
+const tabs = document.querySelector('.wp-tabs');
+
 window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 40);
+  if (tabs) {
+    const opacity = Math.max(0, 1 - window.scrollY / 120);
+    tabs.style.opacity = opacity;
+    tabs.style.pointerEvents = opacity < 0.1 ? 'none' : '';
+  }
 }, { passive: true });
 
 /* ── GRILLE : scroll reveal ── */

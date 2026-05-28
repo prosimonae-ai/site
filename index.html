@@ -3,38 +3,304 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SimonnAE — Bientôt</title>
+  <title>SimonnAE</title>
   <link rel="icon" href="assets/logo-pink.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: #080808;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    img {
-      width: clamp(280px, 55vw, 800px);
-      height: auto;
-      display: block;
-    }
-    p {
-      margin-top: 24px;
-      color: #efefef;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(13px, 1.2vw, 16px);
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      opacity: 0.5;
-    }
-  </style>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://use.typekit.net/kid8vvq.css">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="contact.css">
 </head>
-<body>
-  <img src="assets/name-pink.svg" alt="SIMONN.AE" />
-  <p>Site en maintenance</p>
+<body class="no-scroll">
+
+  <!-- LABEL CURSEUR VIDÉO -->
+  <div id="video-cursor" class="tag"><span class="vc-text">Play</span></div>
+
+
+  <!-- INTRO -->
+  <div id="intro">
+    <div class="intro-content">
+      <div class="intro-logo">
+        <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path class="lp" d="M8,72 L8,8 L52,72 L52,8" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="lp" d="M68,72 L68,8 L112,72 L112,8" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="intro-name" aria-label="SIMONNAE">
+        <span>S</span><span>I</span><span>M</span><span>O</span><span>N</span><span>N</span><span class="pk">A</span><span class="pk">E</span>
+      </div>
+      <p class="intro-role">Réalisateur · Directeur artistique · Paris</p>
+      <button id="enterBtn" class="intro-btn">
+        <span class="btn-inner">
+          <span class="btn-txt">ENTRER</span>
+          <span class="btn-arr">↗</span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- SITE -->
+  <div id="site">
+
+    <div id="scroll-bar"></div>
+
+
+    <!-- HEADER -->
+    <header id="site-header">
+      <a href="#hero" id="site-logo"><img src="assets/logo-pink.svg" alt="SIMONN.AE" /></a>
+
+
+            <div class="header-sep"></div>
+
+
+      <nav id="nav">
+      <div class="nav-links">
+        <a href="#hero"    class="nav-link active">Accueil</a>
+        <a href="work.html" class="nav-link">Projets</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </div>
+    </nav>
+    </header>
+
+    <!-- HERO -->
+    <section id="hero" data-section="Hero">
+      <div class="hero-pin">
+
+        <!-- Vidéo plein écran -->
+        <div class="hero-video-bg">
+          <iframe src="https://player.vimeo.com/video/1190241060?background=1&autoplay=1&loop=1&muted=1"
+            frameborder="0" allow="autoplay; fullscreen; picture-in-picture"></iframe>
+        </div>
+
+        <!-- Texte overlay — disparaît au scroll -->
+        <div class="hero-content" id="heroContent">
+        </div>
+
+        <!-- Flèche scroll -->
+        <button class="hero-arrow" id="heroArrow" aria-label="Scroll vers le lecteur">
+          <span class="hero-arrow-label"><span class="hc-text">Scroll</span></span>
+          <svg class="hero-arrow-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14M5 12l7 7 7-7"/>
+          </svg>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee" aria-hidden="true">
+      <div class="mq-track">
+        <span>EN RECHERCHE D'ALTERNANCE</span><span class="dot">·</span>
+        <span>RENTRÉE 2026</span><span class="dot">·</span>
+        <span>EN RECHERCHE D'ALTERNANCE</span><span class="dot">·</span>
+        <span>RENTRÉE 2026</span><span class="dot">·</span>
+        <span>EN RECHERCHE D'ALTERNANCE</span><span class="dot">·</span>
+        <span>RENTRÉE 2026</span><span class="dot">·</span>
+        <span>EN RECHERCHE D'ALTERNANCE</span><span class="dot">·</span>
+        <span>RENTRÉE 2026</span><span class="dot">·</span>
+      </div>
+    </div>
+
+    <!-- REEL -->
+    <section id="reel" data-section="Showreel">
+
+      <div class="reel-outer" id="reelOuter">
+        <!-- Iframe -->
+        <div class="reel-video-box">
+          <iframe id="vimeo"
+            src="https://player.vimeo.com/video/1190241060?controls=0&autoplay=0&loop=1&muted=0&title=0&byline=0&portrait=0"
+            frameborder="0"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+          <div class="reel-hit" id="reelHit"></div>
+
+          <!-- Boutons permanents haut-droite -->
+          <div class="reel-corner-btns">
+            <button class="corner-btn" id="cornerMuteBtn" aria-label="Son">
+              <svg class="ri ri-unmuted" viewBox="0 0 16 16">
+                <path d="M2 5.5v5h3l4 3v-11l-4 3z" fill="currentColor"/>
+                <path d="M11 6a2.5 2.5 0 0 1 0 4M13.5 4.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+              </svg>
+              <svg class="ri ri-muted" viewBox="0 0 16 16">
+                <path d="M2 5.5v5h3l4 3v-11l-4 3z" fill="currentColor"/>
+                <line x1="11" y1="5" x2="15" y2="11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                <line x1="15" y1="5" x2="11" y2="11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <button class="corner-btn" id="cornerFullBtn" aria-label="Plein écran">
+              <svg class="ri" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="reel-controls-area">
+
+          <!-- Barre simple (visible par défaut) -->
+          <div class="reel-thin">
+            <div class="reel-thin-fill" id="reelSimpleFill"></div>
+          </div>
+
+          <!-- Pill player bar (visible au hover) -->
+          <div class="reel-pill">
+
+          <!-- Boutons gauche -->
+          <div class="pill-btns">
+            <button class="pill-btn" id="reelPlayBtn" aria-label="Lecture">
+              <svg class="ri ri-play" viewBox="0 0 16 16"><path d="M3 2l10 6-10 6z" fill="currentColor"/></svg>
+              <svg class="ri ri-pause" viewBox="0 0 16 16">
+                <rect x="3" y="2" width="4" height="12" rx="1" fill="currentColor"/>
+                <rect x="9" y="2" width="4" height="12" rx="1" fill="currentColor"/>
+              </svg>
+            </button>
+            <button class="pill-btn" id="reelMuteBtn" aria-label="Son">
+              <svg class="ri ri-unmuted" viewBox="0 0 16 16">
+                <path d="M2 5.5v5h3l4 3v-11l-4 3z" fill="currentColor"/>
+                <path d="M11 6a2.5 2.5 0 0 1 0 4M13.5 4.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+              </svg>
+              <svg class="ri ri-muted" viewBox="0 0 16 16">
+                <path d="M2 5.5v5h3l4 3v-11l-4 3z" fill="currentColor"/>
+                <line x1="11" y1="5" x2="15" y2="11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                <line x1="15" y1="5" x2="11" y2="11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Filmstrip scrub bar -->
+          <div class="pill-strip" id="reelProgressArea">
+            <!-- Tooltip image + temps -->
+            <div class="strip-tip" id="reelTip">
+              <img class="tip-img" id="reelTipImg" src="" alt="">
+              <span class="tip-time" id="reelTipTime">0:00</span>
+            </div>
+            <!-- Barre -->
+            <div class="strip-bar" id="reelBar">
+              <div class="strip-poster" id="reelPoster"></div>
+              <div class="strip-hover"  id="reelHoverFill"></div>
+              <div class="strip-played" id="reelPlayed"></div>
+              <div class="strip-dot"    id="reelDot"></div>
+            </div>
+          </div>
+
+          <!-- Temps -->
+          <span class="pill-time" id="reelTimeDisplay">0:00</span>
+        </div>
+
+        </div><!-- .reel-controls-area -->
+
+      </div>
+    </section>
+
+    <!-- WORK -->
+    <section id="work" data-section="Work">
+      <div class="section-head">
+        <h2 class="work-title">MES<br>PROJETS</h2>
+      </div>
+      <div id="work-bg"></div>
+      <ul class="work-list">
+        <li><a class="wi" href="project.html?id=horizon" data-color="#1a0d2e" data-cursor-label="VOIR">
+          <span class="wi-n">01</span>
+          <span class="wi-name">Horizon</span>
+          <span class="wi-cat">Film</span>
+          <span class="wi-yr">2024</span>
+          <span class="wi-arr">↗</span>
+        </a></li>
+        <li><a class="wi" href="project.html?id=nuit-blanche" data-color="#0e0818" data-cursor-label="VOIR">
+          <span class="wi-n">02</span>
+          <span class="wi-name">Nuit Blanche</span>
+          <span class="wi-cat">Documentaire</span>
+          <span class="wi-yr">2023</span>
+          <span class="wi-arr">↗</span>
+        </a></li>
+        <li><a class="wi" href="project.html?id=particules" data-color="#061018" data-cursor-label="VOIR">
+          <span class="wi-n">03</span>
+          <span class="wi-name">Particules</span>
+          <span class="wi-cat">Motion Design</span>
+          <span class="wi-yr">2024</span>
+          <span class="wi-arr">↗</span>
+        </a></li>
+        <li><a class="wi" href="project.html?id=matiere-brute" data-color="#120e08" data-cursor-label="VOIR">
+          <span class="wi-n">04</span>
+          <span class="wi-name">Matière Brute</span>
+          <span class="wi-cat">Photographie</span>
+          <span class="wi-yr">2023</span>
+          <span class="wi-arr">↗</span>
+        </a></li>
+        <li><a class="wi" href="project.html?id=publication" data-color="#0e1208" data-cursor-label="VOIR">
+          <span class="wi-n">05</span>
+          <span class="wi-name">Publication</span>
+          <span class="wi-cat">Éditorial</span>
+          <span class="wi-yr">2022</span>
+          <span class="wi-arr">↗</span>
+        </a></li>
+      </ul>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" data-section="Contact">
+      <div class="ct-top">
+        <div class="ct-left">
+
+          <h2 class="contact-title">
+            <span class="ct-line">PRENONS</span>
+            <span class="ct-line">CONTACT</span>
+          </h2>
+          <p class="ct-bio">
+            Réalisateur et directeur artistique basé à Paris. Je crée des univers visuels forts — films, documentaires, motion design et direction photo.
+          </p>
+        </div>
+        <div class="ct-float-zone">
+          <a class="ct-ficon" href="mailto:pro.simonae@gmail.com"
+             style="--fi-x:8%;--fi-y:8%;--fi-delay:0s;--fi-dur:3.4s">
+            <div class="ct-ficon-circle">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+            </div>
+            <span class="ct-ficon-label">Email</span>
+          </a>
+          <a class="ct-ficon" href="https://instagram.com/simonn.ae" target="_blank" rel="noopener"
+             style="--fi-x:52%;--fi-y:34%;--fi-delay:0.7s;--fi-dur:2.9s">
+            <div class="ct-ficon-circle">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </div>
+            <span class="ct-ficon-label">Instagram</span>
+          </a>
+          <a class="ct-ficon" href="https://linkedin.com/in/simon-corbillon" target="_blank" rel="noopener"
+             style="--fi-x:20%;--fi-y:64%;--fi-delay:1.3s;--fi-dur:3.8s">
+            <div class="ct-ficon-circle">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+            </div>
+            <span class="ct-ficon-label">LinkedIn</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- NAME BAS DE PAGE -->
+    <div class="home-name-bottom">
+      <img src="assets/name-black.svg" alt="SIMONN.AE" />
+    </div>
+
+    <!-- WORK THUMBNAIL -->
+    <div id="work-thumb">
+      <div id="work-thumb-inner">
+        <span id="work-thumb-label"></span>
+      </div>
+    </div>
+
+  </div><!-- #site -->
+
+  <script src="https://player.vimeo.com/api/player.js"></script>
+  <script src="transitions.js"></script>
+  <script src="script.js"></script>
+  <script src="contact.js"></script>
 </body>
 </html>
