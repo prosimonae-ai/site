@@ -28,6 +28,20 @@
   }
   /* Sinon : masque déjà caché via CSS — rien à faire */
 
+  /* Clic logo → retour accueil avec intro */
+  document.addEventListener('click', e => {
+    const logo = e.target.closest('#site-logo');
+    if (!logo) return;
+    e.preventDefault();
+    sessionStorage.removeItem('introSeen_v2');
+    sessionStorage.setItem(NAV_KEY, '1');
+    if (pmLogo) { pmLogo.style.opacity = '0'; pmLogo.style.transition = 'opacity 300ms 100ms'; }
+    mask.style.transition = 'transform 750ms cubic-bezier(0.76, 0, 0.24, 1)';
+    mask.style.transform = 'translateY(0)';
+    if (pmLogo) setTimeout(() => { pmLogo.style.opacity = '1'; }, 100);
+    setTimeout(() => { window.location.href = 'index.html'; }, 770);
+  }, true);
+
   /* Exit — uniquement sur les liens de la navbar */
   document.addEventListener('click', e => {
     const a = e.target.closest('.nav-link');

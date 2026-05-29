@@ -281,21 +281,9 @@ document.querySelectorAll('.pi-title, .pi-body, .pi-back').forEach(el => obs.obs
   muteBtn.classList.add('btn-active');
   cornerMuteBtn.classList.add('btn-active');
 
-  /* Lance dès que le lecteur est visible */
   let hasStarted = false;
   const projObs = new IntersectionObserver(([entry]) => {
-    if (entry.isIntersecting) {
-      player.play().catch(() => {
-        isMuted = true;
-        player.setVolume(0);
-        setIcon(riSound, riMute);
-        setIcon(cRiSound, cRiMute);
-        muteBtn.classList.remove('btn-active');
-        cornerMuteBtn.classList.remove('btn-active');
-        muteBtn.classList.add('mute-hint');
-        cornerMuteBtn.classList.add('mute-hint');
-      });
-    } else if (hasStarted) {
+    if (!entry.isIntersecting && hasStarted) {
       player.pause();
     }
   }, { threshold: 0.4 });

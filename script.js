@@ -55,8 +55,10 @@ function enterSite(withSound) {
 if (sessionStorage.getItem('introSeen_v2')) {
   skipIntro();
 } else {
-  enterWithSound?.addEventListener('click', () => enterSite(true));
-  enterNoSound?.addEventListener('click',   () => enterSite(false));
+  const sfxOui = new Audio('sound/Oui .wav');
+  const sfxNon = new Audio('sound/Non.wav');
+  enterWithSound?.addEventListener('click', () => { sfxOui.play().catch(() => {}); enterSite(true);  });
+  enterNoSound?.addEventListener('click',   () => { sfxNon.play().catch(() => {}); setTimeout(() => { sfxNon.pause(); sfxNon.currentTime = 0; }, 1000); enterSite(false); });
 }
 
 /* ── SCROLL PROGRESS + NAV + HERO FADE ── */
