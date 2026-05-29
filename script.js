@@ -1,4 +1,6 @@
 /* ── VIDÉO HERO — ANTI-FREEZE ── */
+let heroBgPlayer = null;
+
 (function () {
   function initHeroBg() {
     const iframe = document.getElementById('heroBg');
@@ -6,12 +8,21 @@
       setTimeout(initHeroBg, 200);
       return;
     }
-    const player = new Vimeo.Player(iframe);
+    heroBgPlayer = new Vimeo.Player(iframe);
+
+    /* Relance si la page redevient visible ou focus */
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) player.play().catch(() => {});
+      if (!document.hidden) heroBgPlayer.play().catch(() => {});
     });
-    /* Relance aussi au focus de la fenêtre */
-    window.addEventListener('focus', () => player.play().catch(() => {}));
+    window.addEventListener('focus', () => heroBgPlayer.play().catch(() => {}));
+
+    /* Anti-freeze scroll : vérifie toutes les 2s et relance si en pause */
+    setInterval(() => {
+      if (document.hidden) return;
+      heroBgPlayer.getPaused().then(paused => {
+        if (paused) heroBgPlayer.play().catch(() => {});
+      });
+    }, 2000);
   }
   initHeroBg();
 })();
@@ -32,6 +43,8 @@ function enterSite(withSound) {
   sessionStorage.setItem('introSeen_v2', '1');
   sessionStorage.setItem('introSound', withSound ? '1' : '0');
   intro.classList.add('leaving');
+  /* Lance la vidéo hero maintenant */
+  if (heroBgPlayer) heroBgPlayer.play().catch(() => {});
   setTimeout(() => {
     site.classList.add('visible');
     document.body.classList.remove('no-scroll');
