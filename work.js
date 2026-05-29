@@ -6,6 +6,28 @@ const listEl    = document.getElementById('layout-list');
 const thumb     = document.getElementById('wl-thumb');
 const thumbI    = document.getElementById('wl-thumb-inner');
 
+/* ── SON HOVER (Web Audio API) ── */
+const _ac = new (window.AudioContext || window.webkitAudioContext)();
+let _hoverBuf = null;
+
+fetch('sound/toc.wav')
+  .then(r => r.arrayBuffer())
+  .then(buf => _ac.decodeAudioData(buf))
+  .then(decoded => { _hoverBuf = decoded; })
+  .catch(() => {});
+
+function playHover() {
+  if (!_hoverBuf) return;
+  if (_ac.state === 'suspended') _ac.resume();
+  const src = _ac.createBufferSource();
+  src.buffer = _hoverBuf;
+  src.connect(_ac.destination);
+  src.start(0);
+}
+
+/* Débloque l'AudioContext sur le premier geste */
+document.addEventListener('pointerdown', () => _ac.resume(), { once: true });
+
 let currentLayout = sessionStorage.getItem('workLayout') || 'grid';
 
 /* Cursor lerp */
@@ -121,6 +143,7 @@ cards.forEach(c => cardObs.observe(c));
 /* ── GRILLE : cursor label ── */
 document.querySelectorAll('.wp-card').forEach(card => {
   card.addEventListener('mouseenter', e => {
+    playHover();
     cursor.textContent = card.dataset.title || '';
     cursor.classList.add('visible');
     cx = e.clientX + 2; cy = e.clientY - 2;
@@ -133,6 +156,7 @@ document.querySelectorAll('.wl-item').forEach(item => {
   item.style.setProperty('--c', item.dataset.color || 'rgba(255,255,255,0.02)');
 
   item.addEventListener('mouseenter', e => {
+    playHover();
     cursor.textContent = 'VOIR';
     cursor.classList.add('visible');
     cx = e.clientX + 2; cy = e.clientY - 2;

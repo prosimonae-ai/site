@@ -1,14 +1,42 @@
+
 /* ── VIDÉO HERO — ANTI-FREEZE ── */
 let heroBgPlayer = null;
 
 (function () {
+  const iframe   = document.getElementById('heroBg');
+  const videoBg  = iframe && iframe.closest('.hero-video-bg');
+
+  /* Thumbnail Vimeo comme fond immédiat */
+  if (videoBg) {
+    const cached = sessionStorage.getItem('heroBgThumb');
+    if (cached) {
+      videoBg.style.backgroundImage = `url(${cached})`;
+      videoBg.style.backgroundSize  = 'cover';
+      videoBg.style.backgroundPosition = 'center';
+    } else {
+      fetch('https://vimeo.com/api/oembed.json?url=https://vimeo.com/1190241060')
+        .then(r => r.json())
+        .then(({ thumbnail_url }) => {
+          if (!thumbnail_url) return;
+          sessionStorage.setItem('heroBgThumb', thumbnail_url);
+          videoBg.style.backgroundImage = `url(${thumbnail_url})`;
+          videoBg.style.backgroundSize  = 'cover';
+          videoBg.style.backgroundPosition = 'center';
+        }).catch(() => {});
+    }
+  }
+
   function initHeroBg() {
-    const iframe = document.getElementById('heroBg');
     if (!iframe || typeof Vimeo === 'undefined') {
       setTimeout(initHeroBg, 200);
       return;
     }
     heroBgPlayer = new Vimeo.Player(iframe);
+
+    /* Fade-in de la vidéo au premier play */
+    heroBgPlayer.on('play', () => {
+      if (videoBg) videoBg.classList.add('video-ready');
+    });
 
     /* Relance si la page redevient visible ou focus */
     document.addEventListener('visibilitychange', () => {
@@ -36,6 +64,8 @@ const site            = document.getElementById('site');
 function skipIntro() {
   intro.style.display = 'none';
   site.classList.add('visible');
+  site.style.transition = 'none';
+  site.style.opacity = '1';
   document.body.classList.remove('no-scroll');
 }
 
@@ -50,6 +80,8 @@ function enterSite(withSound) {
     document.body.classList.remove('no-scroll');
   }, 600);
   setTimeout(() => { intro.style.display = 'none'; }, 1200);
+  /* Libère le stacking context de #site après la transition opacity */
+  setTimeout(() => { site.style.transition = 'none'; site.style.opacity = '1'; }, 1300);
 }
 
 if (sessionStorage.getItem('introSeen_v2')) {
@@ -58,7 +90,7 @@ if (sessionStorage.getItem('introSeen_v2')) {
   const sfxOui = new Audio('sound/Oui .wav');
   const sfxNon = new Audio('sound/Non.wav');
   enterWithSound?.addEventListener('click', () => { sfxOui.play().catch(() => {}); enterSite(true);  });
-  enterNoSound?.addEventListener('click',   () => { sfxNon.play().catch(() => {}); setTimeout(() => { sfxNon.pause(); sfxNon.currentTime = 0; }, 1000); enterSite(false); });
+  enterNoSound?.addEventListener('click',   () => { sfxNon.play().catch(() => {}); setTimeout(() => { sfxNon.pause(); sfxNon.currentTime = 0; }, 2000); enterSite(false); });
 }
 
 /* ── SCROLL PROGRESS + NAV + HERO FADE ── */
@@ -315,11 +347,30 @@ document.querySelectorAll('.wi').forEach(item => {
 
   /* Boutons coin */
   cornerMuteBtn.addEventListener('click', () => setMuteState(!isMuted));
-  cornerFullBtn.addEventListener('click', () => {
-    const box = document.querySelector('.reel-video-box');
-    if (document.fullscreenElement) document.exitFullscreen();
-    else box.requestFullscreen();
-  });
+  const theaterBackdrop = document.createElement('div');
+  theaterBackdrop.id = 'theater-backdrop';
+  document.body.appendChild(theaterBackdrop);
+
+  let theaterPlaceholder = null;
+
+  function toggleTheater() {
+    const outer = document.querySelector('.reel-outer');
+    const on = !outer.classList.contains('theater');
+    if (on) {
+      const rect = outer.getBoundingClientRect();
+      theaterPlaceholder = document.createElement('div');
+      theaterPlaceholder.style.cssText = `width:${rect.width}px;height:${rect.height}px;flex-shrink:0;`;
+      outer.parentNode.insertBefore(theaterPlaceholder, outer);
+    } else {
+      if (theaterPlaceholder) { theaterPlaceholder.remove(); theaterPlaceholder = null; }
+    }
+    outer.classList.toggle('theater', on);
+    theaterBackdrop.classList.toggle('active', on);
+  }
+
+  cornerFullBtn.addEventListener('click', toggleTheater);
+  theaterBackdrop.addEventListener('click', toggleTheater);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('theater-open')) toggleTheater(); });
 
   /* Filmstrip — hover : déplace tooltip + highlight */
   progArea.addEventListener('mousemove', e => {

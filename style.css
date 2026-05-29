@@ -12,6 +12,7 @@
 }
 
 html { scroll-behavior: smooth; overflow-x: clip; scrollbar-width: none; }
+html[data-nav-entering] body { visibility: hidden; }
 html::-webkit-scrollbar { display: none; }
 
 body {
@@ -531,7 +532,10 @@ body::after {
   height: max(100%, calc(100vw * 9 / 16));
   pointer-events: none;
   border: none;
+  opacity: 0;
+  transition: opacity 600ms ease;
 }
+.hero-video-bg.video-ready iframe { opacity: 1; }
 
 /* Texte overlay — bas gauche */
 .hero-content {
@@ -729,6 +733,35 @@ body::after {
   gap: 6px;
 }
 
+/* ── MODE CINÉMA ── */
+#theater-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9992;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 400ms ease;
+}
+#theater-backdrop.active {
+  opacity: 1;
+  pointer-events: all;
+}
+body.theater-open { overflow: hidden; }
+
+.reel-outer.theater {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: min(94vw, calc(88vh * 16 / 9)) !important;
+  z-index: 9993 !important;
+  margin: 0 !important;
+  pointer-events: all !important;
+}
+
 .corner-btn {
   width: 34px; height: 34px;
   border-radius: 50%;
@@ -821,6 +854,14 @@ body::after {
   transform: translateY(-50%) scale(1);
   pointer-events: auto;
   transition-delay: 80ms;
+}
+
+/* Mode cinéma : contrôles toujours visibles */
+.reel-outer.theater .reel-thin { opacity: 1; }
+.reel-outer.theater .reel-pill {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+  pointer-events: auto;
 }
 
 /* Boutons ronds */

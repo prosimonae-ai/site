@@ -312,11 +312,33 @@ document.querySelectorAll('.pi-title, .pi-body, .pi-back').forEach(el => obs.obs
   playBtn.addEventListener('click', () => isPlaying ? player.pause() : player.play());
   muteBtn.addEventListener('click', () => setMuteState(!isMuted));
   cornerMuteBtn.addEventListener('click', () => setMuteState(!isMuted));
-  cornerFullBtn.addEventListener('click', () => {
-    const box = document.querySelector('.reel-video-box');
-    if (document.fullscreenElement) document.exitFullscreen();
-    else box.requestFullscreen();
-  });
+  const theaterBackdrop = document.createElement('div');
+  theaterBackdrop.id = 'theater-backdrop';
+  document.body.appendChild(theaterBackdrop);
+
+  const projPage = document.getElementById('proj-page');
+
+  let theaterPlaceholder = null;
+
+  function toggleTheater() {
+    const outer = document.querySelector('.reel-outer');
+    const on = !outer.classList.contains('theater');
+    if (projPage) projPage.style.transform = on ? 'none' : '';
+    if (on) {
+      const rect = outer.getBoundingClientRect();
+      theaterPlaceholder = document.createElement('div');
+      theaterPlaceholder.style.cssText = `width:${rect.width}px;height:${rect.height}px;flex-shrink:0;`;
+      outer.parentNode.insertBefore(theaterPlaceholder, outer);
+    } else {
+      if (theaterPlaceholder) { theaterPlaceholder.remove(); theaterPlaceholder = null; }
+    }
+    outer.classList.toggle('theater', on);
+    theaterBackdrop.classList.toggle('active', on);
+  }
+
+  cornerFullBtn.addEventListener('click', toggleTheater);
+  theaterBackdrop.addEventListener('click', toggleTheater);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('theater-open')) toggleTheater(); });
 
   progArea.addEventListener('mousemove', e => {
     const rect = bar.getBoundingClientRect();

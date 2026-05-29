@@ -28,18 +28,54 @@
   }
   /* Sinon : masque déjà caché via CSS — rien à faire */
 
-  /* Clic logo → retour accueil avec intro */
-  document.addEventListener('click', e => {
-    const logo = e.target.closest('#site-logo');
-    if (!logo) return;
-    e.preventDefault();
-    sessionStorage.removeItem('introSeen_v2');
+  /* Retire l'attribut de masquage dès que le masque JS est en place */
+  document.documentElement.removeAttribute('data-nav-entering');
+
+  const sfxSwhoosh = new Audio('sound/swhoos.wav');
+  sfxSwhoosh.preload = 'auto';
+  sfxSwhoosh.load();
+
+  function fadeOutAudio(audio, duration) {
+    const steps = 40;
+    const interval = (duration * 1000) / steps;
+    let step = 0;
+    const t = setInterval(() => {
+      step++;
+      audio.volume = Math.max(0, 1 - step / steps);
+      if (step >= steps) { clearInterval(t); audio.pause(); audio.currentTime = 0; audio.volume = 1; }
+    }, interval);
+  }
+
+  function triggerTransition(href, resetIntro, withSound = true) {
+    if (withSound) {
+      sfxSwhoosh.currentTime = 0;
+      sfxSwhoosh.volume = 1;
+      sfxSwhoosh.play().catch(() => {});
+      fadeOutAudio(sfxSwhoosh, 2.4);
+    }
+    if (resetIntro) sessionStorage.removeItem('introSeen_v2');
     sessionStorage.setItem(NAV_KEY, '1');
     if (pmLogo) { pmLogo.style.opacity = '0'; pmLogo.style.transition = 'opacity 300ms 100ms'; }
     mask.style.transition = 'transform 750ms cubic-bezier(0.76, 0, 0.24, 1)';
     mask.style.transform = 'translateY(0)';
     if (pmLogo) setTimeout(() => { pmLogo.style.opacity = '1'; }, 100);
-    setTimeout(() => { window.location.href = 'index.html'; }, 770);
+    /* Préchauffe la connexion Vimeo pendant la transition si on va sur l'accueil */
+    if (href === 'index.html' || href.endsWith('/index.html')) {
+      const preIframe = document.createElement('iframe');
+      preIframe.style.cssText = 'position:fixed;width:0;height:0;opacity:0;pointer-events:none;';
+      preIframe.src = 'https://player.vimeo.com/video/1190241060?background=1&autoplay=1&loop=1&muted=1';
+      document.body.appendChild(preIframe);
+    }
+    setTimeout(() => { window.location.href = href; }, 770);
+  }
+
+  /* Clic logo → retour accueil avec intro (sans transition) */
+  document.addEventListener('click', e => {
+    const logo = e.target.closest('#site-logo');
+    if (!logo) return;
+    e.preventDefault();
+    sessionStorage.removeItem('introSeen_v2');
+    window.location.href = 'index.html';
   }, true);
 
   /* Exit — uniquement sur les liens de la navbar */
@@ -48,15 +84,8 @@
     if (!a) return;
     const href = a.getAttribute('href');
     if (!href || href.startsWith('#')) return;
-
     e.preventDefault();
-    sessionStorage.setItem(NAV_KEY, '1');
-    /* Fondu entrant du nom */
-    if (pmLogo) { pmLogo.style.opacity = '0'; pmLogo.style.transition = 'opacity 300ms 100ms'; }
-    mask.style.transition = 'transform 750ms cubic-bezier(0.76, 0, 0.24, 1)';
-    mask.style.transform = 'translateY(0)';
-    if (pmLogo) setTimeout(() => { pmLogo.style.opacity = '1'; }, 100);
-    setTimeout(() => { window.location.href = href; }, 770);
+    triggerTransition(href, false);
   }, true);
 })();
 
