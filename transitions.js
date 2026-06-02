@@ -31,27 +31,56 @@
   /* Retire l'attribut de masquage dès que le masque JS est en place */
   document.documentElement.removeAttribute('data-nav-entering');
 
-  const sfxSwhoosh = new Audio('sound/swhoos.wav');
-  sfxSwhoosh.preload = 'auto';
-  sfxSwhoosh.load();
+  const SWOOSH_DUR = 2.2;
+  let _ac = null;
+  let _swooshBuf = null;
+  let _swooshSrc = null;
 
-  function fadeOutAudio(audio, duration) {
-    const steps = 40;
-    const interval = (duration * 1000) / steps;
-    let step = 0;
-    const t = setInterval(() => {
-      step++;
-      audio.volume = Math.max(0, 1 - step / steps);
-      if (step >= steps) { clearInterval(t); audio.pause(); audio.currentTime = 0; audio.volume = 1; }
-    }, interval);
+  function getAC() {
+    if (!_ac) _ac = new (window.AudioContext || window.webkitAudioContext)();
+    return _ac;
+  }
+
+  function playSwoosh(offset = 0) {
+    if (!_swooshBuf || !_ac) return;
+    if (_ac.state === 'suspended') _ac.resume();
+    if (_swooshSrc) { try { _swooshSrc.stop(); } catch(e) {} }
+    const gain = _ac.createGain();
+    gain.gain.setValueAtTime(0.10, _ac.currentTime);
+    const remaining = SWOOSH_DUR - offset;
+    gain.gain.linearRampToValueAtTime(0.0, _ac.currentTime + remaining);
+    _swooshSrc = _ac.createBufferSource();
+    _swooshSrc.buffer = _swooshBuf;
+    _swooshSrc.connect(gain);
+    gain.connect(_ac.destination);
+    _swooshSrc.start(0, offset);
+    _swooshSrc.stop(_ac.currentTime + remaining);
+  }
+
+  /* Buffer pré-décodé dans le <head> → zéro latence */
+  if (window._swooshReady) {
+    window._swooshReady.then(res => {
+      if (!res) return;
+      _ac = res.ac;
+      _swooshBuf = res.buf;
+      const elapsed = (Date.now() - res.t0) / 1000;
+      sessionStorage.removeItem('swooshStart');
+      if (elapsed < SWOOSH_DUR) playSwoosh(elapsed);
+    }).catch(() => {});
+  } else {
+    _ac = getAC();
+    fetch('sound/swhoos.wav')
+      .then(r => r.arrayBuffer())
+      .then(d => _ac.decodeAudioData(d))
+      .then(buf => { _swooshBuf = buf; })
+      .catch(() => {});
   }
 
   function triggerTransition(href, resetIntro, withSound = true) {
+    window._transitioning = true;
     if (withSound) {
-      sfxSwhoosh.currentTime = 0;
-      sfxSwhoosh.volume = 1;
-      sfxSwhoosh.play().catch(() => {});
-      fadeOutAudio(sfxSwhoosh, 2.4);
+      playSwoosh(0);
+      sessionStorage.setItem('swooshStart', Date.now());
     }
     if (resetIntro) sessionStorage.removeItem('introSeen_v2');
     sessionStorage.setItem(NAV_KEY, '1');
@@ -78,6 +107,9 @@
     window.location.href = 'index.html';
   }, true);
 
+  /* Expose pour les clics projets */
+  window.triggerTransition = triggerTransition;
+
   /* Exit — uniquement sur les liens de la navbar */
   document.addEventListener('click', e => {
     const a = e.target.closest('.nav-link');
@@ -87,6 +119,31 @@
     e.preventDefault();
     triggerTransition(href, false);
   }, true);
+
+  /* ── SON HOVER NAVBAR ── */
+  let _navBuf = null;
+  const _navAc = new (window.AudioContext || window.webkitAudioContext)();
+  fetch('sound/toc.wav')
+    .then(r => r.arrayBuffer())
+    .then(d => _navAc.decodeAudioData(d))
+    .then(buf => { _navBuf = buf; })
+    .catch(() => {});
+
+  document.addEventListener('pointerdown', () => _navAc.resume(), { once: true });
+
+  document.querySelectorAll('.nav-link').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      if (!_navBuf || window._transitioning) return;
+      if (_navAc.state === 'suspended') _navAc.resume();
+      const gain = _navAc.createGain();
+      gain.gain.value = 0.10;
+      const src = _navAc.createBufferSource();
+      src.buffer = _navBuf;
+      src.connect(gain);
+      gain.connect(_navAc.destination);
+      src.start(0);
+    });
+  });
 })();
 
 /* ── POINT NAV GLISSANT ── */

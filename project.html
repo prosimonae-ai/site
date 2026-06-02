@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script>if(sessionStorage.getItem('navTransition'))document.documentElement.setAttribute('data-nav-entering','');</script>
+  <script>(function(){
+  var ac=new(window.AudioContext||window.webkitAudioContext)();
+  var nt=sessionStorage.getItem('navTransition');
+  if(nt){document.documentElement.setAttribute('data-nav-entering','');var t0s=sessionStorage.getItem('swooshStart');if(t0s){window._swooshReady=fetch('sound/swhoos.wav').then(function(r){return r.arrayBuffer();}).then(function(d){return ac.decodeAudioData(d);}).then(function(buf){return{ac:ac,buf:buf,t0:Number(t0s)};}).catch(function(){return null;});}}
+  var t0d=sessionStorage.getItem('dingStart');
+  if(t0d){window._dingReady=fetch('sound/ding.wav').then(function(r){return r.arrayBuffer();}).then(function(d){return ac.decodeAudioData(d);}).then(function(buf){return{ac:ac,buf:buf,t0:Number(t0d)};}).catch(function(){return null;});}
+})();</script>
   <title>Projet — SimonnAE</title>
   <link rel="icon" href="assets/logo-pink.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://player.vimeo.com">
@@ -127,7 +133,7 @@
 
   <!-- FOOTER PROJET -->
   <footer id="proj-foot">
-    <a href="work.html" class="pi-back">← Retour au work</a>
+    <a href="work.html" class="pi-back">← Retour aux projets</a>
     <span class="pf-credit">SimonNAE® — Paris</span>
   </footer>
 

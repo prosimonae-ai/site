@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script>if(sessionStorage.getItem('navTransition'))document.documentElement.setAttribute('data-nav-entering','');</script>
+  <script>(function(){var nt=sessionStorage.getItem('navTransition');if(nt){document.documentElement.setAttribute('data-nav-entering','');var t0=sessionStorage.getItem('swooshStart');if(t0){var ac=new(window.AudioContext||window.webkitAudioContext)();window._swooshReady=fetch('sound/swhoos.wav').then(function(r){return r.arrayBuffer();}).then(function(d){return ac.decodeAudioData(d);}).then(function(buf){return{ac:ac,buf:buf,t0:Number(t0)};}).catch(function(){return null;});}}})();</script>
   <title>Projets — SimonnAE</title>
   <link rel="icon" href="assets/logo-pink.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://player.vimeo.com">
@@ -56,7 +56,7 @@
         </div>
         <div class="wp-card-meta">
           <span class="wp-meta-num">01</span>
-          <span class="wp-meta-cat">Film · 2024</span>
+          <span class="wp-meta-cat">Film</span>
         </div>
       </a>
 
@@ -69,7 +69,7 @@
         </div>
         <div class="wp-card-meta">
           <span class="wp-meta-num">02</span>
-          <span class="wp-meta-cat">Documentaire · 2023</span>
+          <span class="wp-meta-cat">Documentaire</span>
         </div>
       </a>
 
@@ -82,7 +82,7 @@
         </div>
         <div class="wp-card-meta">
           <span class="wp-meta-num">03</span>
-          <span class="wp-meta-cat">Motion Design · 2024</span>
+          <span class="wp-meta-cat">Motion Design</span>
         </div>
       </a>
 
@@ -95,7 +95,7 @@
         </div>
         <div class="wp-card-meta">
           <span class="wp-meta-num">04</span>
-          <span class="wp-meta-cat">Photographie · 2023</span>
+          <span class="wp-meta-cat">Photographie</span>
         </div>
       </a>
 
@@ -108,7 +108,7 @@
         </div>
         <div class="wp-card-meta">
           <span class="wp-meta-num">05</span>
-          <span class="wp-meta-cat">Éditorial · 2022</span>
+          <span class="wp-meta-cat">Éditorial</span>
         </div>
       </a>
 
@@ -123,7 +123,7 @@
         <span class="wl-num">01</span>
         <span class="wl-name">Horizon</span>
         <div class="wl-right">
-          <span class="wl-meta">Film · 2024</span>
+          <span class="wl-meta">Film</span>
           <span class="wl-arr">↗</span>
         </div>
       </a>
@@ -132,7 +132,7 @@
         <span class="wl-num">02</span>
         <span class="wl-name">Nuit Blanche</span>
         <div class="wl-right">
-          <span class="wl-meta">Documentaire · 2023</span>
+          <span class="wl-meta">Documentaire</span>
           <span class="wl-arr">↗</span>
         </div>
       </a>
@@ -141,7 +141,7 @@
         <span class="wl-num">03</span>
         <span class="wl-name">Particules</span>
         <div class="wl-right">
-          <span class="wl-meta">Motion Design · 2024</span>
+          <span class="wl-meta">Motion Design</span>
           <span class="wl-arr">↗</span>
         </div>
       </a>
@@ -150,7 +150,7 @@
         <span class="wl-num">04</span>
         <span class="wl-name">Matière Brute</span>
         <div class="wl-right">
-          <span class="wl-meta">Photographie · 2023</span>
+          <span class="wl-meta">Photographie</span>
           <span class="wl-arr">↗</span>
         </div>
       </a>
@@ -159,7 +159,7 @@
         <span class="wl-num">05</span>
         <span class="wl-name">Publication</span>
         <div class="wl-right">
-          <span class="wl-meta">Éditorial · 2022</span>
+          <span class="wl-meta">Éditorial</span>
           <span class="wl-arr">↗</span>
         </div>
       </a>

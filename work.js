@@ -9,6 +9,7 @@ const thumbI    = document.getElementById('wl-thumb-inner');
 /* ── SON HOVER (Web Audio API) ── */
 const _ac = new (window.AudioContext || window.webkitAudioContext)();
 let _hoverBuf = null;
+let _dingBuf = null;
 
 fetch('sound/toc.wav')
   .then(r => r.arrayBuffer())
@@ -16,12 +17,33 @@ fetch('sound/toc.wav')
   .then(decoded => { _hoverBuf = decoded; })
   .catch(() => {});
 
-function playHover() {
-  if (!_hoverBuf) return;
+fetch('sound/ding.wav')
+  .then(r => r.arrayBuffer())
+  .then(buf => _ac.decodeAudioData(buf))
+  .then(decoded => { _dingBuf = decoded; })
+  .catch(() => {});
+
+function playDing() {
+  if (!_dingBuf) return;
   if (_ac.state === 'suspended') _ac.resume();
+  const gain = _ac.createGain();
+  gain.gain.value = 0.10;
+  const src = _ac.createBufferSource();
+  src.buffer = _dingBuf;
+  src.connect(gain);
+  gain.connect(_ac.destination);
+  src.start(0);
+}
+
+function playHover() {
+  if (!_hoverBuf || window._transitioning) return;
+  if (_ac.state === 'suspended') _ac.resume();
+  const gain = _ac.createGain();
+  gain.gain.value = 0.10;
   const src = _ac.createBufferSource();
   src.buffer = _hoverBuf;
-  src.connect(_ac.destination);
+  src.connect(gain);
+  gain.connect(_ac.destination);
   src.start(0);
 }
 
@@ -142,6 +164,14 @@ cards.forEach(c => cardObs.observe(c));
 
 /* ── GRILLE : cursor label ── */
 document.querySelectorAll('.wp-card').forEach(card => {
+  card.addEventListener('click', e => {
+    e.preventDefault();
+    const href = card.getAttribute('href');
+    sessionStorage.setItem('dingStart', Date.now());
+    playDing();
+    if (window.triggerTransition) window.triggerTransition(href, false, false);
+    else window.location.href = href;
+  });
   card.addEventListener('mouseenter', e => {
     playHover();
     cursor.textContent = card.dataset.title || '';
@@ -155,6 +185,14 @@ document.querySelectorAll('.wp-card').forEach(card => {
 document.querySelectorAll('.wl-item').forEach(item => {
   item.style.setProperty('--c', item.dataset.color || 'rgba(255,255,255,0.02)');
 
+  item.addEventListener('click', e => {
+    e.preventDefault();
+    const href = item.getAttribute('href');
+    sessionStorage.setItem('dingStart', Date.now());
+    playDing();
+    if (window.triggerTransition) window.triggerTransition(href, false, false);
+    else window.location.href = href;
+  });
   item.addEventListener('mouseenter', e => {
     playHover();
     cursor.textContent = 'VOIR';

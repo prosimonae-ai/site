@@ -1,3 +1,50 @@
+/* ── SON HOVER (projets + contact) ── */
+(function () {
+  const ac = new (window.AudioContext || window.webkitAudioContext)();
+  let buf = null;
+  fetch('sound/toc.wav')
+    .then(r => r.arrayBuffer())
+    .then(d => ac.decodeAudioData(d))
+    .then(decoded => { buf = decoded; })
+    .catch(() => {});
+  document.addEventListener('pointerdown', () => ac.resume(), { once: true });
+  function playToc() {
+    if (!buf || window._transitioning) return;
+    if (ac.state === 'suspended') ac.resume();
+    const gain = ac.createGain();
+    gain.gain.value = 0.10;
+    const src = ac.createBufferSource();
+    src.buffer = buf;
+    src.connect(gain);
+    gain.connect(ac.destination);
+    src.start(0);
+  }
+  document.querySelectorAll('.wi, .ct-ficon').forEach(el => {
+    el.addEventListener('mouseenter', playToc);
+  });
+
+  let dingBuf = null;
+  fetch('sound/ding.wav')
+    .then(r => r.arrayBuffer())
+    .then(d => ac.decodeAudioData(d))
+    .then(decoded => { dingBuf = decoded; })
+    .catch(() => {});
+
+  document.querySelectorAll('.wi').forEach(el => {
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      const href = el.getAttribute('href');
+      sessionStorage.setItem('dingStart', Date.now());
+      if (dingBuf && ac.state !== 'suspended') {
+        const gain = ac.createGain(); gain.gain.value = 0.10;
+        const src = ac.createBufferSource(); src.buffer = dingBuf;
+        src.connect(gain); gain.connect(ac.destination); src.start(0);
+      }
+      if (window.triggerTransition) window.triggerTransition(href, false, false);
+      else window.location.href = href;
+    });
+  });
+})();
 
 /* ── VIDÉO HERO — ANTI-FREEZE ── */
 let heroBgPlayer = null;
@@ -67,6 +114,7 @@ function skipIntro() {
   site.style.transition = 'none';
   site.style.opacity = '1';
   document.body.classList.remove('no-scroll');
+  document.querySelector('.hero-video-bg')?.classList.add('video-ready');
 }
 
 function enterSite(withSound) {
@@ -80,15 +128,19 @@ function enterSite(withSound) {
     document.body.classList.remove('no-scroll');
   }, 600);
   setTimeout(() => { intro.style.display = 'none'; }, 1200);
-  /* Libère le stacking context de #site après la transition opacity */
-  setTimeout(() => { site.style.transition = 'none'; site.style.opacity = '1'; }, 1300);
+  setTimeout(() => {
+    site.style.transition = 'none'; site.style.opacity = '1';
+    document.querySelector('.hero-video-bg')?.classList.add('video-ready');
+  }, 1300);
 }
 
 if (sessionStorage.getItem('introSeen_v2')) {
   skipIntro();
 } else {
   const sfxOui = new Audio('sound/Oui .wav');
+  sfxOui.volume = 0.10;
   const sfxNon = new Audio('sound/Non.wav');
+  sfxNon.volume = 0.10;
   enterWithSound?.addEventListener('click', () => { sfxOui.play().catch(() => {}); enterSite(true);  });
   enterNoSound?.addEventListener('click',   () => { sfxNon.play().catch(() => {}); setTimeout(() => { sfxNon.pause(); sfxNon.currentTime = 0; }, 2000); enterSite(false); });
 }
@@ -120,7 +172,12 @@ const heroArrow = document.getElementById('heroArrow');
 const reelSection = document.getElementById('reel');
 if (heroArrow && reelSection) {
   heroArrow.addEventListener('click', () => {
-    reelSection.scrollIntoView({ behavior: 'smooth' });
+    if (window.matchMedia('(pointer: coarse)').matches) {
+      const top = reelSection.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top, behavior: 'smooth' });
+    } else {
+      reelSection.scrollIntoView({ behavior: 'smooth' });
+    }
   });
 }
 
@@ -339,7 +396,30 @@ document.querySelectorAll('.wi').forEach(item => {
   });
 
   /* Click sur la vidéo → play/pause */
-  hit.addEventListener('click', () => isPlaying ? player.pause() : player.play());
+  /* Indicateur tap mobile */
+  const reelBox = document.querySelector('.reel-video-box');
+  const tapOverlay = document.createElement('div');
+  tapOverlay.className = 'tap-overlay';
+  reelBox.appendChild(tapOverlay);
+  const tapIndicator = document.createElement('div');
+  tapIndicator.className = 'tap-indicator tag';
+  tapIndicator.textContent = 'Play';
+  reelBox.appendChild(tapIndicator);
+
+  let tapTimeout = null;
+  hit.addEventListener('click', () => {
+    isPlaying ? player.pause() : player.play();
+    if (window.matchMedia('(pointer: coarse)').matches) {
+      tapIndicator.textContent = isPlaying ? 'Pause' : 'Play';
+      tapIndicator.classList.add('visible');
+      tapOverlay.classList.add('visible');
+      clearTimeout(tapTimeout);
+      tapTimeout = setTimeout(() => {
+        tapIndicator.classList.remove('visible');
+        tapOverlay.classList.remove('visible');
+      }, 1200);
+    }
+  });
 
   /* Boutons pill */
   playBtn.addEventListener('click', () => isPlaying ? player.pause() : player.play());
@@ -393,6 +473,18 @@ document.querySelectorAll('.wi').forEach(item => {
     const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
     player.setCurrentTime(pct * dur);
   });
+
+  /* Touch scrubbing */
+  function seekFromTouch(e) {
+    const rect = bar.getBoundingClientRect();
+    const x    = e.touches[0].clientX;
+    const pct  = Math.max(0, Math.min(1, (x - rect.left) / rect.width));
+    played.style.width = (pct * 100) + '%';
+    dot.style.left     = (pct * 100) + '%';
+    player.setCurrentTime(pct * dur);
+  }
+  progArea.addEventListener('touchstart', seekFromTouch, { passive: true });
+  progArea.addEventListener('touchmove',  e => { e.preventDefault(); seekFromTouch(e); }, { passive: false });
 })();
 
 /* ── SCROLL REVEALS ── */

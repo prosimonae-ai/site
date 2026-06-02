@@ -1,3 +1,21 @@
+/* ── REPRISE DU DING ── */
+if (window._dingReady) {
+  window._dingReady.then(res => {
+    if (!res) return;
+    const elapsed = (Date.now() - res.t0) / 1000;
+    sessionStorage.removeItem('dingStart');
+    if (elapsed >= res.buf.duration) return;
+    if (res.ac.state === 'suspended') res.ac.resume();
+    const gain = res.ac.createGain();
+    gain.gain.value = 0.10;
+    const src = res.ac.createBufferSource();
+    src.buffer = res.buf;
+    src.connect(gain);
+    gain.connect(res.ac.destination);
+    src.start(0, elapsed);
+  }).catch(() => {});
+}
+
 /* ── DONNÉES PROJETS ── */
 const PROJECTS = {
   'horizon': {
@@ -6,7 +24,7 @@ const PROJECTS = {
     client: 'Personnel',
     duration: '12 min',
     vimeoId: '1190241060', vimeoH: 'd64fb1eb74',
-    desc: 'Un voyage visuel à travers les paysages du monde. Chaque plan, une invitation à l\'exploration et à la contemplation du monde qui nous entoure.',
+    desc: 'Un <em>voyage visuel</em> à travers les paysages du monde. Chaque plan, une invitation à <em>l\'exploration</em> et à la contemplation du monde qui nous entoure.',
     screens: [
       { gradient: 'linear-gradient(135deg,#3d1a64,#1a0d2e,#060310)' },
       { gradient: 'linear-gradient(145deg,#2d1450,#100820)' },
@@ -22,7 +40,7 @@ const PROJECTS = {
     client: 'Centre Pompidou',
     duration: '28 min',
     vimeoId: '1190241060', vimeoH: 'd64fb1eb74',
-    desc: 'Une nuit entière à suivre des artistes dans leurs ateliers. L\'art dans son état le plus brut, capturé sans filtre ni mise en scène.',
+    desc: 'Une nuit entière à suivre des <em>artistes</em> dans leurs ateliers. L\'art dans son état le plus <em>brut</em>, capturé sans filtre ni mise en scène.',
     screens: [
       { gradient: 'linear-gradient(135deg,#2a1848,#0e0818,#020108)' },
       { gradient: 'linear-gradient(145deg,#1a1030,#080510)' },
@@ -38,7 +56,7 @@ const PROJECTS = {
     client: 'Personnel',
     duration: '4 min',
     vimeoId: '1190241060', vimeoH: 'd64fb1eb74',
-    desc: 'Exploration des structures invisibles qui composent notre monde. Une ode à la science et à la physique racontée par l\'image et le mouvement.',
+    desc: 'Exploration des <em>structures invisibles</em> qui composent notre monde. Une ode à la <em>science</em> et à la physique racontée par l\'image et le mouvement.',
     screens: [
       { gradient: 'linear-gradient(135deg,#0d2030,#061018,#020508)' },
       { gradient: 'linear-gradient(145deg,#0a1820,#020408)' },
@@ -54,7 +72,7 @@ const PROJECTS = {
     client: 'Personnel',
     duration: '—',
     vimeoId: '1190241060', vimeoH: 'd64fb1eb74',
-    desc: 'La beauté de l\'imparfait. Une série photographique sur les textures et matières naturelles, sublimées par une lumière rasante.',
+    desc: 'La beauté de <em>l\'imparfait</em>. Une série photographique sur les <em>textures</em> et matières naturelles, sublimées par une <em>lumière rasante</em>.',
     screens: [
       { gradient: 'linear-gradient(135deg,#2e2010,#120e08,#050300)' },
       { gradient: 'linear-gradient(145deg,#1c1408,#080604)' },
@@ -70,7 +88,7 @@ const PROJECTS = {
     client: 'Revue Nulle Part',
     duration: '—',
     vimeoId: '1190241060', vimeoH: 'd64fb1eb74',
-    desc: 'Direction artistique pour une publication culturelle parisienne. Identité visuelle, mise en page et direction photographique sur deux numéros.',
+    desc: '<em>Direction artistique</em> pour une publication culturelle parisienne. Identité visuelle, <em>mise en page</em> et direction photographique sur deux numéros.',
     screens: [
       { gradient: 'linear-gradient(135deg,#1c2410,#0e1208,#040500)' },
       { gradient: 'linear-gradient(145deg,#141c08,#060800)' },
@@ -93,7 +111,50 @@ const nextProj   = PROJECTS[nextId];
 document.title = `${project.title} — SimonnAE`;
 document.getElementById('piNum').textContent   = project.num;
 document.getElementById('piTitle').textContent = project.title;
-document.getElementById('piDesc').textContent  = project.desc;
+/* Description mot par mot — sticky scroll */
+const piDesc  = document.getElementById('piDesc');
+const projInfo = document.getElementById('proj-info');
+
+const parts = project.desc.split(/(<em>[^<]*<\/em>)/g).filter(Boolean);
+piDesc.innerHTML = parts.map(part => {
+  if (part.startsWith('<em>')) {
+    return part.replace(/<\/?em>/g, '').split(' ').filter(w => w)
+      .map(w => `<span class="ct-word pink">${w}</span>`).join(' ');
+  }
+  return part.split(' ').filter(w => w)
+    .map(w => `<span class="ct-word">${w}</span>`).join(' ');
+}).join(' ');
+
+const descWords    = piDesc.querySelectorAll('.ct-word');
+const SCROLL_EXTRA = 1400;
+
+/* Wrap #proj-info dans un outer qui donne la hauteur extra */
+const piOuter = document.createElement('div');
+piOuter.id = 'pi-scroll-outer';
+projInfo.parentNode.insertBefore(piOuter, projInfo);
+piOuter.appendChild(projInfo);
+
+function setOuterHeight() {
+  piOuter.style.height = (projInfo.offsetHeight + SCROLL_EXTRA) + 'px';
+}
+setOuterHeight();
+window.addEventListener('resize', setOuterHeight);
+
+/* Sticky sur #proj-info */
+projInfo.style.position = 'sticky';
+projInfo.style.top = '0';
+
+/* Révélation au scroll via la position du outer */
+function revealDesc() {
+  const rect      = piOuter.getBoundingClientRect();
+  const maxScroll = piOuter.offsetHeight - window.innerHeight;
+  const progress  = Math.min(1, Math.max(0, -rect.top / maxScroll));
+  const litCount  = Math.floor(progress * descWords.length);
+  descWords.forEach((w, i) => w.classList.toggle('lit', i < litCount));
+}
+
+window.addEventListener('scroll', revealDesc, { passive: true });
+revealDesc();
 
 /* Tags */
 const tagsEl = document.getElementById('piTags');
@@ -307,7 +368,30 @@ document.querySelectorAll('.pi-title, .pi-body, .pi-back').forEach(el => obs.obs
   });
   hit.addEventListener('mouseleave', () => videoCursor.classList.remove('visible'));
   hit.addEventListener('mousemove',  e => { vcTX = e.clientX + 18; vcTY = e.clientY - 16; });
-  hit.addEventListener('click', () => isPlaying ? player.pause() : player.play());
+  /* Indicateur tap mobile */
+  const reelBox = document.querySelector('.reel-video-box');
+  const tapOverlay = document.createElement('div');
+  tapOverlay.className = 'tap-overlay';
+  reelBox.appendChild(tapOverlay);
+  const tapIndicator = document.createElement('div');
+  tapIndicator.className = 'tap-indicator tag';
+  tapIndicator.textContent = 'Play';
+  reelBox.appendChild(tapIndicator);
+
+  let tapTimeout = null;
+  hit.addEventListener('click', () => {
+    isPlaying ? player.pause() : player.play();
+    if (window.matchMedia('(pointer: coarse)').matches) {
+      tapIndicator.textContent = isPlaying ? 'Pause' : 'Play';
+      tapIndicator.classList.add('visible');
+      tapOverlay.classList.add('visible');
+      clearTimeout(tapTimeout);
+      tapTimeout = setTimeout(() => {
+        tapIndicator.classList.remove('visible');
+        tapOverlay.classList.remove('visible');
+      }, 1200);
+    }
+  });
 
   playBtn.addEventListener('click', () => isPlaying ? player.pause() : player.play());
   muteBtn.addEventListener('click', () => setMuteState(!isMuted));
@@ -353,4 +437,15 @@ document.querySelectorAll('.pi-title, .pi-body, .pi-back').forEach(el => obs.obs
     const rect = bar.getBoundingClientRect();
     player.setCurrentTime(Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)) * dur);
   });
+
+  /* Touch scrubbing */
+  function seekFromTouch(e) {
+    const rect = bar.getBoundingClientRect();
+    const pct  = Math.max(0, Math.min(1, (e.touches[0].clientX - rect.left) / rect.width));
+    played.style.width = (pct * 100) + '%';
+    dot.style.left     = (pct * 100) + '%';
+    player.setCurrentTime(pct * dur);
+  }
+  progArea.addEventListener('touchstart', seekFromTouch, { passive: true });
+  progArea.addEventListener('touchmove',  e => { e.preventDefault(); seekFromTouch(e); }, { passive: false });
 })();

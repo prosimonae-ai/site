@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script>if(sessionStorage.getItem('navTransition'))document.documentElement.setAttribute('data-nav-entering','');</script>
+  <script>(function(){var nt=sessionStorage.getItem('navTransition');if(nt){document.documentElement.setAttribute('data-nav-entering','');var t0=sessionStorage.getItem('swooshStart');if(t0){var ac=new(window.AudioContext||window.webkitAudioContext)();window._swooshReady=fetch('sound/swhoos.wav').then(function(r){return r.arrayBuffer();}).then(function(d){return ac.decodeAudioData(d);}).then(function(buf){return{ac:ac,buf:buf,t0:Number(t0)};}).catch(function(){return null;});}}})();</script>
   <title>Contact — SimonnAE</title>
   <link rel="icon" href="assets/logo-pink.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://player.vimeo.com">
@@ -38,6 +38,7 @@
 
     <!-- NOUVEAU LAYOUT -->
     <div class="ct-hero-wrapper">
+    <img src="assets/name-pink.svg" alt="SIMONN.AE" class="ct-bottom-logo" />
     <div class="ct-hero">
 
       <!-- Texte gauche -->
@@ -77,6 +78,7 @@
       </div>
 
     </div>
+
     </div><!-- .ct-hero-wrapper -->
 
     <!-- CONTENU MASQUÉ -->
@@ -182,10 +184,6 @@
       </div>
     </div>
 
-    <footer class="contact-foot">
-      <span>SimonNAE® — Paris, France</span>
-      <span>©2026</span>
-    </footer>
     </div><!-- .ct-hidden -->
 
   </main>

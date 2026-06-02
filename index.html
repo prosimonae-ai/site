@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script>if(sessionStorage.getItem('navTransition'))document.documentElement.setAttribute('data-nav-entering','');</script>
+  <script>(function(){var nt=sessionStorage.getItem('navTransition');if(nt){document.documentElement.setAttribute('data-nav-entering','');var t0=sessionStorage.getItem('swooshStart');if(t0){var ac=new(window.AudioContext||window.webkitAudioContext)();window._swooshReady=fetch('sound/swhoos.wav').then(function(r){return r.arrayBuffer();}).then(function(d){return ac.decodeAudioData(d);}).then(function(buf){return{ac:ac,buf:buf,t0:Number(t0)};}).catch(function(){return null;});}}})();</script>
   <title>SimonnAE</title>
   <link rel="icon" href="assets/logo-pink.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://player.vimeo.com">
@@ -199,35 +199,30 @@
           <span class="wi-n">01</span>
           <span class="wi-name">Horizon</span>
           <span class="wi-cat">Film</span>
-          <span class="wi-yr">2024</span>
           <span class="wi-arr">↗</span>
         </a></li>
         <li><a class="wi" href="project.html?id=nuit-blanche" data-color="#0e0818" data-cursor-label="VOIR">
           <span class="wi-n">02</span>
           <span class="wi-name">Nuit Blanche</span>
           <span class="wi-cat">Documentaire</span>
-          <span class="wi-yr">2023</span>
           <span class="wi-arr">↗</span>
         </a></li>
         <li><a class="wi" href="project.html?id=particules" data-color="#061018" data-cursor-label="VOIR">
           <span class="wi-n">03</span>
           <span class="wi-name">Particules</span>
           <span class="wi-cat">Motion Design</span>
-          <span class="wi-yr">2024</span>
           <span class="wi-arr">↗</span>
         </a></li>
         <li><a class="wi" href="project.html?id=matiere-brute" data-color="#120e08" data-cursor-label="VOIR">
           <span class="wi-n">04</span>
           <span class="wi-name">Matière Brute</span>
           <span class="wi-cat">Photographie</span>
-          <span class="wi-yr">2023</span>
           <span class="wi-arr">↗</span>
         </a></li>
         <li><a class="wi" href="project.html?id=publication" data-color="#0e1208" data-cursor-label="VOIR">
           <span class="wi-n">05</span>
           <span class="wi-name">Publication</span>
           <span class="wi-cat">Éditorial</span>
-          <span class="wi-yr">2022</span>
           <span class="wi-arr">↗</span>
         </a></li>
       </ul>
