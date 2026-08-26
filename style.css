@@ -23,6 +23,18 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: clip;
 }
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M20 0 V60 M40 0 V60 M0 20 H60 M0 40 H60' stroke='white' stroke-width='0.3' fill='none'/%3E%3Cpath d='M0 0 V60 M0 0 H60' stroke='white' stroke-width='0.5' fill='none'/%3E%3Cpath d='M-5 0 H5 M0 -5 V5 M55 0 H65 M60 -5 V5 M-5 60 H5 M0 55 V65 M55 60 H65 M60 55 V65' stroke='white' stroke-width='0.8' fill='none'/%3E%3C/svg%3E");
+  background-size: 60px 60px;
+  opacity: 0.025;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 1;
+}
 body.no-scroll { overflow: hidden; position: fixed; width: 100%; top: 0; }
 
 /* ── PAGE TRANSITION MASK ── */
@@ -474,43 +486,44 @@ body::after {
   display: none;
 }
 
-@media (max-width: 600px) {
-  /* Header — logo seul */
+@media (max-width: 768px) {
+  /* Header — logo pill à gauche */
   #site-header {
     top: 16px;
-    height: 52px;
-    left: 20px;
+    height: 60px;
+    left: 16px;
+    right: auto;
     transform: none;
-    padding: 0 14px;
+    padding: 0 18px;
   }
   #site-header .header-sep,
-  #site-header #nav { display: none; }
-  #logo-nav-svg { height: 26px; }
+  #site-header #nav { display: none !important; }
+  #logo-nav-svg { height: 28px; }
 
-  /* Nav pill en haut à droite */
+  /* Nav pill — s'étend jusqu'au bord droit */
   #bottom-nav {
     display: flex;
     align-items: center;
     position: fixed;
     top: 16px;
-    right: 20px;
-    bottom: auto;
     left: auto;
+    right: 16px;
+    max-width: calc(100vw - 120px);
+    bottom: auto;
     transform: none;
     z-index: 200;
-    height: 52px;
-    padding: 0 6px;
-    gap: 2px;
+    height: 60px;
+    padding: 0 10px;
+    gap: 0;
     background: rgba(8,8,8,0.88);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 100px;
-    white-space: nowrap;
   }
   #bottom-nav .nav-link {
-    font-size: 15px;
-    padding: 8px 18px;
+    font-size: 18px;
+    padding: 12px 18px;
   }
   #bottom-nav .nav-indicator { display: none; }
 }
@@ -766,12 +779,12 @@ body::after {
   position: fixed;
   inset: 0;
   z-index: 9992;
-  background: rgba(0,0,0,0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(0,0,0,0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 400ms ease;
+  transition: opacity 550ms var(--ease);
 }
 #theater-backdrop.active {
   opacity: 1;
@@ -975,6 +988,19 @@ body.theater-open { overflow: hidden; }
   z-index: 0;
 }
 
+/* Keyframes filmstrip */
+.strip-frame {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 400ms ease;
+  pointer-events: none;
+}
+.strip-frame.loaded { opacity: 1; }
+
 /* Pseudo-element pour les séparateurs style pellicule */
 .strip-bar::after {
   content: '';
@@ -1042,11 +1068,11 @@ body.theater-open { overflow: hidden; }
 
 .tip-img {
   display: block;
-  width: 160px;
-  height: 90px;
+  width: 90px;
+  height: 160px;
   object-fit: cover;
-  border-radius: 4px;
-  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.12);
 }
 
 .tip-time {
@@ -1441,4 +1467,22 @@ body.theater-open { overflow: hidden; }
   .ct-float-zone { gap: 14px !important; }
   .ct-ficon-circle { width: 52px !important; height: 52px !important; }
   .ct-ficon-circle svg { width: 20px !important; height: 20px !important; }
+}
+
+/* ─── BOUTONS SON + CROIX — plus grands sur mobile ─── */
+@media (hover: none) {
+  .corner-btn { width: 52px; height: 52px; }
+  .corner-btn .ri { width: 20px; height: 20px; }
+}
+
+/* ─── TIMECODE / SCRUB — améliorations tactiles ─── */
+@media (hover: none) {
+  /* Zone de touch plus grande */
+  .pill-strip { padding: 12px 0; }
+
+  /* Dot toujours visible (pas de hover nécessaire) */
+  .strip-dot { transform: translate(-50%, -50%) scale(1) !important; width: 16px; height: 16px; }
+
+  /* Tooltip désactivé au touch */
+  .strip-tip { display: none !important; }
 }

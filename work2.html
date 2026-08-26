@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>(function(){var nt=sessionStorage.getItem('navTransition');if(nt){document.documentElement.setAttribute('data-nav-entering','');var t0=sessionStorage.getItem('swooshStart');if(t0){var ac=new(window.AudioContext||window.webkitAudioContext)();window._swooshReady=fetch('sound/swhoos.wav').then(function(r){return r.arrayBuffer();}).then(function(d){return ac.decodeAudioData(d);}).then(function(buf){return{ac:ac,buf:buf,t0:Number(t0)};}).catch(function(){return null;});}}})();</script>
+  <title>Projets 2 — SimonnAE</title>
+  <link rel="icon" href="assets/logo-pink.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://player.vimeo.com">
+  <link rel="preconnect" href="https://vimeocdn.com" crossorigin>
+  <link rel="preconnect" href="https://i.vimeocdn.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://use.typekit.net/kid8vvq.css">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="work2.css">
+</head>
+<body>
+
+  <div id="work-cursor" class="tag"></div>
+
+  <header id="site-header" class="scrolled">
+    <a href="index.html" id="site-logo"><img src="assets/logo-pink.svg" alt="SIMONN.AE" /></a>
+    <div class="header-sep"></div>
+    <nav id="nav">
+      <div class="nav-links">
+        <a href="index.html"   class="nav-link">Accueil</a>
+        <a href="work.html"    class="nav-link">Projets</a>
+        <a href="work2.html"   class="nav-link active">Projets 2</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- LISTE -->
+  <main class="wl-page active" id="layout-list">
+    <div class="wl-items" id="list-items">
+
+      <a class="wl-item" href="reels.html" data-color="#2d1450">
+        <span class="wl-num">01</span>
+        <span class="wl-name">Reels</span>
+        <div class="wl-right">
+          <span class="wl-arr">↗</span>
+        </div>
+      </a>
+
+      <a class="wl-item" href="#" data-color="#0e0818">
+        <span class="wl-num">02</span>
+        <span class="wl-name">Youtube</span>
+        <div class="wl-right">
+          <span class="wl-arr">↗</span>
+        </div>
+      </a>
+
+      <a class="wl-item" href="#" data-color="#061018">
+        <span class="wl-num">03</span>
+        <span class="wl-name">Motion Design</span>
+        <div class="wl-right">
+          <span class="wl-arr">↗</span>
+        </div>
+      </a>
+
+    </div>
+  </main>
+
+  <!-- THUMBNAIL (liste) -->
+  <div id="wl-thumb">
+    <div id="wl-thumb-inner"></div>
+  </div>
+
+
+  <script src="transitions.js"></script>
+  <script src="work2.js"></script>
+</body>
+</html>

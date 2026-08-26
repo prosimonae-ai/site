@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    /* Rediriger vers l'intro si elle n'a pas encore été vue */
+    if (!sessionStorage.getItem('introSeen_v2')) { location.replace('index.html'); }
+  </script>
+  <script>(function(){var nt=sessionStorage.getItem('navTransition');if(nt){document.documentElement.setAttribute('data-nav-entering','');var t0=sessionStorage.getItem('swooshStart');if(t0){var ac=new(window.AudioContext||window.webkitAudioContext)();window._swooshReady=fetch('sound/swhoos.wav').then(function(r){return r.arrayBuffer();}).then(function(d){return ac.decodeAudioData(d);}).then(function(buf){return{ac:ac,buf:buf,t0:Number(t0)};}).catch(function(){return null;});}}})();</script>
+  <title>Reels — SimonnAE</title>
+  <link rel="icon" href="assets/logo-pink.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://player.vimeo.com">
+  <link rel="preconnect" href="https://vimeocdn.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://use.typekit.net/kid8vvq.css">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="reels.css">
+</head>
+<body class="reels-page">
+
+  <header id="site-header" class="scrolled">
+    <a href="#rl-hero" id="site-logo"><img src="assets/logo-pink.svg" alt="SIMONN.AE"></a>
+    <div class="header-sep"></div>
+    <nav id="nav">
+      <div class="nav-links">
+        <a href="#rl-content"  class="nav-link">Projet</a>
+        <a href="#rl-showreel" class="nav-link">À propos</a>
+        <a href="#rl-contact"  class="nav-link">Contact</a>
+        <div class="nav-indicator"></div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Nav mobile (visible uniquement ≤600px) -->
+  <nav id="bottom-nav">
+    <a href="#rl-content"  class="nav-link">Projet</a>
+    <a href="#rl-showreel" class="nav-link">À propos</a>
+    <a href="#rl-contact"  class="nav-link">Contact</a>
+  </nav>
+
+  <section id="rl-hero">
+
+    <div id="rl-brand-dots">
+      <div class="bd bd-person" style="--x:4%;--y:22%;--s:72px;--d:0s" data-label="@kylianlebris" data-subs="132K">
+        <img src="LOGO/kylian.jpg" alt="Kylian" class="bd-avatar">
+      </div>
+      <div class="bd bd-person" style="--x:26%;--y:14%;--s:50px;--d:0.7s" data-label="DJI">
+        <img src="LOGO/DJI.jpg" alt="DJI" class="bd-avatar">
+      </div>
+      <div class="bd bd-person" id="bd-may" style="--x:14%;--y:46%;--s:60px;--d:0.5s" data-label="@may.berthelot" data-subs="270K">
+        <img src="LOGO/May.jpg" alt="May" class="bd-avatar">
+      </div>
+      <div class="bd bd-person" style="--x:5%;--y:68%;--s:54px;--d:1.0s" data-label="TCL">
+        <img src="LOGO/TCL.png" alt="TCL" class="bd-avatar">
+      </div>
+      <div class="bd bd-person" style="--x:22%;--y:80%;--s:64px;--d:0.3s" data-label="@vinceeh" data-subs="300K">
+        <img src="LOGO/vinceeh.jpg" alt="Vinceeh" class="bd-avatar">
+      </div>
+
+      <div class="bd bd-person" style="--x:62%;--y:16%;--s:52px;--d:1.3s" data-label="@lucallaccio" data-subs="437K">
+        <img src="LOGO/Lucas.jpg" alt="Lucas" class="bd-avatar">
+      </div>
+      <div class="bd bd-person" id="bd-french" style="--x:82%;--y:30%;--s:64px;--d:0.2s" data-label="@french_renovation" data-subs="503K">
+        <img src="LOGO/frenchreno.jpg" alt="French Reno" class="bd-avatar">
+      </div>
+      <div class="bd bd-person" id="bd-simba" style="--x:69%;--y:56%;--s:56px;--d:0.8s" data-label="@simba.rec" data-subs="45.7K">
+        <img src="LOGO/simba.jpg" alt="Simba" class="bd-avatar">
+      </div>
+      <div class="bd bd-person" style="--x:88%;--y:72%;--s:48px;--d:0.6s" data-label="TR">
+        <img src="LOGO/TR.png" alt="TR" class="bd-avatar">
+      </div>
+      <div class="bd bd-person" style="--x:76%;--y:84%;--s:44px;--d:0.4s" data-label="Bitpanda">
+        <img src="LOGO/bitpanda.png" alt="Bitpanda" class="bd-avatar">
+      </div>
+    </div>
+
+    <div id="rl-hero-content">
+      <p id="rl-hero-eyebrow">Monteur · Motion Designer</p>
+      <h1 id="rl-hero-name"><img src="assets/name-pink.svg" alt="SIMONN.AE"></h1>
+    </div>
+      <button id="rl-scroll-btn" aria-label="Scroll vers la grille">
+        <span class="hero-arrow-label"><span>Scroll</span></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 5v14M5 12l7 7 7-7"/>
+        </svg>
+      </button>
+    </section>
+
+  <section id="rl-content">
+
+    <nav id="rl-cat-nav">
+      <div id="rl-cat-indicator"></div>
+      <button class="rl-cat active" data-cat="reels">Reels / TikTok</button>
+      <button class="rl-cat" data-cat="youtube">Youtube</button>
+      <button class="rl-cat" data-cat="animation">Animation / DA</button>
+    </nav>
+
+    <div id="rl-grids">
+
+      <div class="rl-grid-pane active" id="pane-reels">
+        <div class="rl-grid rl-grid-reels" id="rl-grid"></div>
+        <div id="rl-more-wrap">
+          <button id="rl-more">Voir plus</button>
+          <a id="rl-discover-link" href="https://www.instagram.com/simonn.ae/reposts/" target="_blank" rel="noopener">
+            Tout découvrir
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 13L13 3M13 3H7M13 3v6"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="rl-grid-pane" id="pane-youtube">
+        <div class="rl-grid rl-grid-yt" id="rl-grid-yt"></div>
+        <div class="rl-more-wrap-x" id="rl-more-wrap-yt">
+          <button class="rl-more-x" id="rl-more-yt">Voir plus</button>
+        </div>
+      </div>
+
+      <div class="rl-grid-pane" id="pane-animation">
+        <div class="rl-grid rl-grid-anim" id="rl-grid-anim"></div>
+        <div class="rl-more-wrap-x" id="rl-more-wrap-anim">
+          <button class="rl-more-x" id="rl-more-anim">Voir plus</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+<div id="rl-theater-cursor" class="tag"><span class="vc-text">Play</span></div>
+  <div id="rl2-cursor" class="tag"><span class="vc-text">Play</span></div>
+
+  <!-- SHOWREEL SECTION -->
+  <section id="rl-showreel">
+    <div class="reel-outer" id="rl2-outer">
+      <div class="reel-video-box">
+        <iframe id="rl2-iframe"
+          src="https://player.vimeo.com/video/1190241060?h=d64fb1eb74&controls=0&autoplay=0&loop=1&muted=0&title=0&byline=0&portrait=0"
+          frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        <div class="reel-hit" id="rl2-hit"></div>
+        <div id="rl2-mob-indicator">
+          <svg id="rl2-mob-icon-play"  viewBox="0 0 24 24" fill="white"><path d="M6 4l14 8-14 8z"/></svg>
+          <svg id="rl2-mob-icon-pause" viewBox="0 0 24 24" fill="white"><rect x="5" y="4" width="4" height="16" rx="1"/><rect x="15" y="4" width="4" height="16" rx="1"/></svg>
+        </div>
+        <div class="reel-corner-btns">
+          <button class="corner-btn" id="rl2-mute-btn" aria-label="Son">
+            <svg class="ri ri-unmuted" viewBox="0 0 16 16">
+              <path d="M2 5.5v5h3l4 3v-11l-4 3z" fill="currentColor"/>
+              <path d="M11 6a2.5 2.5 0 0 1 0 4M13.5 4.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+            </svg>
+            <svg class="ri ri-muted" viewBox="0 0 16 16">
+              <path d="M2 5.5v5h3l4 3v-11l-4 3z" fill="currentColor"/>
+              <line x1="11" y1="5" x2="15" y2="11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              <line x1="15" y1="5" x2="11" y2="11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button class="corner-btn" id="rl2-full-btn" aria-label="Plein écran">
+            <svg class="ri" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="reel-controls-area">
+        <div class="reel-thin">
+          <div class="reel-thin-fill" id="rl2-fill"></div>
+        </div>
+        <div class="reel-pill">
+          <div class="pill-btns">
+            <button class="pill-btn" id="rl2-play-btn" aria-label="Lecture">
+              <svg class="ri ri-play" viewBox="0 0 16 16"><path d="M3 2l10 6-10 6z" fill="currentColor"/></svg>
+              <svg class="ri ri-pause" viewBox="0 0 16 16">
+                <rect x="3" y="2" width="4" height="12" rx="1" fill="currentColor"/>
+                <rect x="9" y="2" width="4" height="12" rx="1" fill="currentColor"/>
+              </svg>
+            </button>
+            <button class="pill-btn" id="rl2-pill-mute-btn" aria-label="Son">
+              <svg class="ri ri-unmuted" viewBox="0 0 16 16">
+                <path d="M2 5.5v5h3l4 3v-11l-4 3z" fill="currentColor"/>
+                <path d="M11 6a2.5 2.5 0 0 1 0 4M13.5 4.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+              </svg>
+              <svg class="ri ri-muted" viewBox="0 0 16 16">
+                <path d="M2 5.5v5h3l4 3v-11l-4 3z" fill="currentColor"/>
+                <line x1="11" y1="5" x2="15" y2="11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                <line x1="15" y1="5" x2="11" y2="11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <div class="pill-strip" id="rl2-strip">
+            <div class="strip-bar" id="rl2-bar">
+              <div class="strip-hover" id="rl2-hover-fill"></div>
+              <div class="strip-played" id="rl2-played"></div>
+              <div class="strip-dot" id="rl2-dot"></div>
+            </div>
+          </div>
+          <span class="pill-time" id="rl2-time">0:00</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT SECTION -->
+  <section id="rl-contact">
+    <div id="rl-contact-body">
+      <p id="rl-contact-tagline" class="sr">Travaillons<br>ensemble.</p>
+
+      <a href="mailto:pro.simonae@gmail.com" class="rl-contact-email sr sr-delay-1">
+        pro.simonae@gmail.com
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 13L13 3M13 3H6M13 3v7"/>
+        </svg>
+      </a>
+
+      <div id="rl-contact-socials" class="sr sr-delay-2">
+        <a href="https://www.instagram.com/simonn.ae/" class="rl-social" target="_blank" rel="noopener">Instagram</a>
+        <span class="rl-social-sep">·</span>
+        <a href="https://www.linkedin.com/in/simon-corbillon" class="rl-social" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+
+    <div id="rl-name-bottom">
+      <img src="assets/name-white.svg" alt="SIMONN.AE">
+    </div>
+
+
+  </section>
+
+  <!-- PLAYER (same structure as project.html, opened in theater mode on card click) -->
+  <div id="theater-backdrop"></div>
+
+  <div id="rl-player">
+
+    <!-- Colonne vidéo -->
+    <div id="rl-video-col">
+      <div class="reel-video-box">
+        <div id="rl-vimeo"></div>
+        <div class="reel-hit" id="rl-hit"></div>
+        <div id="rl-mob-indicator">
+          <svg id="rl-mob-icon-play"  viewBox="0 0 24 24" fill="white"><path d="M6 4l14 8-14 8z"/></svg>
+          <svg id="rl-mob-icon-pause" viewBox="0 0 24 24" fill="white"><rect x="5" y="4" width="4" height="16" rx="1"/><rect x="15" y="4" width="4" height="16" rx="1"/></svg>
+        </div>
+
+        <div class="reel-corner-btns">
+          <button class="corner-btn" id="rl-mute-btn" aria-label="Son">
+            <svg class="ri ri-unmuted" viewBox="0 0 16 16">
+              <path d="M2 5.5v5h3l4 3v-11l-4 3z" fill="currentColor"/>
+              <path d="M11 6a2.5 2.5 0 0 1 0 4M13.5 4.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+            </svg>
+            <svg class="ri ri-muted" viewBox="0 0 16 16">
+              <path d="M2 5.5v5h3l4 3v-11l-4 3z" fill="currentColor"/>
+              <line x1="11" y1="5" x2="15" y2="11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              <line x1="15" y1="5" x2="11" y2="11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button class="corner-btn" id="rl-close-btn" aria-label="Fermer">
+            <svg class="ri" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <line x1="3" y1="3" x2="13" y2="13"/>
+              <line x1="13" y1="3" x2="3" y2="13"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="reel-controls-area">
+        <div class="reel-thin">
+          <div class="reel-thin-fill" id="rl-progress-fill"></div>
+        </div>
+        <div class="reel-pill">
+          <div class="pill-btns">
+            <button class="pill-btn" id="rl-play-btn" aria-label="Lecture">
+              <svg class="ri ri-play" viewBox="0 0 16 16"><path d="M3 2l10 6-10 6z" fill="currentColor"/></svg>
+              <svg class="ri ri-pause" viewBox="0 0 16 16">
+                <rect x="3" y="2" width="4" height="12" rx="1" fill="currentColor"/>
+                <rect x="9" y="2" width="4" height="12" rx="1" fill="currentColor"/>
+              </svg>
+            </button>
+          </div>
+          <div class="pill-strip" id="rl-strip">
+            <div class="strip-tip" id="rl-strip-tip">
+              <img class="tip-img" id="rl-tip-img" alt=""/>
+              <span class="tip-time" id="rl-tip-time">0:00</span>
+            </div>
+            <div class="strip-bar" id="rl-bar">
+              <div class="strip-poster" id="rl-strip-poster"></div>
+              <div class="strip-hover" id="rl-hover-fill"></div>
+              <div class="strip-played" id="rl-played"></div>
+              <div class="strip-dot" id="rl-dot"></div>
+            </div>
+          </div>
+          <span class="pill-time" id="rl-time">0:00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Colonne infos -->
+    <div id="rl-info">
+      <div id="rl-info-top">
+        <span id="rl-info-num"></span>
+        <span id="rl-info-year"></span>
+      </div>
+      <h2 id="rl-info-title"></h2>
+      <p id="rl-info-client"></p>
+      <p id="rl-info-desc"></p>
+
+      <a href="#rl-contact" id="rl-info-cta">
+        Parlons de votre projet
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 13L13 3M13 3H6M13 3v7"/>
+        </svg>
+      </a>
+
+      <div id="rl-next-reel">
+        <span id="rl-next-reel-label">Reel suivant</span>
+        <span id="rl-next-reel-title"></span>
+        <div id="rl-next-reel-bar"><div id="rl-next-reel-fill"></div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://player.vimeo.com/api/player.js"></script>
+  <script src="transitions.js"></script>
+  <script src="reels.js"></script>
+</body>
+</html>
