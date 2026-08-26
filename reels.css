@@ -1197,8 +1197,6 @@ body.reels-page {
     flex: 0 0 auto;
   }
 
-  /* Boutons originaux cachés sur mobile (remplacés par l'overlay fixe) */
-  #rl-player .reel-corner-btns { display: none; }
   #rl-player .reel-video-box {
     border-radius: 0;
     width: 100%;
@@ -1218,18 +1216,6 @@ body.reels-page {
   /* Contact */
   #rl-contact { padding: 80px 24px 140px; }
   #rl-contact-tagline { font-size: clamp(52px, 14vw, 80px); }
-
-  /* Overlay boutons mobiles fixes */
-  #rl-mob-corner-btns {
-    display: none;
-    position: fixed;
-    top: 14px;
-    right: 14px;
-    z-index: 10000;
-    gap: 8px;
-    align-items: center;
-  }
-  body.theater-open #rl-mob-corner-btns { display: flex; }
 
   /* Descriptions des cards toujours visibles sur mobile */
   .rl-card-info { opacity: 1; }
