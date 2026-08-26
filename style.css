@@ -522,8 +522,10 @@ body::after {
     border-radius: 100px;
   }
   #bottom-nav .nav-link {
-    font-size: 18px;
-    padding: 12px 18px;
+    font-size: 12px;
+    padding: 10px 12px;
+    white-space: nowrap;
+    letter-spacing: 0.06em;
   }
   #bottom-nav .nav-indicator { display: none; }
 }
@@ -1469,10 +1471,11 @@ body.theater-open { overflow: hidden; }
   .ct-ficon-circle svg { width: 20px !important; height: 20px !important; }
 }
 
-/* ─── BOUTONS SON + CROIX — plus grands sur mobile ─── */
+/* ─── BOUTONS SON + CROIX — plus grands et fixes sur mobile ─── */
 @media (hover: none) {
   .corner-btn { width: 52px; height: 52px; }
   .corner-btn .ri { width: 20px; height: 20px; }
+
 }
 
 /* ─── TIMECODE / SCRUB — améliorations tactiles ─── */

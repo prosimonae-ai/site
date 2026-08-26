@@ -1111,18 +1111,24 @@ body.reels-page {
   #rl-hero-desc { font-size: 13px; max-width: 100%; }
   #rl-scroll-btn { margin-top: 48px; }
 
-  /* Brand dots : scatter conservé, dots du centre cachés */
-  .bd { transform-origin: center; }
-  #rl-brand-dots .bd { --s: clamp(30px, calc(var(--s) * 0.55), 44px); }
-  #bd-may, #bd-simba, #bd-french { display: none; }
-  /* Repositionnement des dots au centre vertical → zones haute/basse */
+  /* Brand dots cachés sur mobile */
+  #rl-brand-dots { display: none; }
 
-  /* Category nav : scroll horizontal sans scrollbar */
+  /* Toutes les lumières / glows supprimés sur mobile */
+  #rl-content::before,
+  #rl-content[data-cat="reels"]::before,
+  #rl-content[data-cat="youtube"]::before,
+  #rl-content[data-cat="animation"]::before { display: none !important; }
+  #rl-showreel::before { display: none !important; }
+  #rl-contact::before  { display: none !important; }
+  #rl-hero::after      { display: none !important; }
+  .rl-contact-email::before { display: none !important; }
+
+  /* Category nav */
   #rl-cat-nav {
     width: calc(100% - 32px);
-    max-width: 360px;
+    max-width: none;
     margin: 0 auto 32px;
-    justify-content: space-between;
     padding: 4px;
     gap: 2px;
   }
@@ -1131,15 +1137,18 @@ body.reels-page {
     transform: none !important;
     left: auto !important;
     top: auto !important;
-    width: calc(100% - 32px);
-    max-width: 360px;
   }
   .rl-cat {
     flex: 1;
-    font-size: 11px;
-    padding: 8px 6px;
-    letter-spacing: 0.04em;
+    font-size: 10px;
+    padding: 10px 6px;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
+  /* Annule le scale sur mobile — évite le débordement */
+  .rl-cat.active { transform: none; }
 
   /* Grilles : 2 colonnes fluides */
   #rl-grids { width: 100%; padding: 0 12px; box-sizing: border-box; }
@@ -1165,7 +1174,7 @@ body.reels-page {
   .rl-grid-anim .rl-card              { aspect-ratio: 3/4; }
   .rl-grid-anim .rl-card[data-span-row="2"] { grid-row: span 1; aspect-ratio: 3/4; }
 
-  /* Player mobile : vidéo plein écran, infos en dessous */
+  /* Player mobile : scroll normal mais vidéo sticky en haut */
   #rl-player {
     flex-direction: column;
     gap: 0;
@@ -1174,6 +1183,7 @@ body.reels-page {
     top: 0;
     transform: translate(-50%, -46%) scale(0.92);
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
     border-radius: 0;
     align-items: flex-start;
@@ -1186,6 +1196,9 @@ body.reels-page {
     width: 100%;
     flex: 0 0 auto;
   }
+
+  /* Boutons originaux cachés sur mobile (remplacés par l'overlay fixe) */
+  #rl-player .reel-corner-btns { display: none; }
   #rl-player .reel-video-box {
     border-radius: 0;
     width: 100%;
@@ -1200,11 +1213,23 @@ body.reels-page {
     align-self: stretch;
   }
   #rl-info-title { font-size: 28px; }
-  #rl-info-cta { margin-top: 20px; }
+  #rl-info-cta { margin-top: 20px; align-self: center; }
 
   /* Contact */
   #rl-contact { padding: 80px 24px 140px; }
   #rl-contact-tagline { font-size: clamp(52px, 14vw, 80px); }
+
+  /* Overlay boutons mobiles fixes */
+  #rl-mob-corner-btns {
+    display: none;
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    z-index: 10000;
+    gap: 8px;
+    align-items: center;
+  }
+  body.theater-open #rl-mob-corner-btns { display: flex; }
 
   /* Descriptions des cards toujours visibles sur mobile */
   .rl-card-info { opacity: 1; }

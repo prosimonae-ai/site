@@ -213,6 +213,11 @@ function setMute(muted) {
   if (vPlayer) vPlayer.setMuted(muted);
   rlMuteBtn.classList.toggle('muted', muted);
   setIcon(muted ? riUnmuted : riMuted, muted ? riMuted : riUnmuted);
+  /* Sync icône sur le bouton mobile fixe */
+  if (rlMobMuteBtn) {
+    rlMobMuteBtn.querySelector('.ri-unmuted').style.display = muted ? 'none' : '';
+    rlMobMuteBtn.querySelector('.ri-muted').style.display   = muted ? '' : 'none';
+  }
 }
 
 function setPlayState(playing) {
@@ -470,6 +475,12 @@ rlPlayBtn.addEventListener('click', () => {
 rlMuteBtn.addEventListener('click', () => setMute(!isMuted));
 rlCloseBtn.addEventListener('click', closePlayer);
 theaterBackdrop.addEventListener('click', closePlayer);
+
+/* Boutons mobiles fixes (hors du player, toujours visibles au scroll) */
+const rlMobMuteBtn  = document.getElementById('rl-mob-mute-btn');
+const rlMobCloseBtn = document.getElementById('rl-mob-close-btn');
+if (rlMobMuteBtn)  rlMobMuteBtn.addEventListener('click',  () => setMute(!isMuted));
+if (rlMobCloseBtn) rlMobCloseBtn.addEventListener('click', closePlayer);
 
 if (!isTouch) {
   theaterBackdrop.addEventListener('mouseenter', e => {
