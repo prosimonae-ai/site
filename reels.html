@@ -64,7 +64,7 @@
     <div class="header-sep"></div>
     <nav id="nav">
       <div class="nav-links">
-        <a href="#rl-content"  class="nav-link">Projet</a>
+        <a href="#rl-content"  class="nav-link">Projets</a>
         <a href="#rl-showreel" class="nav-link">À propos</a>
         <a href="#rl-contact"  class="nav-link">Contact</a>
         <div class="nav-indicator"></div>
@@ -80,7 +80,7 @@
   <div id="burger-menu" aria-hidden="true">
     <nav>
       <a href="#rl-hero"     class="burger-link" data-num="01">Accueil</a>
-      <a href="#rl-content"  class="burger-link" data-num="02">Projet</a>
+      <a href="#rl-content"  class="burger-link" data-num="02">Projets</a>
       <a href="#rl-showreel" class="burger-link" data-num="03">À propos</a>
       <a href="#rl-contact"  class="burger-link" data-num="04">Contact</a>
     </nav>
@@ -283,6 +283,7 @@
     <div id="rl-video-col">
       <div class="reel-video-box">
         <div id="rl-vimeo"></div>
+        <video id="rl-local-video" playsinline loop preload="none"></video>
         <div class="reel-hit" id="rl-hit"></div>
         <div id="rl-mob-indicator">
           <svg id="rl-mob-icon-play"  viewBox="0 0 24 24" fill="white"><path d="M6 4l14 8-14 8z"/></svg>
@@ -357,6 +358,11 @@
       <h2 id="rl-info-title"></h2>
       <p id="rl-info-client"></p>
       <p id="rl-info-desc"></p>
+
+      <a id="rl-yt-link" href="#" target="_blank" rel="noopener" class="rl-yt-link">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.75 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>
+        Voir la vidéo complète sur YouTube
+      </a>
 
       <a href="#rl-contact" id="rl-info-cta">
         Parlons de votre projet

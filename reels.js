@@ -304,7 +304,7 @@ const REELS = [
       { time: 54, url: 'assets/keyframes/kylian-tcl/frame_019.jpg' },
       { time: 57, url: 'assets/keyframes/kylian-tcl/frame_020.jpg' }
     ] },
-  { label: 'DJI Mic Mini 2S',        year: 2026, color: '#080a0f', poster: 'https://i.vimeocdn.com/video/2194687478-4bec04acb72321dd7dea8e71541017aee60dd34ccc2cbf29ce9ddc73833886e2-d_1280?region=us', vimeoId: '1221872650', vimeoH: '', client: 'Kylianlebris', brandLogo: 'LOGO/DJI.jpg', volume: 1, desc: "Les 5 détails qui font la différence sur le DJI Mic Mini 2S — un test produit réalisé pour Kylianlebris en collaboration avec DJI France, entre qualité audio et praticité terrain.",
+  { label: 'DJI Mic Mini 2S',        year: 2026, color: '#080a0f', poster: 'https://i.vimeocdn.com/video/2194718058-f566d5c6f8eeefc6c0a61d83c850582d54fb9604c4e3c295d42a04abe3bac313-d_1280?region=us', vimeoId: '1221872650', vimeoH: '', client: 'Kylianlebris', brandLogo: 'LOGO/DJI.jpg', volume: 1, desc: "Les 5 détails qui font la différence sur le DJI Mic Mini 2S — un test produit réalisé pour Kylianlebris en collaboration avec DJI France, entre qualité audio et praticité terrain.",
     keyframes: [
       { time:  0, url: 'assets/keyframes/kylian-dji/frame_001.jpg' },
       { time:  3, url: 'assets/keyframes/kylian-dji/frame_002.jpg' },
@@ -434,6 +434,136 @@ const REELS = [
       { time: 96, url: 'assets/keyframes/vinceeh-friend/frame_033.jpg' }
     ] },
 
+  { label: 'Juice WRLD — Série',      year: 2026, color: '#0a0808', poster: '', vimeoId: '1221914572', vimeoH: '', client: 'Simba', volume: 1, desc: "",
+    keyframes: [
+      { time:   0, url: 'assets/keyframes/simba-juicewrld/frame_001.jpg' },
+      { time:   3, url: 'assets/keyframes/simba-juicewrld/frame_002.jpg' },
+      { time:   6, url: 'assets/keyframes/simba-juicewrld/frame_003.jpg' },
+      { time:   9, url: 'assets/keyframes/simba-juicewrld/frame_004.jpg' },
+      { time:  12, url: 'assets/keyframes/simba-juicewrld/frame_005.jpg' },
+      { time:  15, url: 'assets/keyframes/simba-juicewrld/frame_006.jpg' },
+      { time:  18, url: 'assets/keyframes/simba-juicewrld/frame_007.jpg' },
+      { time:  21, url: 'assets/keyframes/simba-juicewrld/frame_008.jpg' },
+      { time:  24, url: 'assets/keyframes/simba-juicewrld/frame_009.jpg' },
+      { time:  27, url: 'assets/keyframes/simba-juicewrld/frame_010.jpg' },
+      { time:  30, url: 'assets/keyframes/simba-juicewrld/frame_011.jpg' },
+      { time:  33, url: 'assets/keyframes/simba-juicewrld/frame_012.jpg' },
+      { time:  36, url: 'assets/keyframes/simba-juicewrld/frame_013.jpg' },
+      { time:  39, url: 'assets/keyframes/simba-juicewrld/frame_014.jpg' },
+      { time:  42, url: 'assets/keyframes/simba-juicewrld/frame_015.jpg' },
+      { time:  45, url: 'assets/keyframes/simba-juicewrld/frame_016.jpg' },
+      { time:  48, url: 'assets/keyframes/simba-juicewrld/frame_017.jpg' },
+      { time:  51, url: 'assets/keyframes/simba-juicewrld/frame_018.jpg' },
+      { time:  54, url: 'assets/keyframes/simba-juicewrld/frame_019.jpg' },
+      { time:  57, url: 'assets/keyframes/simba-juicewrld/frame_020.jpg' },
+      { time:  60, url: 'assets/keyframes/simba-juicewrld/frame_021.jpg' },
+      { time:  63, url: 'assets/keyframes/simba-juicewrld/frame_022.jpg' },
+      { time:  66, url: 'assets/keyframes/simba-juicewrld/frame_023.jpg' },
+      { time:  69, url: 'assets/keyframes/simba-juicewrld/frame_024.jpg' },
+      { time:  72, url: 'assets/keyframes/simba-juicewrld/frame_025.jpg' },
+      { time:  75, url: 'assets/keyframes/simba-juicewrld/frame_026.jpg' },
+      { time:  78, url: 'assets/keyframes/simba-juicewrld/frame_027.jpg' },
+      { time:  81, url: 'assets/keyframes/simba-juicewrld/frame_028.jpg' },
+      { time:  84, url: 'assets/keyframes/simba-juicewrld/frame_029.jpg' },
+      { time:  87, url: 'assets/keyframes/simba-juicewrld/frame_030.jpg' },
+      { time:  90, url: 'assets/keyframes/simba-juicewrld/frame_031.jpg' },
+      { time:  93, url: 'assets/keyframes/simba-juicewrld/frame_032.jpg' },
+      { time:  96, url: 'assets/keyframes/simba-juicewrld/frame_033.jpg' },
+      { time:  99, url: 'assets/keyframes/simba-juicewrld/frame_034.jpg' },
+      { time: 102, url: 'assets/keyframes/simba-juicewrld/frame_035.jpg' },
+      { time: 105, url: 'assets/keyframes/simba-juicewrld/frame_036.jpg' },
+      { time: 108, url: 'assets/keyframes/simba-juicewrld/frame_037.jpg' },
+      { time: 111, url: 'assets/keyframes/simba-juicewrld/frame_038.jpg' },
+      { time: 114, url: 'assets/keyframes/simba-juicewrld/frame_039.jpg' },
+      { time: 117, url: 'assets/keyframes/simba-juicewrld/frame_040.jpg' },
+      { time: 120, url: 'assets/keyframes/simba-juicewrld/frame_041.jpg' },
+      { time: 123, url: 'assets/keyframes/simba-juicewrld/frame_042.jpg' },
+      { time: 126, url: 'assets/keyframes/simba-juicewrld/frame_043.jpg' },
+      { time: 129, url: 'assets/keyframes/simba-juicewrld/frame_044.jpg' },
+      { time: 132, url: 'assets/keyframes/simba-juicewrld/frame_045.jpg' },
+      { time: 135, url: 'assets/keyframes/simba-juicewrld/frame_046.jpg' },
+      { time: 138, url: 'assets/keyframes/simba-juicewrld/frame_047.jpg' },
+      { time: 141, url: 'assets/keyframes/simba-juicewrld/frame_048.jpg' },
+      { time: 144, url: 'assets/keyframes/simba-juicewrld/frame_049.jpg' },
+      { time: 147, url: 'assets/keyframes/simba-juicewrld/frame_050.jpg' },
+      { time: 150, url: 'assets/keyframes/simba-juicewrld/frame_051.jpg' },
+      { time: 153, url: 'assets/keyframes/simba-juicewrld/frame_052.jpg' },
+      { time: 156, url: 'assets/keyframes/simba-juicewrld/frame_053.jpg' }
+    ] },
+
+  { label: 'Jeux mobiles favoris',     year: 2026, color: '#080a0c', poster: '', vimeoId: '1221919375', vimeoH: '', client: 'Kylianlebris', volume: 1, desc: "",
+    keyframes: [
+      { time:  0, url: 'assets/keyframes/kylian-jeux-mobiles/frame_001.jpg' },
+      { time:  3, url: 'assets/keyframes/kylian-jeux-mobiles/frame_002.jpg' },
+      { time:  6, url: 'assets/keyframes/kylian-jeux-mobiles/frame_003.jpg' },
+      { time:  9, url: 'assets/keyframes/kylian-jeux-mobiles/frame_004.jpg' },
+      { time: 12, url: 'assets/keyframes/kylian-jeux-mobiles/frame_005.jpg' },
+      { time: 15, url: 'assets/keyframes/kylian-jeux-mobiles/frame_006.jpg' },
+      { time: 18, url: 'assets/keyframes/kylian-jeux-mobiles/frame_007.jpg' },
+      { time: 21, url: 'assets/keyframes/kylian-jeux-mobiles/frame_008.jpg' },
+      { time: 24, url: 'assets/keyframes/kylian-jeux-mobiles/frame_009.jpg' },
+      { time: 27, url: 'assets/keyframes/kylian-jeux-mobiles/frame_010.jpg' },
+      { time: 30, url: 'assets/keyframes/kylian-jeux-mobiles/frame_011.jpg' },
+      { time: 33, url: 'assets/keyframes/kylian-jeux-mobiles/frame_012.jpg' },
+      { time: 36, url: 'assets/keyframes/kylian-jeux-mobiles/frame_013.jpg' },
+      { time: 39, url: 'assets/keyframes/kylian-jeux-mobiles/frame_014.jpg' },
+      { time: 42, url: 'assets/keyframes/kylian-jeux-mobiles/frame_015.jpg' },
+      { time: 45, url: 'assets/keyframes/kylian-jeux-mobiles/frame_016.jpg' },
+      { time: 48, url: 'assets/keyframes/kylian-jeux-mobiles/frame_017.jpg' },
+      { time: 51, url: 'assets/keyframes/kylian-jeux-mobiles/frame_018.jpg' },
+      { time: 54, url: 'assets/keyframes/kylian-jeux-mobiles/frame_019.jpg' },
+      { time: 57, url: 'assets/keyframes/kylian-jeux-mobiles/frame_020.jpg' },
+      { time: 60, url: 'assets/keyframes/kylian-jeux-mobiles/frame_021.jpg' },
+      { time: 63, url: 'assets/keyframes/kylian-jeux-mobiles/frame_022.jpg' },
+      { time: 66, url: 'assets/keyframes/kylian-jeux-mobiles/frame_023.jpg' },
+      { time: 69, url: 'assets/keyframes/kylian-jeux-mobiles/frame_024.jpg' },
+      { time: 72, url: 'assets/keyframes/kylian-jeux-mobiles/frame_025.jpg' }
+    ] },
+
+  { label: 'La VMC, à quoi ça sert ?', year: 2026, color: '#080c0d', poster: '', vimeoId: '1221912901', vimeoH: '', client: 'The French Reno', volume: 1, desc: "",
+    keyframes: [
+      { time:   0, url: 'assets/keyframes/frenchreno-vmc/frame_001.jpg' },
+      { time:   3, url: 'assets/keyframes/frenchreno-vmc/frame_002.jpg' },
+      { time:   6, url: 'assets/keyframes/frenchreno-vmc/frame_003.jpg' },
+      { time:   9, url: 'assets/keyframes/frenchreno-vmc/frame_004.jpg' },
+      { time:  12, url: 'assets/keyframes/frenchreno-vmc/frame_005.jpg' },
+      { time:  15, url: 'assets/keyframes/frenchreno-vmc/frame_006.jpg' },
+      { time:  18, url: 'assets/keyframes/frenchreno-vmc/frame_007.jpg' },
+      { time:  21, url: 'assets/keyframes/frenchreno-vmc/frame_008.jpg' },
+      { time:  24, url: 'assets/keyframes/frenchreno-vmc/frame_009.jpg' },
+      { time:  27, url: 'assets/keyframes/frenchreno-vmc/frame_010.jpg' },
+      { time:  30, url: 'assets/keyframes/frenchreno-vmc/frame_011.jpg' },
+      { time:  33, url: 'assets/keyframes/frenchreno-vmc/frame_012.jpg' },
+      { time:  36, url: 'assets/keyframes/frenchreno-vmc/frame_013.jpg' },
+      { time:  39, url: 'assets/keyframes/frenchreno-vmc/frame_014.jpg' },
+      { time:  42, url: 'assets/keyframes/frenchreno-vmc/frame_015.jpg' },
+      { time:  45, url: 'assets/keyframes/frenchreno-vmc/frame_016.jpg' },
+      { time:  48, url: 'assets/keyframes/frenchreno-vmc/frame_017.jpg' },
+      { time:  51, url: 'assets/keyframes/frenchreno-vmc/frame_018.jpg' },
+      { time:  54, url: 'assets/keyframes/frenchreno-vmc/frame_019.jpg' },
+      { time:  57, url: 'assets/keyframes/frenchreno-vmc/frame_020.jpg' },
+      { time:  60, url: 'assets/keyframes/frenchreno-vmc/frame_021.jpg' },
+      { time:  63, url: 'assets/keyframes/frenchreno-vmc/frame_022.jpg' },
+      { time:  66, url: 'assets/keyframes/frenchreno-vmc/frame_023.jpg' },
+      { time:  69, url: 'assets/keyframes/frenchreno-vmc/frame_024.jpg' },
+      { time:  72, url: 'assets/keyframes/frenchreno-vmc/frame_025.jpg' },
+      { time:  75, url: 'assets/keyframes/frenchreno-vmc/frame_026.jpg' },
+      { time:  78, url: 'assets/keyframes/frenchreno-vmc/frame_027.jpg' },
+      { time:  81, url: 'assets/keyframes/frenchreno-vmc/frame_028.jpg' },
+      { time:  84, url: 'assets/keyframes/frenchreno-vmc/frame_029.jpg' },
+      { time:  87, url: 'assets/keyframes/frenchreno-vmc/frame_030.jpg' },
+      { time:  90, url: 'assets/keyframes/frenchreno-vmc/frame_031.jpg' },
+      { time:  93, url: 'assets/keyframes/frenchreno-vmc/frame_032.jpg' },
+      { time:  96, url: 'assets/keyframes/frenchreno-vmc/frame_033.jpg' },
+      { time:  99, url: 'assets/keyframes/frenchreno-vmc/frame_034.jpg' },
+      { time: 102, url: 'assets/keyframes/frenchreno-vmc/frame_035.jpg' },
+      { time: 105, url: 'assets/keyframes/frenchreno-vmc/frame_036.jpg' },
+      { time: 108, url: 'assets/keyframes/frenchreno-vmc/frame_037.jpg' },
+      { time: 111, url: 'assets/keyframes/frenchreno-vmc/frame_038.jpg' },
+      { time: 114, url: 'assets/keyframes/frenchreno-vmc/frame_039.jpg' },
+      { time: 117, url: 'assets/keyframes/frenchreno-vmc/frame_040.jpg' }
+    ] },
+
   { label: 'Déco — Trade Republic',   year: 2026, color: '#090c0f', poster: '', vimeoId: '1221898501', vimeoH: '', client: 'Vinceeh', brandLogo: 'LOGO/TR.png', volume: 0.6, desc: "3 conseils pour économiser sur la déco de son intérieur — collaboration commerciale Trade Republic par Vinceeh.",
     keyframes: [
       { time:  0, url: 'assets/keyframes/vinceeh-deco-tips/frame_001.jpg' },
@@ -471,14 +601,44 @@ const REELS = [
 
 /* ─── LOGOS CLIENTS ──────────────────────── */
 const CLIENT_LOGOS = {
-  'Vinceeh':      'LOGO/vinceeh.jpg',
-  'Kylianlebris': 'LOGO/kylian.jpg',
-  'May Bartelot': 'LOGO/May.jpg',
-  'Lucallaccio':  'LOGO/Lucas.jpg',
+  'Vinceeh':          'LOGO/vinceeh.jpg',
+  'Kylianlebris':     'LOGO/kylian.jpg',
+  'May Bartelot':     'LOGO/May.jpg',
+  'Lucallaccio':      'LOGO/Lucas.jpg',
+  'Simba':            'LOGO/simba.jpg',
+  'The French Reno':  'LOGO/frenchreno.jpg',
 };
 
 /* ─── DONNÉES YOUTUBE ────────────────────── */
 const YOUTUBE = [
+  { label: 'Pourquoi nos voitures sont devenues moches ?', year: 2025, color: '#0d0c0a', ratio: '16/9',
+    poster: 'https://i.ytimg.com/vi/DDavgLjBzsE/maxresdefault.jpg',
+    video: 'assets/clips/yt-voitures.mp4',
+    youtubeUrl: 'https://www.youtube.com/watch?v=DDavgLjBzsE', client: '',
+    desc: 'Une vidéo sur l\'évolution du design automobile — pourquoi les voitures ont perdu leur caractère et leur esthétique au fil des décennies.',
+    keyframes: [
+      { time:  0, url: 'assets/keyframes/yt-voitures/frame_001.jpg' },
+      { time:  3, url: 'assets/keyframes/yt-voitures/frame_002.jpg' },
+      { time:  6, url: 'assets/keyframes/yt-voitures/frame_003.jpg' },
+      { time:  9, url: 'assets/keyframes/yt-voitures/frame_004.jpg' },
+      { time: 12, url: 'assets/keyframes/yt-voitures/frame_005.jpg' },
+      { time: 15, url: 'assets/keyframes/yt-voitures/frame_006.jpg' },
+      { time: 18, url: 'assets/keyframes/yt-voitures/frame_007.jpg' },
+      { time: 21, url: 'assets/keyframes/yt-voitures/frame_008.jpg' },
+      { time: 24, url: 'assets/keyframes/yt-voitures/frame_009.jpg' },
+      { time: 27, url: 'assets/keyframes/yt-voitures/frame_010.jpg' },
+      { time: 30, url: 'assets/keyframes/yt-voitures/frame_011.jpg' },
+      { time: 33, url: 'assets/keyframes/yt-voitures/frame_012.jpg' },
+      { time: 36, url: 'assets/keyframes/yt-voitures/frame_013.jpg' },
+      { time: 39, url: 'assets/keyframes/yt-voitures/frame_014.jpg' },
+      { time: 42, url: 'assets/keyframes/yt-voitures/frame_015.jpg' },
+      { time: 45, url: 'assets/keyframes/yt-voitures/frame_016.jpg' },
+      { time: 48, url: 'assets/keyframes/yt-voitures/frame_017.jpg' },
+      { time: 51, url: 'assets/keyframes/yt-voitures/frame_018.jpg' },
+      { time: 54, url: 'assets/keyframes/yt-voitures/frame_019.jpg' },
+      { time: 57, url: 'assets/keyframes/yt-voitures/frame_020.jpg' },
+    ],
+  },
 ];
 
 /* ─── DONNÉES ANIMATION / DA ─────────────── */
@@ -497,6 +657,18 @@ const ANIMATION = [
       { time: 27, url: 'assets/keyframes/yoshien-matcha/frame_010.jpg' },
       { time: 30, url: 'assets/keyframes/yoshien-matcha/frame_011.jpg' }
     ] },
+  { label: 'Motion — Swave', year: 2026, color: '#0a0a0a', poster: '', vimeoId: '1221925020', vimeoH: '', client: 'Vinceeh', volume: 0.8, spanRow: '2', desc: 'Toutes les animations et motion graphics réalisés pour la vidéo YouTube de Vinceeh sur le magasin Swave.',
+    keyframes: [
+      { time:  0, url: 'assets/keyframes/vinceeh-swave/frame_001.jpg' },
+      { time:  3, url: 'assets/keyframes/vinceeh-swave/frame_002.jpg' },
+      { time:  6, url: 'assets/keyframes/vinceeh-swave/frame_003.jpg' },
+      { time:  9, url: 'assets/keyframes/vinceeh-swave/frame_004.jpg' },
+      { time: 12, url: 'assets/keyframes/vinceeh-swave/frame_005.jpg' },
+      { time: 15, url: 'assets/keyframes/vinceeh-swave/frame_006.jpg' },
+      { time: 18, url: 'assets/keyframes/vinceeh-swave/frame_007.jpg' },
+      { time: 21, url: 'assets/keyframes/vinceeh-swave/frame_008.jpg' },
+      { time: 24, url: 'assets/keyframes/vinceeh-swave/frame_009.jpg' },
+    ] },
   { label: '?????',               year: 2025, color: '#100a18', poster: '', vimeoId: '', vimeoH: '', client: '',       desc: '', spanRow: '2' },
   { label: '?????',               year: 2025, color: '#0a0e18', poster: '', vimeoId: '', vimeoH: '', client: '',       desc: '', spanRow: '1' },
   { label: '?????',               year: 2024, color: '#130d0f', poster: '', vimeoId: '', vimeoH: '', client: '',       desc: '', spanRow: '1' },
@@ -505,6 +677,14 @@ const ANIMATION = [
   { label: '?????',               year: 2025, color: '#0d0d1a', poster: '', vimeoId: '', vimeoH: '', client: '',       desc: '', spanRow: '1' },
   { label: '?????',               year: 2025, color: '#0a100a', poster: '', vimeoId: '', vimeoH: '', client: '',       desc: '', spanRow: '1' },
 ];
+
+/* Mélange aléatoire à chaque chargement */
+(function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+})(REELS);
 
 const PER_PAGE = 8;
 let shown = 0;
@@ -584,6 +764,9 @@ const rlMobIndicator  = document.getElementById('rl-mob-indicator');
 
 let vPlayer        = null;
 let vPlayerLoadedId = null; // ID de la vidéo actuellement dans l'iframe
+let isLocalMode    = false;
+const rlLocalVideo = document.getElementById('rl-local-video');
+const rlYtLink     = document.getElementById('rl-yt-link');
 let isMuted        = false;
 let targetVolume   = 1;    // volume cible du reel courant (0-1)
 let duration       = 0;
@@ -619,7 +802,10 @@ setIcon(riPause, riPlay);
 
 function setMute(muted) {
   isMuted = muted;
-  if (vPlayer) {
+  if (isLocalMode) {
+    rlLocalVideo.muted = muted;
+    if (!muted) rlLocalVideo.volume = targetVolume;
+  } else if (vPlayer) {
     vPlayer.setMuted(muted);
     if (!muted) vPlayer.setVolume(targetVolume);
   }
@@ -706,7 +892,7 @@ function buildFilmstrip(frames, dur) {
 }
 
 function openPlayer(reel, index, srcArr) {
-  if (!reel.vimeoId) return;
+  if (!reel.vimeoId && !reel.video) return;
   currentDataset = srcArr || REELS;
   currentIndex   = index >= 0 ? index : 0;
   scrollAccum    = 0;
@@ -724,6 +910,70 @@ function openPlayer(reel, index, srcArr) {
   clearFilmstrip();
   if (rlStripPoster) rlStripPoster.style.backgroundImage = '';
   if (rlTipImg) rlTipImg.removeAttribute('src');
+
+  /* YouTube / clip local */
+  if (reel.video && !reel.vimeoId) {
+    isLocalMode = true;
+    rlPlayer.classList.add('local-mode');
+    if (rlYtLink) {
+      rlYtLink.href = reel.youtubeUrl || '#';
+    }
+    rlLocalVideo.src = reel.video;
+    rlLocalVideo.volume = targetVolume;
+    rlLocalVideo.muted  = false;
+    rlLocalVideo.currentTime = 0;
+    rlLocalVideo.play().catch(() => {
+      rlLocalVideo.muted = true;
+      rlLocalVideo.play().catch(() => {});
+    });
+
+    rlLocalVideo.ontimeupdate = () => {
+      const d = rlLocalVideo.duration;
+      if (!d) return;
+      duration = d;
+      const pct = rlLocalVideo.currentTime / d * 100;
+      rlPlayed.style.width       = pct + '%';
+      rlDot.style.left           = pct + '%';
+      rlProgressFill.style.width = pct + '%';
+      rlTime.textContent         = fmtTime(rlLocalVideo.currentTime);
+    };
+    rlLocalVideo.onplay  = () => setPlayState(true);
+    rlLocalVideo.onpause = () => { setPlayState(false); if (isTouch) showMobIndicator(false); };
+    rlLocalVideo.onended = () => { rlLocalVideo.currentTime = 0; rlLocalVideo.play().catch(() => {}); };
+
+    if (reel.poster && rlStripPoster) {
+      rlStripPoster.style.backgroundImage = `url("${reel.poster}")`;
+    }
+
+    /* Filmstrip avec keyframes (même logique que Vimeo) */
+    if (reel.keyframes && reel.keyframes.length > 0) {
+      rlLocalVideo.addEventListener('loadedmetadata', function onMeta() {
+        rlLocalVideo.removeEventListener('loadedmetadata', onMeta);
+        const dur = rlLocalVideo.duration;
+        if (dur) {
+          storyboard = reel.keyframes.map((kf, i, arr) => ({
+            startTime: kf.time,
+            endTime:   arr[i + 1] ? arr[i + 1].time : dur,
+            url:       kf.url,
+          }));
+          buildFilmstrip(storyboard, dur);
+        }
+      });
+    }
+
+    rlPlayer.classList.add('theater');
+    theaterBackdrop.classList.add('active');
+    document.body.classList.add('theater-open');
+    setPlayState(true);
+    setMute(false);
+    playSound('toc');
+    if (rlScrollHint && !isTouch) rlScrollHint.classList.remove('hidden');
+    if (isTouch) { document.body.appendChild(rlCornerBtns); rlCornerBtns.classList.add('floating'); }
+    return;
+  }
+
+  isLocalMode = false;
+  rlPlayer.classList.remove('local-mode');
 
   if (vPlayer && vPlayerLoadedId === reel.vimeoId) {
     /* Vidéo déjà dans l'iframe (pré-chargée) — juste play + unmute */
@@ -867,7 +1117,16 @@ function closePlayer() {
   theaterCursor.classList.remove('visible');
   theaterCursor.style.opacity = '0';
   setTimeout(() => { theaterCursor.style.cssText = ''; }, 250);
-  if (vPlayer) { vPlayer.destroy(); vPlayer = null; }
+  if (isLocalMode) {
+    rlLocalVideo.pause();
+    rlLocalVideo.src = '';
+    rlLocalVideo.ontimeupdate = null;
+    rlLocalVideo.onplay = null;
+    rlLocalVideo.onpause = null;
+    rlLocalVideo.onended = null;
+    isLocalMode = false;
+    rlPlayer.classList.remove('local-mode');
+    } else if (vPlayer) { vPlayer.destroy(); vPlayer = null; }
   setIcon(riPause, riPlay);
   /* reset scroll state */
   scrollAccum = 0;
@@ -934,25 +1193,39 @@ function updateTheaterCursor(playing) {
   }, { once: true });
 }
 
+function toggleActivePlayer() {
+  if (isLocalMode) {
+    if (rlLocalVideo.paused) { rlLocalVideo.play().catch(() => {}); }
+    else rlLocalVideo.pause();
+  } else if (vPlayer) {
+    vPlayer.getPaused().then(p => p ? vPlayer.play() : vPlayer.pause());
+  }
+}
+
 /* Clic sur la vidéo → pause/lecture */
 rlHit.addEventListener('click', () => {
-  if (!vPlayer) return;
-  vPlayer.getPaused().then(p => p ? vPlayer.play() : vPlayer.pause());
+  if (!isLocalMode && !vPlayer) return;
+  toggleActivePlayer();
 });
 
 /* Tap mobile → barre de contrôle */
 rlHit.addEventListener('touchend', e => {
-  if (!vPlayer) return;
+  if (!isLocalMode && !vPlayer) return;
   e.preventDefault();
-  vPlayer.getPaused().then(paused => {
-    if (paused) { vPlayer.play(); showMobIndicator(true); }
-    else        { vPlayer.pause(); showMobIndicator(false); }
-  });
+  if (isLocalMode) {
+    if (rlLocalVideo.paused) { rlLocalVideo.play().catch(() => {}); showMobIndicator(true); }
+    else { rlLocalVideo.pause(); showMobIndicator(false); }
+  } else {
+    vPlayer.getPaused().then(paused => {
+      if (paused) { vPlayer.play(); showMobIndicator(true); }
+      else        { vPlayer.pause(); showMobIndicator(false); }
+    });
+  }
 }, { passive: false });
 
 rlPlayBtn.addEventListener('click', () => {
-  if (!vPlayer) return;
-  vPlayer.getPaused().then(p => p ? vPlayer.play() : vPlayer.pause());
+  if (!isLocalMode && !vPlayer) return;
+  toggleActivePlayer();
 });
 
 rlMuteBtn.addEventListener('click', () => setMute(!isMuted));
@@ -1003,7 +1276,8 @@ function rlApply(pct) {
   rlProgressFill.style.width = (pct * 100) + '%';
   cancelAnimationFrame(rlRaf);
   rlRaf = requestAnimationFrame(() => {
-    if (vPlayer && duration) vPlayer.setCurrentTime(pct * duration);
+    if (isLocalMode && duration) rlLocalVideo.currentTime = pct * duration;
+    else if (vPlayer && duration) vPlayer.setCurrentTime(pct * duration);
   });
 }
 
@@ -1109,7 +1383,7 @@ function buildCard(reel, srcArr) {
     });
   }
 
-  if (!reel.vimeoId) {
+  if (!reel.vimeoId && !reel.youtubeUrl && !reel.video) {
     const badge = document.createElement('div');
     badge.className = 'rl-card-wip';
     badge.textContent = 'Projet en cours';
@@ -1147,8 +1421,12 @@ function buildCard(reel, srcArr) {
   `;
   card.appendChild(info);
 
-  const arr = srcArr || REELS;
-  card.addEventListener('click', () => openPlayer(reel, arr.indexOf(reel), arr));
+  if (reel.youtubeUrl) {
+    card.addEventListener('click', () => openPlayer(reel, srcArr ? srcArr.indexOf(reel) : 0, srcArr));
+  } else {
+    const arr = srcArr || REELS;
+    card.addEventListener('click', () => openPlayer(reel, arr.indexOf(reel), arr));
+  }
 
   return card;
 }

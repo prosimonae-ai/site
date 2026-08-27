@@ -526,6 +526,7 @@ body.reels-page {
   opacity: 0.85;
 }
 
+
 /* Badge "Projet en cours" */
 .rl-card-wip {
   position: absolute;
@@ -681,6 +682,60 @@ body.reels-page {
   height: 100% !important;
   border: 0 !important;
 }
+
+/* Lecteur local (clips YouTube) */
+#rl-local-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+#rl-player.local-mode #rl-vimeo        { display: none; }
+#rl-player.local-mode #rl-local-video  { display: block; }
+
+/* En mode local : filmstrip identique aux reels Vimeo */
+#rl-player.local-mode .reel-pill {
+  opacity: 1 !important;
+  transform: translateY(-50%) scale(1) !important;
+  pointer-events: auto !important;
+}
+
+/* Lien "Voir la vidéo complète" — dans la colonne info */
+.rl-yt-link {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.8);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 9px 16px 9px 12px;
+  border-radius: 22px;
+  transition: background 200ms, color 200ms;
+}
+.rl-yt-link:hover { background: rgba(255,255,255,0.13); color: #fff; }
+.rl-yt-link svg { width: 18px; height: 18px; color: #ff2020; flex-shrink: 0; }
+#rl-player.local-mode .rl-yt-link { display: flex; }
+
+/* ── Desktop local-mode : même layout que les reels, vidéo en 16:9 ── */
+#rl-player.local-mode #rl-video-col {
+  width: min(680px, calc(72vh * 16 / 9));
+}
+
+#rl-player.local-mode .reel-video-box {
+  aspect-ratio: 16 / 9;
+}
+
+#rl-player.local-mode #rl-info-cta    { display: none; }
+#rl-player.local-mode #rl-next-reel   { display: none; }
+#rl-player.local-mode #rl-scroll-hint-desktop { display: none; }
 
 /* Son actif = rose */
 #rl-mute-btn:not(.muted) { color: var(--pink); border-color: rgba(255,75,137,0.4); }
@@ -1333,6 +1388,25 @@ body.reels-page {
     position: relative;
     z-index: 2;
     padding: 10px 16px 12px;
+  }
+
+  /* Mode local 16:9 — pas d'overlap, controls en dessous */
+  #rl-player.local-mode .reel-controls-area {
+    margin-top: 0;
+    background: #0a0a0a;
+    padding: 10px 20px 14px;
+  }
+  #rl-player.local-mode .reel-video-box {
+    max-height: none;
+    aspect-ratio: 16 / 9;
+  }
+  #rl-player.local-mode #rl-info {
+    border-radius: 0;
+  }
+  /* Animation différente : pas de peek, glisse depuis le bas */
+  #rl-player.local-mode.theater #rl-info,
+  #rl-player.local-mode.theater .reel-controls-area {
+    animation: none;
   }
 
   /* Timecode caché sur mobile — gagne de la place */
