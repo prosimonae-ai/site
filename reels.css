@@ -496,6 +496,56 @@ body.reels-page {
   margin-top: 2px;
 }
 
+/* Stack logos en haut à droite */
+.rl-card-logo-stack {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  pointer-events: none;
+}
+
+.rl-card-client-logo,
+.rl-card-brand-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid rgba(255,255,255,0.15);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  display: block;
+}
+
+.rl-card-brand-logo {
+  width: 26px;
+  height: 26px;
+  opacity: 0.85;
+}
+
+/* Badge "Projet en cours" */
+.rl-card-wip {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 4;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.75);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
 /* Aspect-ratio par grille */
 .rl-grid-reels .rl-card { aspect-ratio: 9 / 16; }
 .rl-grid-yt .rl-card    { aspect-ratio: 16 / 9; }
@@ -616,6 +666,8 @@ body.reels-page {
   aspect-ratio: 9 / 16;
   border-radius: 18px;
   width: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
 #rl-vimeo {
@@ -1162,7 +1214,7 @@ body.reels-page {
   /* Brand dots cachés sur mobile */
   #rl-brand-dots { display: none; }
 
-  /* Toutes les lumières / glows supprimés sur mobile */
+  /* Toutes les lumières / glows / dégradés supprimés sur mobile */
   #rl-content::before,
   #rl-content[data-cat="reels"]::before,
   #rl-content[data-cat="youtube"]::before,
@@ -1171,6 +1223,10 @@ body.reels-page {
   #rl-contact::before  { display: none !important; }
   #rl-hero::after      { display: none !important; }
   .rl-contact-email::before { display: none !important; }
+
+  /* Dégradés de fond supprimés */
+  #rl-showreel { background: #141414 !important; }
+  .rl-card-info { background: none !important; }
 
   /* Sections padding réduit sur mobile */
   #rl-content { padding: 80px 16px 40px; }
@@ -1209,8 +1265,8 @@ body.reels-page {
   .rl-grid { gap: 8px; }
 
   /* Textes des cards agrandis */
-  .rl-card-label { font-size: 15px; }
-  .rl-card-year  { font-size: 12px; }
+  .rl-card-label { font-size: 19px; }
+  .rl-card-year  { font-size: 13px; }
 
   /* Section title sur mobile */
   .rl-section-title { font-size: clamp(52px, 14vw, 80px); }
@@ -1266,6 +1322,9 @@ body.reels-page {
   #rl-player .reel-video-box {
     border-radius: 0;
     width: 100%;
+    max-height: 75vh;
+    max-width: 100%;
+    margin: 0 auto;
   }
 
   /* Filmstrip remonté sur la vidéo — libère de l'espace pour la description */

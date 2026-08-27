@@ -24,83 +24,486 @@ async function getVimeoThumb(vimeoId, vimeoH) {
   return url;
 }
 const REELS = [
-  { label: 'Nike — Air Max',        year: 2025, color: '#0d0e1a', poster: '', vimeoId: '1190241060', vimeoH: 'd64fb1eb74', client: 'Nike',            desc: "Direction artistique et motion design pour le lancement de l'Air Max 2025. Identité visuelle construite autour du mouvement et de la matière.",
+  { label: 'Top App Spiderman',     year: 2026, color: '#0d0a1a', poster: '', vimeoId: '1221825120', vimeoH: '',            client: 'Kylianlebris',    volume: 1,   desc: "5 applications au cœur de l'univers Spider-Man — des expériences immersives, des easter eggs cachés et des interfaces qui font basculer dans la toile.",
     keyframes: [
-      { time:  0, url: 'assets/keyframes/showreel/showreel_001.jpg' },
-      { time:  3, url: 'assets/keyframes/showreel/showreel_002.jpg' },
-      { time:  6, url: 'assets/keyframes/showreel/showreel_003.jpg' },
-      { time:  9, url: 'assets/keyframes/showreel/showreel_004.jpg' },
-      { time: 12, url: 'assets/keyframes/showreel/showreel_005.jpg' },
-      { time: 15, url: 'assets/keyframes/showreel/showreel_006.jpg' },
-      { time: 18, url: 'assets/keyframes/showreel/showreel_007.jpg' },
-      { time: 21, url: 'assets/keyframes/showreel/showreel_008.jpg' },
-      { time: 24, url: 'assets/keyframes/showreel/showreel_009.jpg' },
-      { time: 27, url: 'assets/keyframes/showreel/showreel_010.jpg' },
-      { time: 30, url: 'assets/keyframes/showreel/showreel_011.jpg' },
-      { time: 33, url: 'assets/keyframes/showreel/showreel_012.jpg' },
-      { time: 36, url: 'assets/keyframes/showreel/showreel_013.jpg' },
-      { time: 39, url: 'assets/keyframes/showreel/showreel_014.jpg' },
-      { time: 42, url: 'assets/keyframes/showreel/showreel_015.jpg' },
-      { time: 45, url: 'assets/keyframes/showreel/showreel_016.jpg' },
-      { time: 48, url: 'assets/keyframes/showreel/showreel_017.jpg' },
-      { time: 51, url: 'assets/keyframes/showreel/showreel_018.jpg' },
-      { time: 54, url: 'assets/keyframes/showreel/showreel_019.jpg' },
-      { time: 57, url: 'assets/keyframes/showreel/showreel_020.jpg' }
+      { time:  0, url: 'assets/keyframes/spiderman/frame_001.jpg' },
+      { time:  3, url: 'assets/keyframes/spiderman/frame_002.jpg' },
+      { time:  6, url: 'assets/keyframes/spiderman/frame_003.jpg' },
+      { time:  9, url: 'assets/keyframes/spiderman/frame_004.jpg' },
+      { time: 12, url: 'assets/keyframes/spiderman/frame_005.jpg' },
+      { time: 15, url: 'assets/keyframes/spiderman/frame_006.jpg' },
+      { time: 18, url: 'assets/keyframes/spiderman/frame_007.jpg' },
+      { time: 21, url: 'assets/keyframes/spiderman/frame_008.jpg' },
+      { time: 24, url: 'assets/keyframes/spiderman/frame_009.jpg' },
+      { time: 27, url: 'assets/keyframes/spiderman/frame_010.jpg' },
+      { time: 30, url: 'assets/keyframes/spiderman/frame_011.jpg' },
+      { time: 33, url: 'assets/keyframes/spiderman/frame_012.jpg' },
+      { time: 36, url: 'assets/keyframes/spiderman/frame_013.jpg' },
+      { time: 39, url: 'assets/keyframes/spiderman/frame_014.jpg' },
+      { time: 42, url: 'assets/keyframes/spiderman/frame_015.jpg' },
+      { time: 45, url: 'assets/keyframes/spiderman/frame_016.jpg' },
+      { time: 48, url: 'assets/keyframes/spiderman/frame_017.jpg' },
+      { time: 51, url: 'assets/keyframes/spiderman/frame_018.jpg' },
+      { time: 54, url: 'assets/keyframes/spiderman/frame_019.jpg' },
+      { time: 57, url: 'assets/keyframes/spiderman/frame_020.jpg' },
+      { time: 60, url: 'assets/keyframes/spiderman/frame_021.jpg' },
+      { time: 63, url: 'assets/keyframes/spiderman/frame_022.jpg' },
+      { time: 66, url: 'assets/keyframes/spiderman/frame_023.jpg' }
     ] },
-  { label: 'Dior — SS25',           year: 2025, color: '#140a12', poster: '', vimeoId: '1190241060', vimeoH: 'd64fb1eb74', client: 'Dior',            desc: "Reel de présentation pour la collection printemps-été 2025. Atmosphère cinématique, travail sur la lumière et la texture du tissu.",
+  { label: 'Sélection de Chaises',   year: 2026, color: '#0a0d0f', poster: '', vimeoId: '1221849753', vimeoH: '', client: 'Vinceeh', volume: 0.6,   desc: "Une sélection de chaises choisies par Vinceeh — des pièces qui sortent de l'ordinaire, mises en valeur par une animation dynamique qui transforme un sujet du quotidien en vrai moment de style.",
     keyframes: [
-      { time:  0, url: 'assets/keyframes/showreel/showreel_001.jpg' },
-      { time:  3, url: 'assets/keyframes/showreel/showreel_002.jpg' },
-      { time:  6, url: 'assets/keyframes/showreel/showreel_003.jpg' },
-      { time:  9, url: 'assets/keyframes/showreel/showreel_004.jpg' },
-      { time: 12, url: 'assets/keyframes/showreel/showreel_005.jpg' },
-      { time: 15, url: 'assets/keyframes/showreel/showreel_006.jpg' },
-      { time: 18, url: 'assets/keyframes/showreel/showreel_007.jpg' },
-      { time: 21, url: 'assets/keyframes/showreel/showreel_008.jpg' },
-      { time: 24, url: 'assets/keyframes/showreel/showreel_009.jpg' },
-      { time: 27, url: 'assets/keyframes/showreel/showreel_010.jpg' },
-      { time: 30, url: 'assets/keyframes/showreel/showreel_011.jpg' },
-      { time: 33, url: 'assets/keyframes/showreel/showreel_012.jpg' },
-      { time: 36, url: 'assets/keyframes/showreel/showreel_013.jpg' },
-      { time: 39, url: 'assets/keyframes/showreel/showreel_014.jpg' },
-      { time: 42, url: 'assets/keyframes/showreel/showreel_015.jpg' },
-      { time: 45, url: 'assets/keyframes/showreel/showreel_016.jpg' },
-      { time: 48, url: 'assets/keyframes/showreel/showreel_017.jpg' },
-      { time: 51, url: 'assets/keyframes/showreel/showreel_018.jpg' },
-      { time: 54, url: 'assets/keyframes/showreel/showreel_019.jpg' },
-      { time: 57, url: 'assets/keyframes/showreel/showreel_020.jpg' }
+      { time:  0, url: 'assets/keyframes/vinceeh-chaises/frame_001.jpg' },
+      { time:  3, url: 'assets/keyframes/vinceeh-chaises/frame_002.jpg' },
+      { time:  6, url: 'assets/keyframes/vinceeh-chaises/frame_003.jpg' },
+      { time:  9, url: 'assets/keyframes/vinceeh-chaises/frame_004.jpg' },
+      { time: 12, url: 'assets/keyframes/vinceeh-chaises/frame_005.jpg' },
+      { time: 15, url: 'assets/keyframes/vinceeh-chaises/frame_006.jpg' },
+      { time: 18, url: 'assets/keyframes/vinceeh-chaises/frame_007.jpg' },
+      { time: 21, url: 'assets/keyframes/vinceeh-chaises/frame_008.jpg' },
+      { time: 24, url: 'assets/keyframes/vinceeh-chaises/frame_009.jpg' },
+      { time: 27, url: 'assets/keyframes/vinceeh-chaises/frame_010.jpg' },
+      { time: 30, url: 'assets/keyframes/vinceeh-chaises/frame_011.jpg' },
+      { time: 33, url: 'assets/keyframes/vinceeh-chaises/frame_012.jpg' },
+      { time: 36, url: 'assets/keyframes/vinceeh-chaises/frame_013.jpg' },
+      { time: 39, url: 'assets/keyframes/vinceeh-chaises/frame_014.jpg' },
+      { time: 42, url: 'assets/keyframes/vinceeh-chaises/frame_015.jpg' },
+      { time: 45, url: 'assets/keyframes/vinceeh-chaises/frame_016.jpg' },
+      { time: 48, url: 'assets/keyframes/vinceeh-chaises/frame_017.jpg' },
+      { time: 51, url: 'assets/keyframes/vinceeh-chaises/frame_018.jpg' },
+      { time: 54, url: 'assets/keyframes/vinceeh-chaises/frame_019.jpg' },
+      { time: 57, url: 'assets/keyframes/vinceeh-chaises/frame_020.jpg' },
+      { time: 60, url: 'assets/keyframes/vinceeh-chaises/frame_021.jpg' },
+      { time: 63, url: 'assets/keyframes/vinceeh-chaises/frame_022.jpg' },
+      { time: 66, url: 'assets/keyframes/vinceeh-chaises/frame_023.jpg' },
+      { time: 69, url: 'assets/keyframes/vinceeh-chaises/frame_024.jpg' },
+      { time: 72, url: 'assets/keyframes/vinceeh-chaises/frame_025.jpg' },
+      { time: 75, url: 'assets/keyframes/vinceeh-chaises/frame_026.jpg' },
+      { time: 78, url: 'assets/keyframes/vinceeh-chaises/frame_027.jpg' },
+      { time: 81, url: 'assets/keyframes/vinceeh-chaises/frame_028.jpg' },
+      { time: 84, url: 'assets/keyframes/vinceeh-chaises/frame_029.jpg' },
+      { time: 87, url: 'assets/keyframes/vinceeh-chaises/frame_030.jpg' },
+      { time: 90, url: 'assets/keyframes/vinceeh-chaises/frame_031.jpg' },
+      { time: 93, url: 'assets/keyframes/vinceeh-chaises/frame_032.jpg' }
     ] },
-  { label: 'Ami Paris — AH24',      year: 2024, color: '#0c0a0e', poster: '', vimeoId: '',            vimeoH: '',            client: 'Ami Paris',       desc: "Capsule vidéo automne-hiver 2024. Un regard intime sur le vestiaire parisien, entre élégance discrète et modernité." },
-  { label: 'Prada — Linea Rossa',   year: 2025, color: '#130d0f', poster: '', vimeoId: '',            vimeoH: '',            client: 'Prada',           desc: "Séquence dynamique pour la ligne Linea Rossa. Énergie brute, typographie agressive et palette contrastée." },
-  { label: 'Spotify — Wrapped',     year: 2024, color: '#0a120a', poster: '', vimeoId: '',            vimeoH: '',            client: 'Spotify',         desc: "Animation de données pour Wrapped 2024. Motion design génératif, visualisation sonore et transitions fluides." },
-  { label: "Hermès — Savoir-faire", year: 2024, color: '#13100a', poster: '', vimeoId: '',            vimeoH: '',            client: 'Hermès',          desc: "Documentaire court sur les artisans Hermès. Rythme lent, plans macro et ambiance feutrée pour valoriser le geste." },
-  { label: 'Renault — EV',          year: 2024, color: '#0d1010', poster: '', vimeoId: '',            vimeoH: '',            client: 'Renault',         desc: "Teaser pour le lancement électrique de Renault. Effets de particules, transitions 3D et identité sonore immersive." },
-  { label: 'Adidas — Campus',       year: 2025, color: '#0d1208', poster: '', vimeoId: '',            vimeoH: '',            client: 'Adidas',          desc: "Campagne sociale pour la silhouette Campus. Style street, montage cut et palette rétro revisitée." },
-  { label: 'Charlotte T.',          year: 2025, color: '#120a10', poster: '', vimeoId: '',            vimeoH: '',            client: 'Charlotte Tilbury', desc: "Reel beauté pour Charlotte Tilbury. Slow motion, reflets dorés et mise en scène de la gestuelle maquillage." },
-  { label: 'New Balance',           year: 2025, color: '#0d0d0d', poster: '', vimeoId: '',            vimeoH: '',            client: 'New Balance',     desc: "Contenu digital pour la 990v6. Direction photo épurée, matières techniques et mouvement naturel." },
-  { label: 'Apple — Vision',        year: 2025, color: '#0e0e0e', poster: '', vimeoId: '',            vimeoH: '',            client: 'Apple',           desc: "Motion design pour Vision Pro. Interface spatiale, profondeur de champ et animations millimétrées." },
-  { label: 'Showreel 2025',         year: 2025, color: '#1a0a10', poster: '', vimeoId: '',            vimeoH: '',            client: '',                desc: "Compilation des projets 2025. Motion design, direction artistique et réalisation vidéo." },
+  { label: 'Yakisugi',               year: 2026, color: '#0d0b08', poster: '', vimeoId: '1221851512', vimeoH: '', client: 'Vinceeh', volume: 0.6,   desc: "Le Yakisugi — une technique japonaise ancestrale qui consiste à brûler le bois pour le rendre plus résistant et lui donner un caractère unique. Mis en images pour Vinceeh avec une direction rythmée, entre matière brute et esthétique épurée.",
+    keyframes: [
+      { time:  0, url: 'assets/keyframes/vinceeh-yakisugi/frame_001.jpg' },
+      { time:  3, url: 'assets/keyframes/vinceeh-yakisugi/frame_002.jpg' },
+      { time:  6, url: 'assets/keyframes/vinceeh-yakisugi/frame_003.jpg' },
+      { time:  9, url: 'assets/keyframes/vinceeh-yakisugi/frame_004.jpg' },
+      { time: 12, url: 'assets/keyframes/vinceeh-yakisugi/frame_005.jpg' },
+      { time: 15, url: 'assets/keyframes/vinceeh-yakisugi/frame_006.jpg' },
+      { time: 18, url: 'assets/keyframes/vinceeh-yakisugi/frame_007.jpg' },
+      { time: 21, url: 'assets/keyframes/vinceeh-yakisugi/frame_008.jpg' },
+      { time: 24, url: 'assets/keyframes/vinceeh-yakisugi/frame_009.jpg' },
+      { time: 27, url: 'assets/keyframes/vinceeh-yakisugi/frame_010.jpg' },
+      { time: 30, url: 'assets/keyframes/vinceeh-yakisugi/frame_011.jpg' },
+      { time: 33, url: 'assets/keyframes/vinceeh-yakisugi/frame_012.jpg' },
+      { time: 36, url: 'assets/keyframes/vinceeh-yakisugi/frame_013.jpg' },
+      { time: 39, url: 'assets/keyframes/vinceeh-yakisugi/frame_014.jpg' },
+      { time: 42, url: 'assets/keyframes/vinceeh-yakisugi/frame_015.jpg' },
+      { time: 45, url: 'assets/keyframes/vinceeh-yakisugi/frame_016.jpg' },
+      { time: 48, url: 'assets/keyframes/vinceeh-yakisugi/frame_017.jpg' },
+      { time: 51, url: 'assets/keyframes/vinceeh-yakisugi/frame_018.jpg' },
+      { time: 54, url: 'assets/keyframes/vinceeh-yakisugi/frame_019.jpg' },
+      { time: 57, url: 'assets/keyframes/vinceeh-yakisugi/frame_020.jpg' },
+      { time: 60, url: 'assets/keyframes/vinceeh-yakisugi/frame_021.jpg' },
+      { time: 63, url: 'assets/keyframes/vinceeh-yakisugi/frame_022.jpg' },
+      { time: 66, url: 'assets/keyframes/vinceeh-yakisugi/frame_023.jpg' },
+      { time: 69, url: 'assets/keyframes/vinceeh-yakisugi/frame_024.jpg' },
+      { time: 72, url: 'assets/keyframes/vinceeh-yakisugi/frame_025.jpg' },
+      { time: 75, url: 'assets/keyframes/vinceeh-yakisugi/frame_026.jpg' },
+      { time: 78, url: 'assets/keyframes/vinceeh-yakisugi/frame_027.jpg' },
+      { time: 81, url: 'assets/keyframes/vinceeh-yakisugi/frame_028.jpg' },
+      { time: 84, url: 'assets/keyframes/vinceeh-yakisugi/frame_029.jpg' },
+      { time: 87, url: 'assets/keyframes/vinceeh-yakisugi/frame_030.jpg' },
+      { time: 90, url: 'assets/keyframes/vinceeh-yakisugi/frame_031.jpg' },
+      { time: 93, url: 'assets/keyframes/vinceeh-yakisugi/frame_032.jpg' },
+      { time: 96, url: 'assets/keyframes/vinceeh-yakisugi/frame_033.jpg' }
+    ] },
+  { label: 'Erreurs déco',           year: 2026, color: '#0f0c0a', poster: '', vimeoId: '1221861234', vimeoH: '', client: 'Vinceeh', volume: 0.6, desc: "Les erreurs à éviter quand on fait sa déco — conseils concrets et directs mis en scène avec une réalisation dynamique pour rendre le sujet accessible et accrocheur.",
+    keyframes: [
+      { time:  0, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_001.jpg' },
+      { time:  3, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_002.jpg' },
+      { time:  6, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_003.jpg' },
+      { time:  9, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_004.jpg' },
+      { time: 12, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_005.jpg' },
+      { time: 15, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_006.jpg' },
+      { time: 18, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_007.jpg' },
+      { time: 21, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_008.jpg' },
+      { time: 24, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_009.jpg' },
+      { time: 27, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_010.jpg' },
+      { time: 30, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_011.jpg' },
+      { time: 33, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_012.jpg' },
+      { time: 36, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_013.jpg' },
+      { time: 39, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_014.jpg' },
+      { time: 42, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_015.jpg' },
+      { time: 45, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_016.jpg' },
+      { time: 48, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_017.jpg' },
+      { time: 51, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_018.jpg' },
+      { time: 54, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_019.jpg' },
+      { time: 57, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_020.jpg' },
+      { time: 60, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_021.jpg' },
+      { time: 63, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_022.jpg' },
+      { time: 66, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_023.jpg' },
+      { time: 69, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_024.jpg' },
+      { time: 72, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_025.jpg' },
+      { time: 75, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_026.jpg' },
+      { time: 78, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_027.jpg' },
+      { time: 81, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_028.jpg' },
+      { time: 84, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_029.jpg' },
+      { time: 87, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_030.jpg' },
+      { time: 90, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_031.jpg' }
+    ] },
+  { label: 'Couleurs du Métro',      year: 2026, color: '#08080f', poster: '', vimeoId: '1221861237', vimeoH: '', client: 'Vinceeh', volume: 0.6, desc: "L'histoire cachée derrière les couleurs des lignes du métro parisien — un sujet du quotidien raconté avec rythme et motion design pour révéler ce qu'on ne voit plus.",
+    keyframes: [
+      { time:  0, url: 'assets/keyframes/vinceeh-metro/frame_001.jpg' },
+      { time:  3, url: 'assets/keyframes/vinceeh-metro/frame_002.jpg' },
+      { time:  6, url: 'assets/keyframes/vinceeh-metro/frame_003.jpg' },
+      { time:  9, url: 'assets/keyframes/vinceeh-metro/frame_004.jpg' },
+      { time: 12, url: 'assets/keyframes/vinceeh-metro/frame_005.jpg' },
+      { time: 15, url: 'assets/keyframes/vinceeh-metro/frame_006.jpg' },
+      { time: 18, url: 'assets/keyframes/vinceeh-metro/frame_007.jpg' },
+      { time: 21, url: 'assets/keyframes/vinceeh-metro/frame_008.jpg' },
+      { time: 24, url: 'assets/keyframes/vinceeh-metro/frame_009.jpg' },
+      { time: 27, url: 'assets/keyframes/vinceeh-metro/frame_010.jpg' },
+      { time: 30, url: 'assets/keyframes/vinceeh-metro/frame_011.jpg' },
+      { time: 33, url: 'assets/keyframes/vinceeh-metro/frame_012.jpg' },
+      { time: 36, url: 'assets/keyframes/vinceeh-metro/frame_013.jpg' },
+      { time: 39, url: 'assets/keyframes/vinceeh-metro/frame_014.jpg' },
+      { time: 42, url: 'assets/keyframes/vinceeh-metro/frame_015.jpg' },
+      { time: 45, url: 'assets/keyframes/vinceeh-metro/frame_016.jpg' },
+      { time: 48, url: 'assets/keyframes/vinceeh-metro/frame_017.jpg' },
+      { time: 51, url: 'assets/keyframes/vinceeh-metro/frame_018.jpg' },
+      { time: 54, url: 'assets/keyframes/vinceeh-metro/frame_019.jpg' },
+      { time: 57, url: 'assets/keyframes/vinceeh-metro/frame_020.jpg' },
+      { time: 60, url: 'assets/keyframes/vinceeh-metro/frame_021.jpg' },
+      { time: 63, url: 'assets/keyframes/vinceeh-metro/frame_022.jpg' },
+      { time: 66, url: 'assets/keyframes/vinceeh-metro/frame_023.jpg' },
+      { time: 69, url: 'assets/keyframes/vinceeh-metro/frame_024.jpg' },
+      { time: 72, url: 'assets/keyframes/vinceeh-metro/frame_025.jpg' },
+      { time: 75, url: 'assets/keyframes/vinceeh-metro/frame_026.jpg' },
+      { time: 78, url: 'assets/keyframes/vinceeh-metro/frame_027.jpg' },
+      { time: 81, url: 'assets/keyframes/vinceeh-metro/frame_028.jpg' },
+      { time: 84, url: 'assets/keyframes/vinceeh-metro/frame_029.jpg' },
+      { time: 87, url: 'assets/keyframes/vinceeh-metro/frame_030.jpg' },
+      { time: 90, url: 'assets/keyframes/vinceeh-metro/frame_031.jpg' },
+      { time: 93, url: 'assets/keyframes/vinceeh-metro/frame_032.jpg' },
+      { time: 96, url: 'assets/keyframes/vinceeh-metro/frame_033.jpg' },
+      { time: 99, url: 'assets/keyframes/vinceeh-metro/frame_034.jpg' },
+      { time: 102, url: 'assets/keyframes/vinceeh-metro/frame_035.jpg' },
+      { time: 105, url: 'assets/keyframes/vinceeh-metro/frame_036.jpg' },
+      { time: 108, url: 'assets/keyframes/vinceeh-metro/frame_037.jpg' }
+    ] },
+  { label: 'Sièges rouges au cinéma', year: 2026, color: '#120608', poster: '', vimeoId: '1221861235', vimeoH: '', client: 'Vinceeh', volume: 0.6, desc: "Pourquoi les fauteuils de cinéma sont-ils toujours rouges ? Une question du quotidien qui cache une réponse fascinante — racontée avec rythme et une direction visuelle soignée.",
+    keyframes: [
+      { time:  0, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_001.jpg' },
+      { time:  3, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_002.jpg' },
+      { time:  6, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_003.jpg' },
+      { time:  9, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_004.jpg' },
+      { time: 12, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_005.jpg' },
+      { time: 15, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_006.jpg' },
+      { time: 18, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_007.jpg' },
+      { time: 21, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_008.jpg' },
+      { time: 24, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_009.jpg' },
+      { time: 27, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_010.jpg' },
+      { time: 30, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_011.jpg' },
+      { time: 33, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_012.jpg' },
+      { time: 36, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_013.jpg' },
+      { time: 39, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_014.jpg' },
+      { time: 42, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_015.jpg' },
+      { time: 45, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_016.jpg' },
+      { time: 48, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_017.jpg' },
+      { time: 51, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_018.jpg' },
+      { time: 54, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_019.jpg' },
+      { time: 57, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_020.jpg' },
+      { time: 60, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_021.jpg' },
+      { time: 63, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_022.jpg' },
+      { time: 66, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_023.jpg' },
+      { time: 69, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_024.jpg' },
+      { time: 72, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_025.jpg' },
+      { time: 75, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_026.jpg' },
+      { time: 78, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_027.jpg' },
+      { time: 81, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_028.jpg' },
+      { time: 84, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_029.jpg' },
+      { time: 87, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_030.jpg' },
+      { time: 90, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_031.jpg' },
+      { time: 93, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_032.jpg' },
+      { time: 96, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_033.jpg' },
+      { time: 99, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_034.jpg' },
+      { time: 102, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_035.jpg' },
+      { time: 105, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_036.jpg' },
+      { time: 108, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_037.jpg' }
+    ] },
+  { label: 'Rolex — Ça vaut quoi ?', year: 2026, color: '#0f0d0a', poster: '', vimeoId: '1221870770', vimeoH: '', client: 'Lucallaccio', volume: 1, desc: "Ça vaut quoi une Rolex ? Une plongée dans l'univers de la montre de luxe, entre histoire, prestige et valeur réelle — mis en images pour Lucallaccio avec une réalisation soignée et rythmée.",
+    keyframes: [
+      { time:   0, url: 'assets/keyframes/rolex-lucallaccio/frame_001.jpg' },
+      { time:   3, url: 'assets/keyframes/rolex-lucallaccio/frame_002.jpg' },
+      { time:   6, url: 'assets/keyframes/rolex-lucallaccio/frame_003.jpg' },
+      { time:   9, url: 'assets/keyframes/rolex-lucallaccio/frame_004.jpg' },
+      { time:  12, url: 'assets/keyframes/rolex-lucallaccio/frame_005.jpg' },
+      { time:  15, url: 'assets/keyframes/rolex-lucallaccio/frame_006.jpg' },
+      { time:  18, url: 'assets/keyframes/rolex-lucallaccio/frame_007.jpg' },
+      { time:  21, url: 'assets/keyframes/rolex-lucallaccio/frame_008.jpg' },
+      { time:  24, url: 'assets/keyframes/rolex-lucallaccio/frame_009.jpg' },
+      { time:  27, url: 'assets/keyframes/rolex-lucallaccio/frame_010.jpg' },
+      { time:  30, url: 'assets/keyframes/rolex-lucallaccio/frame_011.jpg' },
+      { time:  33, url: 'assets/keyframes/rolex-lucallaccio/frame_012.jpg' },
+      { time:  36, url: 'assets/keyframes/rolex-lucallaccio/frame_013.jpg' },
+      { time:  39, url: 'assets/keyframes/rolex-lucallaccio/frame_014.jpg' },
+      { time:  42, url: 'assets/keyframes/rolex-lucallaccio/frame_015.jpg' },
+      { time:  45, url: 'assets/keyframes/rolex-lucallaccio/frame_016.jpg' },
+      { time:  48, url: 'assets/keyframes/rolex-lucallaccio/frame_017.jpg' },
+      { time:  51, url: 'assets/keyframes/rolex-lucallaccio/frame_018.jpg' },
+      { time:  54, url: 'assets/keyframes/rolex-lucallaccio/frame_019.jpg' },
+      { time:  57, url: 'assets/keyframes/rolex-lucallaccio/frame_020.jpg' },
+      { time:  60, url: 'assets/keyframes/rolex-lucallaccio/frame_021.jpg' },
+      { time:  63, url: 'assets/keyframes/rolex-lucallaccio/frame_022.jpg' },
+      { time:  66, url: 'assets/keyframes/rolex-lucallaccio/frame_023.jpg' },
+      { time:  69, url: 'assets/keyframes/rolex-lucallaccio/frame_024.jpg' },
+      { time:  72, url: 'assets/keyframes/rolex-lucallaccio/frame_025.jpg' },
+      { time:  75, url: 'assets/keyframes/rolex-lucallaccio/frame_026.jpg' },
+      { time:  78, url: 'assets/keyframes/rolex-lucallaccio/frame_027.jpg' },
+      { time:  81, url: 'assets/keyframes/rolex-lucallaccio/frame_028.jpg' },
+      { time:  84, url: 'assets/keyframes/rolex-lucallaccio/frame_029.jpg' },
+      { time:  87, url: 'assets/keyframes/rolex-lucallaccio/frame_030.jpg' },
+      { time:  90, url: 'assets/keyframes/rolex-lucallaccio/frame_031.jpg' },
+      { time:  93, url: 'assets/keyframes/rolex-lucallaccio/frame_032.jpg' },
+      { time:  96, url: 'assets/keyframes/rolex-lucallaccio/frame_033.jpg' },
+      { time:  99, url: 'assets/keyframes/rolex-lucallaccio/frame_034.jpg' },
+      { time: 102, url: 'assets/keyframes/rolex-lucallaccio/frame_035.jpg' },
+      { time: 105, url: 'assets/keyframes/rolex-lucallaccio/frame_036.jpg' },
+      { time: 108, url: 'assets/keyframes/rolex-lucallaccio/frame_037.jpg' },
+      { time: 111, url: 'assets/keyframes/rolex-lucallaccio/frame_038.jpg' },
+      { time: 114, url: 'assets/keyframes/rolex-lucallaccio/frame_039.jpg' },
+      { time: 117, url: 'assets/keyframes/rolex-lucallaccio/frame_040.jpg' },
+      { time: 120, url: 'assets/keyframes/rolex-lucallaccio/frame_041.jpg' },
+      { time: 123, url: 'assets/keyframes/rolex-lucallaccio/frame_042.jpg' },
+      { time: 126, url: 'assets/keyframes/rolex-lucallaccio/frame_043.jpg' }
+    ] },
+  { label: 'Setup TCL — Kylianlebris', year: 2026, color: '#080c12', poster: 'https://i.vimeocdn.com/video/2194687912-1b987f3d39a2c12dda0f972d5dcb7dea60e652d1fd82c5a99cfcaf91f69a3015-d_1280?region=us', vimeoId: '1221871316', vimeoH: '', client: 'Kylianlebris', brandLogo: 'LOGO/TCL.png', volume: 1, desc: "Kylianlebris ne supportait plus son ancien setup — on a pris ça comme un défi. Une transformation complète autour d'une TCL, filmée et montée pour montrer chaque détail du résultat final.",
+    keyframes: [
+      { time:  0, url: 'assets/keyframes/kylian-tcl/frame_001.jpg' },
+      { time:  3, url: 'assets/keyframes/kylian-tcl/frame_002.jpg' },
+      { time:  6, url: 'assets/keyframes/kylian-tcl/frame_003.jpg' },
+      { time:  9, url: 'assets/keyframes/kylian-tcl/frame_004.jpg' },
+      { time: 12, url: 'assets/keyframes/kylian-tcl/frame_005.jpg' },
+      { time: 15, url: 'assets/keyframes/kylian-tcl/frame_006.jpg' },
+      { time: 18, url: 'assets/keyframes/kylian-tcl/frame_007.jpg' },
+      { time: 21, url: 'assets/keyframes/kylian-tcl/frame_008.jpg' },
+      { time: 24, url: 'assets/keyframes/kylian-tcl/frame_009.jpg' },
+      { time: 27, url: 'assets/keyframes/kylian-tcl/frame_010.jpg' },
+      { time: 30, url: 'assets/keyframes/kylian-tcl/frame_011.jpg' },
+      { time: 33, url: 'assets/keyframes/kylian-tcl/frame_012.jpg' },
+      { time: 36, url: 'assets/keyframes/kylian-tcl/frame_013.jpg' },
+      { time: 39, url: 'assets/keyframes/kylian-tcl/frame_014.jpg' },
+      { time: 42, url: 'assets/keyframes/kylian-tcl/frame_015.jpg' },
+      { time: 45, url: 'assets/keyframes/kylian-tcl/frame_016.jpg' },
+      { time: 48, url: 'assets/keyframes/kylian-tcl/frame_017.jpg' },
+      { time: 51, url: 'assets/keyframes/kylian-tcl/frame_018.jpg' },
+      { time: 54, url: 'assets/keyframes/kylian-tcl/frame_019.jpg' },
+      { time: 57, url: 'assets/keyframes/kylian-tcl/frame_020.jpg' }
+    ] },
+  { label: 'DJI Mic Mini 2S',        year: 2026, color: '#080a0f', poster: 'https://i.vimeocdn.com/video/2194687478-4bec04acb72321dd7dea8e71541017aee60dd34ccc2cbf29ce9ddc73833886e2-d_1280?region=us', vimeoId: '1221872650', vimeoH: '', client: 'Kylianlebris', brandLogo: 'LOGO/DJI.jpg', volume: 1, desc: "Les 5 détails qui font la différence sur le DJI Mic Mini 2S — un test produit réalisé pour Kylianlebris en collaboration avec DJI France, entre qualité audio et praticité terrain.",
+    keyframes: [
+      { time:  0, url: 'assets/keyframes/kylian-dji/frame_001.jpg' },
+      { time:  3, url: 'assets/keyframes/kylian-dji/frame_002.jpg' },
+      { time:  6, url: 'assets/keyframes/kylian-dji/frame_003.jpg' },
+      { time:  9, url: 'assets/keyframes/kylian-dji/frame_004.jpg' },
+      { time: 12, url: 'assets/keyframes/kylian-dji/frame_005.jpg' },
+      { time: 15, url: 'assets/keyframes/kylian-dji/frame_006.jpg' },
+      { time: 18, url: 'assets/keyframes/kylian-dji/frame_007.jpg' },
+      { time: 21, url: 'assets/keyframes/kylian-dji/frame_008.jpg' },
+      { time: 24, url: 'assets/keyframes/kylian-dji/frame_009.jpg' },
+      { time: 27, url: 'assets/keyframes/kylian-dji/frame_010.jpg' },
+      { time: 30, url: 'assets/keyframes/kylian-dji/frame_011.jpg' },
+      { time: 33, url: 'assets/keyframes/kylian-dji/frame_012.jpg' },
+      { time: 36, url: 'assets/keyframes/kylian-dji/frame_013.jpg' },
+      { time: 39, url: 'assets/keyframes/kylian-dji/frame_014.jpg' },
+      { time: 42, url: 'assets/keyframes/kylian-dji/frame_015.jpg' },
+      { time: 45, url: 'assets/keyframes/kylian-dji/frame_016.jpg' },
+      { time: 48, url: 'assets/keyframes/kylian-dji/frame_017.jpg' },
+      { time: 51, url: 'assets/keyframes/kylian-dji/frame_018.jpg' },
+      { time: 54, url: 'assets/keyframes/kylian-dji/frame_019.jpg' },
+      { time: 57, url: 'assets/keyframes/kylian-dji/frame_020.jpg' },
+      { time: 60, url: 'assets/keyframes/kylian-dji/frame_021.jpg' },
+      { time: 63, url: 'assets/keyframes/kylian-dji/frame_022.jpg' },
+      { time: 66, url: 'assets/keyframes/kylian-dji/frame_023.jpg' },
+      { time: 69, url: 'assets/keyframes/kylian-dji/frame_024.jpg' },
+      { time: 72, url: 'assets/keyframes/kylian-dji/frame_025.jpg' },
+      { time: 75, url: 'assets/keyframes/kylian-dji/frame_026.jpg' },
+      { time: 78, url: 'assets/keyframes/kylian-dji/frame_027.jpg' }
+    ] },
+  { label: 'Bottega Veneta',         year: 2026, color: '#120e09', poster: '', vimeoId: '1221896811', vimeoH: '', client: 'May Bartelot', volume: 1, desc: "Investir ou pas dans un sac Bottega Veneta ? Qualité, modèles à choisir, valeur sur le marché secondaire — un guide complet mis en images pour May Bartelot.",
+    keyframes: [
+      { time:  0, url: 'assets/keyframes/bottega-may/frame_001.jpg' },
+      { time:  3, url: 'assets/keyframes/bottega-may/frame_002.jpg' },
+      { time:  6, url: 'assets/keyframes/bottega-may/frame_003.jpg' },
+      { time:  9, url: 'assets/keyframes/bottega-may/frame_004.jpg' },
+      { time: 12, url: 'assets/keyframes/bottega-may/frame_005.jpg' },
+      { time: 15, url: 'assets/keyframes/bottega-may/frame_006.jpg' },
+      { time: 18, url: 'assets/keyframes/bottega-may/frame_007.jpg' },
+      { time: 21, url: 'assets/keyframes/bottega-may/frame_008.jpg' },
+      { time: 24, url: 'assets/keyframes/bottega-may/frame_009.jpg' },
+      { time: 27, url: 'assets/keyframes/bottega-may/frame_010.jpg' },
+      { time: 30, url: 'assets/keyframes/bottega-may/frame_011.jpg' },
+      { time: 33, url: 'assets/keyframes/bottega-may/frame_012.jpg' },
+      { time: 36, url: 'assets/keyframes/bottega-may/frame_013.jpg' },
+      { time: 39, url: 'assets/keyframes/bottega-may/frame_014.jpg' },
+      { time: 42, url: 'assets/keyframes/bottega-may/frame_015.jpg' },
+      { time: 45, url: 'assets/keyframes/bottega-may/frame_016.jpg' },
+      { time: 48, url: 'assets/keyframes/bottega-may/frame_017.jpg' },
+      { time: 51, url: 'assets/keyframes/bottega-may/frame_018.jpg' },
+      { time: 54, url: 'assets/keyframes/bottega-may/frame_019.jpg' },
+      { time: 57, url: 'assets/keyframes/bottega-may/frame_020.jpg' },
+      { time: 60, url: 'assets/keyframes/bottega-may/frame_021.jpg' },
+      { time: 63, url: 'assets/keyframes/bottega-may/frame_022.jpg' },
+      { time: 66, url: 'assets/keyframes/bottega-may/frame_023.jpg' },
+      { time: 69, url: 'assets/keyframes/bottega-may/frame_024.jpg' },
+      { time: 72, url: 'assets/keyframes/bottega-may/frame_025.jpg' },
+      { time: 75, url: 'assets/keyframes/bottega-may/frame_026.jpg' },
+      { time: 78, url: 'assets/keyframes/bottega-may/frame_027.jpg' },
+      { time: 81, url: 'assets/keyframes/bottega-may/frame_028.jpg' },
+      { time: 84, url: 'assets/keyframes/bottega-may/frame_029.jpg' },
+      { time: 87, url: 'assets/keyframes/bottega-may/frame_030.jpg' },
+      { time: 90, url: 'assets/keyframes/bottega-may/frame_031.jpg' },
+      { time: 93, url: 'assets/keyframes/bottega-may/frame_032.jpg' }
+    ] },
+
+  { label: 'Finder Apple',            year: 2026, color: '#0a0d0f', poster: 'https://i.vimeocdn.com/video/2194723099-9238ecce4409afe278561673f1c49bcf9855feade1047a6cd75c99de2eedd0b6-d_1280?region=us', vimeoId: '1221897580', vimeoH: '', client: 'Vinceeh', volume: 0.6, desc: "L'énigme derrière l'icône du Finder d'Apple — origines, anecdotes et symbolisme décortiqués par Vinceeh.",
+    keyframes: [
+      { time:  0, url: 'assets/keyframes/vinceeh-finder/frame_001.jpg' },
+      { time:  3, url: 'assets/keyframes/vinceeh-finder/frame_002.jpg' },
+      { time:  6, url: 'assets/keyframes/vinceeh-finder/frame_003.jpg' },
+      { time:  9, url: 'assets/keyframes/vinceeh-finder/frame_004.jpg' },
+      { time: 12, url: 'assets/keyframes/vinceeh-finder/frame_005.jpg' },
+      { time: 15, url: 'assets/keyframes/vinceeh-finder/frame_006.jpg' },
+      { time: 18, url: 'assets/keyframes/vinceeh-finder/frame_007.jpg' },
+      { time: 21, url: 'assets/keyframes/vinceeh-finder/frame_008.jpg' },
+      { time: 24, url: 'assets/keyframes/vinceeh-finder/frame_009.jpg' },
+      { time: 27, url: 'assets/keyframes/vinceeh-finder/frame_010.jpg' },
+      { time: 30, url: 'assets/keyframes/vinceeh-finder/frame_011.jpg' },
+      { time: 33, url: 'assets/keyframes/vinceeh-finder/frame_012.jpg' },
+      { time: 36, url: 'assets/keyframes/vinceeh-finder/frame_013.jpg' },
+      { time: 39, url: 'assets/keyframes/vinceeh-finder/frame_014.jpg' },
+      { time: 42, url: 'assets/keyframes/vinceeh-finder/frame_015.jpg' },
+      { time: 45, url: 'assets/keyframes/vinceeh-finder/frame_016.jpg' },
+      { time: 48, url: 'assets/keyframes/vinceeh-finder/frame_017.jpg' },
+      { time: 51, url: 'assets/keyframes/vinceeh-finder/frame_018.jpg' },
+      { time: 54, url: 'assets/keyframes/vinceeh-finder/frame_019.jpg' },
+      { time: 57, url: 'assets/keyframes/vinceeh-finder/frame_020.jpg' },
+      { time: 60, url: 'assets/keyframes/vinceeh-finder/frame_021.jpg' },
+      { time: 63, url: 'assets/keyframes/vinceeh-finder/frame_022.jpg' },
+      { time: 66, url: 'assets/keyframes/vinceeh-finder/frame_023.jpg' }
+    ] },
+
+  { label: 'Friend — IA',             year: 2026, color: '#080a10', poster: '', vimeoId: '1221897579', vimeoH: '', client: 'Vinceeh', volume: 0.6, desc: "Et si ton meilleur ami était une IA ? Vinceeh explore Friend, le pendant IA d'un compagnon de poche.",
+    keyframes: [
+      { time:  0, url: 'assets/keyframes/vinceeh-friend/frame_001.jpg' },
+      { time:  3, url: 'assets/keyframes/vinceeh-friend/frame_002.jpg' },
+      { time:  6, url: 'assets/keyframes/vinceeh-friend/frame_003.jpg' },
+      { time:  9, url: 'assets/keyframes/vinceeh-friend/frame_004.jpg' },
+      { time: 12, url: 'assets/keyframes/vinceeh-friend/frame_005.jpg' },
+      { time: 15, url: 'assets/keyframes/vinceeh-friend/frame_006.jpg' },
+      { time: 18, url: 'assets/keyframes/vinceeh-friend/frame_007.jpg' },
+      { time: 21, url: 'assets/keyframes/vinceeh-friend/frame_008.jpg' },
+      { time: 24, url: 'assets/keyframes/vinceeh-friend/frame_009.jpg' },
+      { time: 27, url: 'assets/keyframes/vinceeh-friend/frame_010.jpg' },
+      { time: 30, url: 'assets/keyframes/vinceeh-friend/frame_011.jpg' },
+      { time: 33, url: 'assets/keyframes/vinceeh-friend/frame_012.jpg' },
+      { time: 36, url: 'assets/keyframes/vinceeh-friend/frame_013.jpg' },
+      { time: 39, url: 'assets/keyframes/vinceeh-friend/frame_014.jpg' },
+      { time: 42, url: 'assets/keyframes/vinceeh-friend/frame_015.jpg' },
+      { time: 45, url: 'assets/keyframes/vinceeh-friend/frame_016.jpg' },
+      { time: 48, url: 'assets/keyframes/vinceeh-friend/frame_017.jpg' },
+      { time: 51, url: 'assets/keyframes/vinceeh-friend/frame_018.jpg' },
+      { time: 54, url: 'assets/keyframes/vinceeh-friend/frame_019.jpg' },
+      { time: 57, url: 'assets/keyframes/vinceeh-friend/frame_020.jpg' },
+      { time: 60, url: 'assets/keyframes/vinceeh-friend/frame_021.jpg' },
+      { time: 63, url: 'assets/keyframes/vinceeh-friend/frame_022.jpg' },
+      { time: 66, url: 'assets/keyframes/vinceeh-friend/frame_023.jpg' },
+      { time: 69, url: 'assets/keyframes/vinceeh-friend/frame_024.jpg' },
+      { time: 72, url: 'assets/keyframes/vinceeh-friend/frame_025.jpg' },
+      { time: 75, url: 'assets/keyframes/vinceeh-friend/frame_026.jpg' },
+      { time: 78, url: 'assets/keyframes/vinceeh-friend/frame_027.jpg' },
+      { time: 81, url: 'assets/keyframes/vinceeh-friend/frame_028.jpg' },
+      { time: 84, url: 'assets/keyframes/vinceeh-friend/frame_029.jpg' },
+      { time: 87, url: 'assets/keyframes/vinceeh-friend/frame_030.jpg' },
+      { time: 90, url: 'assets/keyframes/vinceeh-friend/frame_031.jpg' },
+      { time: 93, url: 'assets/keyframes/vinceeh-friend/frame_032.jpg' },
+      { time: 96, url: 'assets/keyframes/vinceeh-friend/frame_033.jpg' }
+    ] },
+
+  { label: 'Déco — Trade Republic',   year: 2026, color: '#090c0f', poster: '', vimeoId: '1221898501', vimeoH: '', client: 'Vinceeh', brandLogo: 'LOGO/TR.png', volume: 0.6, desc: "3 conseils pour économiser sur la déco de son intérieur — collaboration commerciale Trade Republic par Vinceeh.",
+    keyframes: [
+      { time:  0, url: 'assets/keyframes/vinceeh-deco-tips/frame_001.jpg' },
+      { time:  3, url: 'assets/keyframes/vinceeh-deco-tips/frame_002.jpg' },
+      { time:  6, url: 'assets/keyframes/vinceeh-deco-tips/frame_003.jpg' },
+      { time:  9, url: 'assets/keyframes/vinceeh-deco-tips/frame_004.jpg' },
+      { time: 12, url: 'assets/keyframes/vinceeh-deco-tips/frame_005.jpg' },
+      { time: 15, url: 'assets/keyframes/vinceeh-deco-tips/frame_006.jpg' },
+      { time: 18, url: 'assets/keyframes/vinceeh-deco-tips/frame_007.jpg' },
+      { time: 21, url: 'assets/keyframes/vinceeh-deco-tips/frame_008.jpg' },
+      { time: 24, url: 'assets/keyframes/vinceeh-deco-tips/frame_009.jpg' },
+      { time: 27, url: 'assets/keyframes/vinceeh-deco-tips/frame_010.jpg' },
+      { time: 30, url: 'assets/keyframes/vinceeh-deco-tips/frame_011.jpg' },
+      { time: 33, url: 'assets/keyframes/vinceeh-deco-tips/frame_012.jpg' },
+      { time: 36, url: 'assets/keyframes/vinceeh-deco-tips/frame_013.jpg' },
+      { time: 39, url: 'assets/keyframes/vinceeh-deco-tips/frame_014.jpg' },
+      { time: 42, url: 'assets/keyframes/vinceeh-deco-tips/frame_015.jpg' },
+      { time: 45, url: 'assets/keyframes/vinceeh-deco-tips/frame_016.jpg' },
+      { time: 48, url: 'assets/keyframes/vinceeh-deco-tips/frame_017.jpg' },
+      { time: 51, url: 'assets/keyframes/vinceeh-deco-tips/frame_018.jpg' },
+      { time: 54, url: 'assets/keyframes/vinceeh-deco-tips/frame_019.jpg' },
+      { time: 57, url: 'assets/keyframes/vinceeh-deco-tips/frame_020.jpg' },
+      { time: 60, url: 'assets/keyframes/vinceeh-deco-tips/frame_021.jpg' },
+      { time: 63, url: 'assets/keyframes/vinceeh-deco-tips/frame_022.jpg' },
+      { time: 66, url: 'assets/keyframes/vinceeh-deco-tips/frame_023.jpg' },
+      { time: 69, url: 'assets/keyframes/vinceeh-deco-tips/frame_024.jpg' },
+      { time: 72, url: 'assets/keyframes/vinceeh-deco-tips/frame_025.jpg' },
+      { time: 75, url: 'assets/keyframes/vinceeh-deco-tips/frame_026.jpg' },
+      { time: 78, url: 'assets/keyframes/vinceeh-deco-tips/frame_027.jpg' },
+      { time: 81, url: 'assets/keyframes/vinceeh-deco-tips/frame_028.jpg' },
+      { time: 84, url: 'assets/keyframes/vinceeh-deco-tips/frame_029.jpg' },
+      { time: 87, url: 'assets/keyframes/vinceeh-deco-tips/frame_030.jpg' }
+    ] },
 ];
+
+/* ─── LOGOS CLIENTS ──────────────────────── */
+const CLIENT_LOGOS = {
+  'Vinceeh':      'LOGO/vinceeh.jpg',
+  'Kylianlebris': 'LOGO/kylian.jpg',
+  'May Bartelot': 'LOGO/May.jpg',
+  'Lucallaccio':  'LOGO/Lucas.jpg',
+};
 
 /* ─── DONNÉES YOUTUBE ────────────────────── */
 const YOUTUBE = [
-  { label: 'Nike — Air Max Documentary', year: 2025, color: '#0d0e1a', poster: '', vimeoId: '', vimeoH: '', client: 'Nike',      desc: '' },
-  { label: 'Dior — Behind the Scenes',   year: 2025, color: '#140a12', poster: '', vimeoId: '', vimeoH: '', client: 'Dior',      desc: '' },
-  { label: 'Spotify — Wrapped 2024',     year: 2024, color: '#0a120a', poster: '', vimeoId: '', vimeoH: '', client: 'Spotify',   desc: '' },
-  { label: 'Apple — Vision Pro',         year: 2025, color: '#0e0e0e', poster: '', vimeoId: '', vimeoH: '', client: 'Apple',     desc: '' },
-  { label: 'Renault — EV Launch',        year: 2024, color: '#0d1010', poster: '', vimeoId: '', vimeoH: '', client: 'Renault',   desc: '' },
-  { label: 'Adidas — Campus Story',      year: 2025, color: '#0d1208', poster: '', vimeoId: '', vimeoH: '', client: 'Adidas',    desc: '' },
 ];
 
 /* ─── DONNÉES ANIMATION / DA ─────────────── */
 const ANIMATION = [
-  { label: 'Loop — Identité',     year: 2025, color: '#100a18', poster: '', vimeoId: '', vimeoH: '', client: '',       desc: '', spanRow: '2' },
-  { label: 'Typographie Animée',  year: 2025, color: '#0a0e18', poster: '', vimeoId: '', vimeoH: '', client: '',       desc: '', spanRow: '1' },
-  { label: 'Prada — Motion ID',   year: 2024, color: '#130d0f', poster: '', vimeoId: '', vimeoH: '', client: 'Prada',  desc: '', spanRow: '1' },
-  { label: 'Générique — Court',   year: 2025, color: '#1a0a10', poster: '', vimeoId: '', vimeoH: '', client: '',       desc: '', spanRow: '1' },
-  { label: 'Hermès — Geste',      year: 2024, color: '#13100a', poster: '', vimeoId: '', vimeoH: '', client: 'Hermès', desc: '', spanRow: '2' },
-  { label: 'Particle System',     year: 2025, color: '#0d0d1a', poster: '', vimeoId: '', vimeoH: '', client: '',       desc: '', spanRow: '1' },
-  { label: 'Brand Motion — AW25', year: 2025, color: '#0a100a', poster: '', vimeoId: '', vimeoH: '', client: '',       desc: '', spanRow: '1' },
+  { label: 'Yoshien — Matcha', year: 2025, color: '#0a1208', poster: '', vimeoId: '1221865522', vimeoH: '', client: 'Yoshien', volume: 1, ratio: '4/5', desc: "Stop motion réalisé pour Yoshien, marque de matcha fictive — une mise en scène produit soignée, entre texture, mouvement image par image et esthétique épurée.", spanRow: '1',
+    keyframes: [
+      { time:  0, url: 'assets/keyframes/yoshien-matcha/frame_001.jpg' },
+      { time:  3, url: 'assets/keyframes/yoshien-matcha/frame_002.jpg' },
+      { time:  6, url: 'assets/keyframes/yoshien-matcha/frame_003.jpg' },
+      { time:  9, url: 'assets/keyframes/yoshien-matcha/frame_004.jpg' },
+      { time: 12, url: 'assets/keyframes/yoshien-matcha/frame_005.jpg' },
+      { time: 15, url: 'assets/keyframes/yoshien-matcha/frame_006.jpg' },
+      { time: 18, url: 'assets/keyframes/yoshien-matcha/frame_007.jpg' },
+      { time: 21, url: 'assets/keyframes/yoshien-matcha/frame_008.jpg' },
+      { time: 24, url: 'assets/keyframes/yoshien-matcha/frame_009.jpg' },
+      { time: 27, url: 'assets/keyframes/yoshien-matcha/frame_010.jpg' },
+      { time: 30, url: 'assets/keyframes/yoshien-matcha/frame_011.jpg' }
+    ] },
+  { label: '?????',               year: 2025, color: '#100a18', poster: '', vimeoId: '', vimeoH: '', client: '',       desc: '', spanRow: '2' },
+  { label: '?????',               year: 2025, color: '#0a0e18', poster: '', vimeoId: '', vimeoH: '', client: '',       desc: '', spanRow: '1' },
+  { label: '?????',               year: 2024, color: '#130d0f', poster: '', vimeoId: '', vimeoH: '', client: '',       desc: '', spanRow: '1' },
+  { label: '?????',               year: 2025, color: '#1a0a10', poster: '', vimeoId: '', vimeoH: '', client: '',       desc: '', spanRow: '1' },
+  { label: '?????',               year: 2024, color: '#13100a', poster: '', vimeoId: '', vimeoH: '', client: '',       desc: '', spanRow: '2' },
+  { label: '?????',               year: 2025, color: '#0d0d1a', poster: '', vimeoId: '', vimeoH: '', client: '',       desc: '', spanRow: '1' },
+  { label: '?????',               year: 2025, color: '#0a100a', poster: '', vimeoId: '', vimeoH: '', client: '',       desc: '', spanRow: '1' },
 ];
 
 const PER_PAGE = 8;
@@ -145,6 +548,7 @@ document.addEventListener('pointerdown', () => getAC().resume(), { once: true })
 /* ─── THEATER PLAYER ─────────────────────── */
 const theaterBackdrop  = document.getElementById('theater-backdrop');
 const rlPlayer         = document.getElementById('rl-player');
+const rlVideoBox       = rlPlayer.querySelector('.reel-video-box');
 const rlVimeo          = document.getElementById('rl-vimeo');
 const rlHit            = document.getElementById('rl-hit');
 const rlInfoNum        = document.getElementById('rl-info-num');
@@ -178,10 +582,12 @@ const rlTipTime       = document.getElementById('rl-tip-time');
 const rlStripPoster   = document.getElementById('rl-strip-poster');
 const rlMobIndicator  = document.getElementById('rl-mob-indicator');
 
-let vPlayer    = null;
-let isMuted    = false;
-let duration   = 0;
-let storyboard = [];
+let vPlayer        = null;
+let vPlayerLoadedId = null; // ID de la vidéo actuellement dans l'iframe
+let isMuted        = false;
+let targetVolume   = 1;    // volume cible du reel courant (0-1)
+let duration       = 0;
+let storyboard     = [];
 
 function fmtTime(s) {
   return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
@@ -213,10 +619,12 @@ setIcon(riPause, riPlay);
 
 function setMute(muted) {
   isMuted = muted;
-  if (vPlayer) vPlayer.setMuted(muted);
+  if (vPlayer) {
+    vPlayer.setMuted(muted);
+    if (!muted) vPlayer.setVolume(targetVolume);
+  }
   rlMuteBtn.classList.toggle('muted', muted);
   setIcon(muted ? riUnmuted : riMuted, muted ? riMuted : riUnmuted);
-
 }
 
 function setPlayState(playing) {
@@ -283,12 +691,14 @@ function clearFilmstrip() {
 function buildFilmstrip(frames, dur) {
   clearFilmstrip();
   if (!frames.length || !dur || !rlBar) return;
-  frames.forEach(frame => {
+  const n = frames.length;
+  frames.forEach((frame, i) => {
     const img = document.createElement('img');
     img.className  = 'strip-frame';
     img.loading    = 'lazy';
-    img.style.left  = (frame.startTime / dur * 100) + '%';
-    img.style.width = ((frame.endTime - frame.startTime) / dur * 100) + '%';
+    /* Distribution égale : chaque frame occupe 1/n de la largeur */
+    img.style.left  = (i / n * 100) + '%';
+    img.style.width = (1 / n * 100) + '%';
     img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
     img.src = frame.url;
     rlBar.appendChild(img);
@@ -301,37 +711,13 @@ function openPlayer(reel, index, srcArr) {
   currentIndex   = index >= 0 ? index : 0;
   scrollAccum    = 0;
 
-  /* destroy() retire l'iframe du div — div vide = état zéro garanti */
-  if (vPlayer) { vPlayer.destroy(); vPlayer = null; }
+  targetVolume = reel.volume ?? 1;
+
+  /* Adapte l'aspect-ratio de la video-box au format de la vidéo */
+  if (rlVideoBox) rlVideoBox.style.aspectRatio = reel.ratio || '9 / 16';
 
   resetProgress();
   fillInfo(reel, index);
-
-  const opts = {
-    id:       reel.vimeoId,
-    autoplay: true,
-    controls: false,
-    title:    false,
-    byline:   false,
-    portrait: false,
-  };
-  if (reel.vimeoH) opts.h = reel.vimeoH;
-
-  /* Nouvelle instance — Vimeo crée un iframe neuf dans #rl-vimeo */
-  vPlayer = new Vimeo.Player(rlVimeo, opts);
-
-  vPlayer.on('play',  () => { setPlayState(true); });
-  vPlayer.on('pause', () => { setPlayState(false); if (isTouch) showMobIndicator(false); });
-  vPlayer.on('ended', () => { setPlayState(false); if (isTouch) hideMobIndicator(); });
-  vPlayer.on('timeupdate', ({ seconds, duration: dur }) => {
-    if (!dur) return;
-    duration = dur;
-    const pct = seconds / dur * 100;
-    rlPlayed.style.width       = pct + '%';
-    rlDot.style.left           = pct + '%';
-    rlProgressFill.style.width = pct + '%';
-    rlTime.textContent         = fmtTime(seconds);
-  });
 
   /* Reset filmstrip */
   storyboard = [];
@@ -339,10 +725,85 @@ function openPlayer(reel, index, srcArr) {
   if (rlStripPoster) rlStripPoster.style.backgroundImage = '';
   if (rlTipImg) rlTipImg.removeAttribute('src');
 
-  vPlayer.ready().then(async () => {
-    vPlayer.setVolume(1);
+  if (vPlayer && vPlayerLoadedId === reel.vimeoId) {
+    /* Vidéo déjà dans l'iframe (pré-chargée) — juste play + unmute */
+    vPlayer.setCurrentTime(0).catch(() => {});
+    vPlayer.setVolume(targetVolume);
     vPlayer.setMuted(false).catch(() => {});
+    vPlayer.play().catch(() => {});
+    vPlayerLoadedId = reel.vimeoId;
+  } else if (vPlayer) {
+    /* Iframe existante mais vidéo différente — loadVideo() */
+    const loadOpts = { id: reel.vimeoId, autoplay: true };
+    if (reel.vimeoH) loadOpts.h = reel.vimeoH;
+    vPlayer.loadVideo(loadOpts).then(() => {
+      vPlayerLoadedId = reel.vimeoId;
+      vPlayer.setVolume(targetVolume);
+      vPlayer.setMuted(false).catch(() => {});
+      vPlayer.play().catch(() => {});
+      vPlayer.getMuted().then(muted => {
+        vPlayer.getVolume().then(vol => {
+          const actuallyMuted = muted || vol === 0;
+          isMuted = actuallyMuted;
+          rlMuteBtn.classList.toggle('muted', isMuted);
+          setIcon(isMuted ? riUnmuted : riMuted, isMuted ? riMuted : riUnmuted);
+        });
+      });
+    });
+  } else {
+    /* Pas encore d'iframe — crée l'instance */
+    const opts = {
+      id:       reel.vimeoId,
+      autoplay: true,
+      controls: false,
+      title:    false,
+      byline:   false,
+      portrait: false,
+      dnt:      true,
+    };
+    if (reel.vimeoH) opts.h = reel.vimeoH;
+    vPlayer = new Vimeo.Player(rlVimeo, opts);
+    vPlayerLoadedId = reel.vimeoId;
 
+    vPlayer.on('play',  () => { setPlayState(true); });
+    vPlayer.on('pause', () => { setPlayState(false); if (isTouch) showMobIndicator(false); });
+    vPlayer.on('ended', () => {
+      setPlayState(false);
+      if (isTouch) hideMobIndicator();
+      /* Revient à t=0 immédiatement pour bloquer l'écran de fin Vimeo */
+      vPlayer.setCurrentTime(0).catch(() => {});
+    });
+    vPlayer.on('timeupdate', ({ seconds, duration: dur }) => {
+      if (!dur) return;
+      duration = dur;
+      const pct = seconds / dur * 100;
+      rlPlayed.style.width       = pct + '%';
+      rlDot.style.left           = pct + '%';
+      rlProgressFill.style.width = pct + '%';
+      rlTime.textContent         = fmtTime(seconds);
+    });
+    /* Sync UI sur l'état réel du volume — le navigateur peut forcer le muet au démarrage */
+    vPlayer.on('volumechange', ({ muted, volume }) => {
+      const actuallyMuted = muted || volume === 0;
+      if (actuallyMuted !== isMuted) {
+        isMuted = actuallyMuted;
+        rlMuteBtn.classList.toggle('muted', isMuted);
+        setIcon(isMuted ? riUnmuted : riMuted, isMuted ? riMuted : riUnmuted);
+      }
+    });
+  }
+
+  const afterReady = async () => {
+    vPlayer.setVolume(targetVolume);
+    vPlayer.setMuted(false).catch(() => {});
+    /* Synchro UI sur l'état réel après autoplay (navigateur peut forcer le muet) */
+    try {
+      const [muted, vol] = await Promise.all([vPlayer.getMuted(), vPlayer.getVolume()]);
+      const actuallyMuted = muted || vol === 0;
+      isMuted = actuallyMuted;
+      rlMuteBtn.classList.toggle('muted', isMuted);
+      setIcon(isMuted ? riUnmuted : riMuted, isMuted ? riMuted : riUnmuted);
+    } catch (_) {}
     try {
       /* Récupère durée + thumbnail en parallèle */
       const [dur, thumbUrl] = await Promise.all([
@@ -355,23 +816,27 @@ function openPlayer(reel, index, srcArr) {
       }
 
       /* Tente le storyboard Vimeo (Pro+) */
-      let frames = [];
-      try { frames = await vPlayer.getThumbnails(); } catch (_) {}
-
-      if (frames && frames.length > 0) {
-        storyboard = frames;
-        buildFilmstrip(frames, dur);
-      } else if (reel.keyframes && reel.keyframes.length > 0 && dur) {
-        /* Fallback : keyframes manuelles définies dans les données du reel */
+      /* Priorité aux keyframes maison (couvrent toute la durée) ;
+         storyboard Vimeo en fallback uniquement si pas de keyframes */
+      if (reel.keyframes && reel.keyframes.length > 0 && dur) {
         storyboard = reel.keyframes.map((kf, i, arr) => ({
           startTime: kf.time,
           endTime:   arr[i + 1] ? arr[i + 1].time : dur,
           url:       kf.url
         }));
         buildFilmstrip(storyboard, dur);
+      } else {
+        let frames = [];
+        try { frames = await vPlayer.getThumbnails(); } catch (_) {}
+        if (frames && frames.length > 0) {
+          storyboard = frames;
+          buildFilmstrip(frames, dur);
+        }
       }
     } catch (_) {}
-  });
+  };
+
+  vPlayer.ready().then(afterReady);
 
   rlPlayer.classList.add('theater');
   theaterBackdrop.classList.add('active');
@@ -642,6 +1107,36 @@ function buildCard(reel, srcArr) {
       vid.pause();
       vid.currentTime = 0;
     });
+  }
+
+  if (!reel.vimeoId) {
+    const badge = document.createElement('div');
+    badge.className = 'rl-card-wip';
+    badge.textContent = 'Projet en cours';
+    card.appendChild(badge);
+  }
+
+  const logoSrc = CLIENT_LOGOS[reel.client];
+  if (logoSrc || reel.brandLogo) {
+    const stack = document.createElement('div');
+    stack.className = 'rl-card-logo-stack';
+    if (logoSrc) {
+      const logo = document.createElement('img');
+      logo.className = 'rl-card-client-logo';
+      logo.src = logoSrc;
+      logo.alt = reel.client;
+      logo.loading = 'lazy';
+      stack.appendChild(logo);
+    }
+    if (reel.brandLogo) {
+      const brand = document.createElement('img');
+      brand.className = 'rl-card-brand-logo';
+      brand.src = reel.brandLogo;
+      brand.alt = '';
+      brand.loading = 'lazy';
+      stack.appendChild(brand);
+    }
+    card.appendChild(stack);
   }
 
   const info = document.createElement('div');
@@ -1379,3 +1874,53 @@ window.addEventListener('wheel', e => {
     link.addEventListener('click', closeMenu);
   });
 })();
+
+/* ─── PRÉ-CHARGEMENT VIMEO ─────────────────────────────────────
+   Initialise l'iframe Vimeo en arrière-plan dès le chargement de la
+   page avec le premier reel disponible (muet, sans autoplay).
+   Quand l'utilisateur clique, l'iframe est déjà prête.
+─────────────────────────────────────────────────────────────── */
+window.addEventListener('load', () => {
+  const firstReel = REELS.find(r => r.vimeoId);
+  if (!firstReel || vPlayer) return;
+
+  const opts = {
+    id:       firstReel.vimeoId,
+    autoplay: false,
+    muted:    true,
+    controls: false,
+    title:    false,
+    byline:   false,
+    portrait: false,
+    dnt:      true,
+  };
+  if (firstReel.vimeoH) opts.h = firstReel.vimeoH;
+
+  vPlayer = new Vimeo.Player(rlVimeo, opts);
+  vPlayerLoadedId = firstReel.vimeoId;
+
+  vPlayer.on('play',  () => { setPlayState(true); });
+  vPlayer.on('pause', () => { setPlayState(false); if (isTouch) showMobIndicator(false); });
+  vPlayer.on('ended', () => {
+    setPlayState(false);
+    if (isTouch) hideMobIndicator();
+    vPlayer.setCurrentTime(0).catch(() => {});
+  });
+  vPlayer.on('timeupdate', ({ seconds, duration: dur }) => {
+    if (!dur) return;
+    duration = dur;
+    const pct = seconds / dur * 100;
+    rlPlayed.style.width       = pct + '%';
+    rlDot.style.left           = pct + '%';
+    rlProgressFill.style.width = pct + '%';
+    rlTime.textContent         = fmtTime(seconds);
+  });
+  vPlayer.on('volumechange', ({ muted, volume }) => {
+    const actuallyMuted = muted || volume === 0;
+    if (actuallyMuted !== isMuted) {
+      isMuted = actuallyMuted;
+      rlMuteBtn.classList.toggle('muted', isMuted);
+      setIcon(isMuted ? riUnmuted : riMuted, isMuted ? riMuted : riUnmuted);
+    }
+  });
+});
