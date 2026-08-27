@@ -8,7 +8,42 @@
     if (!sessionStorage.getItem('introSeen_v2')) { location.replace('index.html'); }
   </script>
   <script>(function(){var nt=sessionStorage.getItem('navTransition');if(nt){document.documentElement.setAttribute('data-nav-entering','');var t0=sessionStorage.getItem('swooshStart');if(t0){var ac=new(window.AudioContext||window.webkitAudioContext)();window._swooshReady=fetch('sound/swhoos.wav').then(function(r){return r.arrayBuffer();}).then(function(d){return ac.decodeAudioData(d);}).then(function(buf){return{ac:ac,buf:buf,t0:Number(t0)};}).catch(function(){return null;});}}})();</script>
-  <title>Reels — SimonnAE</title>
+  <title>Simon Corbillon — SimonnAE | Réalisateur & Motion Designer</title>
+  <meta name="description" content="Simon Corbillon, réalisateur et motion designer freelance basé en France. Découvrez les reels et projets de SimonnAE — direction artistique, motion design, vidéo pour marques et créateurs.">
+  <meta name="keywords" content="Simon Corbillon, SimonnAE, Simonn AE, réalisateur, motion designer, direction artistique, vidéo, freelance">
+  <meta name="author" content="Simon Corbillon">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Simon Corbillon — SimonnAE | Réalisateur & Motion Designer">
+  <meta property="og:description" content="Simon Corbillon, réalisateur et motion designer freelance. Direction artistique, motion design, vidéo pour marques et créateurs.">
+  <meta property="og:image" content="assets/og-cover.jpg">
+  <meta property="og:locale" content="fr_FR">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Simon Corbillon — SimonnAE">
+  <meta name="twitter:description" content="Réalisateur & motion designer freelance — direction artistique, motion design, vidéo.">
+  <meta name="twitter:image" content="assets/og-cover.jpg">
+
+  <!-- Données structurées JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Simon Corbillon",
+    "alternateName": ["SimonnAE", "Simonn AE", "Simonn.ae"],
+    "jobTitle": "Réalisateur & Motion Designer",
+    "url": "https://simonn.ae",
+    "sameAs": [
+      "https://www.instagram.com/simonn.ae/",
+      "https://www.linkedin.com/in/simon-corbillon"
+    ],
+    "description": "Réalisateur et motion designer freelance — direction artistique, motion design et vidéo pour marques et créateurs."
+  }
+  </script>
+
   <link rel="icon" href="assets/logo-pink.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://player.vimeo.com">
   <link rel="preconnect" href="https://vimeocdn.com" crossorigin>
@@ -34,12 +69,19 @@
     </nav>
   </header>
 
-  <!-- Nav mobile (visible uniquement ≤600px) -->
-  <nav id="bottom-nav">
-    <a href="#rl-content"  class="nav-link">Projet</a>
-    <a href="#rl-showreel" class="nav-link">À propos</a>
-    <a href="#rl-contact"  class="nav-link">Contact</a>
-  </nav>
+  <!-- Burger mobile -->
+  <button id="burger-btn" aria-label="Menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+
+  <div id="burger-menu" aria-hidden="true">
+    <nav>
+      <a href="#rl-hero"     class="burger-link" data-num="01">Accueil</a>
+      <a href="#rl-content"  class="burger-link" data-num="02">Projet</a>
+      <a href="#rl-showreel" class="burger-link" data-num="03">À propos</a>
+      <a href="#rl-contact"  class="burger-link" data-num="04">Contact</a>
+    </nav>
+  </div>
 
   <section id="rl-hero">
 
@@ -208,8 +250,8 @@
     <div id="rl-contact-body">
       <p id="rl-contact-tagline" class="sr">Travaillons<br>ensemble.</p>
 
-      <a href="mailto:pro.simonae@gmail.com" class="rl-contact-email sr sr-delay-1">
-        pro.simonae@gmail.com
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSctyiSBuwhy72PiP1h0hGgE4p3RSYxK0Yc3BDre6Kxsxx-D1A/viewform?usp=header" class="rl-contact-email sr sr-delay-1" target="_blank" rel="noopener">
+        Parlons de votre projet
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 13L13 3M13 3H6M13 3v7"/>
         </svg>
@@ -296,6 +338,13 @@
       </div>
     </div>
 
+    <!-- Hint scroll mobile -->
+    <div id="rl-scroll-hint">
+      <svg viewBox="0 0 16 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="1,1 8,9 15,1"/>
+      </svg>
+    </div>
+
     <!-- Colonne infos -->
     <div id="rl-info">
       <div id="rl-info-top">
@@ -317,6 +366,14 @@
         <span id="rl-next-reel-label">Reel suivant</span>
         <span id="rl-next-reel-title"></span>
         <div id="rl-next-reel-bar"><div id="rl-next-reel-fill"></div></div>
+      </div>
+
+      <div id="rl-scroll-hint-desktop" aria-hidden="true">
+        <svg class="rsh-mouse" viewBox="0 0 28 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="26" height="42" rx="13" stroke="currentColor" stroke-width="1.8"/>
+          <rect class="rsh-wheel" x="12" y="8" width="4" height="8" rx="2" fill="currentColor"/>
+        </svg>
+        <span class="rsh-text">Scroll</span>
       </div>
     </div>
 

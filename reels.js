@@ -155,11 +155,14 @@ const rlInfoDesc       = document.getElementById('rl-info-desc');
 const rlPlayBtn        = document.getElementById('rl-play-btn');
 const rlMuteBtn        = document.getElementById('rl-mute-btn');
 const rlCloseBtn       = document.getElementById('rl-close-btn');
+const rlCornerBtns     = rlMuteBtn.closest('.reel-corner-btns');
+const rlCornerOrigParent = rlCornerBtns.parentElement;
 const rlPlayed         = document.getElementById('rl-played');
 const rlDot            = document.getElementById('rl-dot');
-const rlNextReel       = document.getElementById('rl-next-reel');
-const rlNextReelTitle  = document.getElementById('rl-next-reel-title');
-const rlNextReelFill   = document.getElementById('rl-next-reel-fill');
+const rlNextReel        = document.getElementById('rl-next-reel');
+const rlNextReelTitle   = document.getElementById('rl-next-reel-title');
+const rlNextReelFill    = document.getElementById('rl-next-reel-fill');
+const rlScrollHint      = document.getElementById('rl-scroll-hint-desktop');
 
 let currentDataset = REELS;
 let currentIndex   = 0;
@@ -376,10 +379,23 @@ function openPlayer(reel, index, srcArr) {
   setPlayState(true);
   setMute(false);
   playSound('toc');
+
+  /* Hint scroll desktop — réapparaît à chaque ouverture */
+  if (rlScrollHint && !isTouch) {
+    rlScrollHint.classList.remove('hidden');
+  }
+
+  /* Mobile : téléporte les corner-btns dans <body> pour échapper au transform du player */
+  if (isTouch) {
+    document.body.appendChild(rlCornerBtns);
+    rlCornerBtns.classList.add('floating');
+  }
 }
+
 
 function closePlayer() {
   hideMobIndicator();
+
   rlPlayer.classList.remove('theater');
   theaterBackdrop.classList.remove('active');
   document.body.classList.remove('theater-open');
@@ -395,6 +411,12 @@ function closePlayer() {
   rlNextReelFill.style.width = '0%';
   rlPlayer.style.transform = '';
   if (drainScrollRaf) { cancelAnimationFrame(drainScrollRaf); drainScrollRaf = null; }
+
+  /* Mobile : remet les corner-btns à leur place d'origine */
+  if (isTouch && rlCornerBtns.parentElement === document.body) {
+    rlCornerBtns.classList.remove('floating');
+    rlCornerOrigParent.appendChild(rlCornerBtns);
+  }
 }
 
 /* Curseur PLAY/PAUSE sur le player theater */
@@ -1175,6 +1197,8 @@ const NEXT_THRESHOLD = 900;
 
 function applyScrollState() {
   if (!descWords.length) return;
+  /* Cache le hint dès le premier scroll */
+  if (rlScrollHint && scrollAccum > 0) rlScrollHint.classList.add('hidden');
   const wordStep    = 22;
   const wordTotal   = descWords.length * wordStep;
   const totalRange  = wordTotal + NEXT_THRESHOLD;
@@ -1224,6 +1248,7 @@ function drainScroll() {
 }
 
 window.addEventListener('wheel', e => {
+  if (window.innerWidth <= 768) return;
   if (!document.body.classList.contains('theater-open')) return;
   e.preventDefault();
   if (drainScrollRaf) { cancelAnimationFrame(drainScrollRaf); drainScrollRaf = null; }
@@ -1323,3 +1348,34 @@ window.addEventListener('wheel', e => {
 })();
 
 
+
+/* ─── BURGER MENU MOBILE ─── */
+(function() {
+  const btn  = document.getElementById('burger-btn');
+  const menu = document.getElementById('burger-menu');
+  if (!btn || !menu) return;
+
+  function openMenu() {
+    btn.classList.add('open');
+    menu.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+    menu.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    btn.classList.remove('open');
+    menu.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+    menu.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  btn.addEventListener('click', () => {
+    btn.classList.contains('open') ? closeMenu() : openMenu();
+  });
+
+  menu.querySelectorAll('.burger-link').forEach(link => {
+    link.addEventListener('click', closeMenu);
+  });
+})();
