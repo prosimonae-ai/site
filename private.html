@@ -1014,6 +1014,7 @@ async function loginOrRegister() {
   document.getElementById('the-liste').classList.add('visible');
   document.querySelector('.v-logo').textContent = `The Liste · ${data.name}`;
   renderProfileBtn();
+  await loadAllRequests();
   items = await load(currentUser.id);
   render();
 }
