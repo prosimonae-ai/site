@@ -198,38 +198,34 @@
   #fp-header {
     max-width: 1200px; margin: 0 auto;
     padding: 80px 40px 24px;
-    display: flex; flex-direction: column; align-items: center; gap: 14px;
+    display: flex; flex-direction: column; align-items: center; gap: 20px;
     text-align: center;
   }
-  #fp-back-row {
-    width: 100%; display: flex; align-items: center; gap: 20px;
-    margin-bottom: 8px;
-  }
-  #fp-back {
-    background: none; border: none; cursor: pointer;
-    color: var(--muted); font-family: 'Inter', sans-serif;
-    font-size: 12px; font-weight: 500; letter-spacing: 0.06em;
-    text-transform: uppercase; display: flex; align-items: center; gap: 6px;
-    padding: 0; transition: color 200ms; flex-shrink: 0;
-  }
-  #fp-back:hover { color: var(--text); }
-  #fp-title-inline {
-    font-family: 'stevie-sans', sans-serif;
-    font-size: 42px; font-weight: 600; font-style: italic;
-    letter-spacing: -0.03em; color: var(--text); opacity: 0.12;
-    margin: 0; line-height: 1;
-  }
   #fp-big-avatar {
-    width: 110px; height: 110px; border-radius: 50%;
+    width: 150px; height: 150px; border-radius: 50%;
     background: var(--surface); border: 1.5px solid var(--border);
     display: flex; align-items: center; justify-content: center;
-    font-size: 40px; font-weight: 700; color: var(--text);
+    font-size: 56px; font-weight: 700; color: var(--text);
     overflow: hidden;
   }
   #fp-big-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  #fp-title-row {
+    width: 100%; display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  #fp-back {
+    position: absolute; left: 0;
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 500; letter-spacing: 0.06em;
+    text-transform: uppercase; display: flex; align-items: center; gap: 5px;
+    padding: 0; transition: color 200ms;
+  }
+  #fp-back:hover { color: var(--text); }
   #fp-title {
-    font-family: 'Inter', sans-serif;
-    font-size: 15px; font-weight: 500; color: var(--muted);
+    font-family: 'stevie-sans', sans-serif;
+    font-size: 42px; font-weight: 600; font-style: italic;
+    letter-spacing: -0.03em; color: var(--text); opacity: 0.12;
     margin: 0;
   }
   #fp-cat-nav {
@@ -239,8 +235,9 @@
   }
   @media (max-width: 600px) {
     #fp-header { padding: 64px 16px 16px; }
+    #fp-big-avatar { width: 110px; height: 110px; font-size: 40px; }
+    #fp-title { font-size: 32px; }
     #fp-cat-nav { padding: 0 16px; }
-    #fp-title-inline { font-size: 32px; }
   }
 
   /* Profile panel */
@@ -856,15 +853,14 @@
 <!-- FRIEND PROFILE VIEW -->
 <div id="friend-profile">
   <div id="fp-header">
-    <div id="fp-back-row">
+    <div id="fp-big-avatar"></div>
+    <div id="fp-title-row">
       <button id="fp-back">
         <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 1L3 6l5 5"/></svg>
         Retour
       </button>
-      <p id="fp-title-inline"></p>
+      <p id="fp-title"></p>
     </div>
-    <div id="fp-big-avatar"></div>
-    <p id="fp-title"></p>
   </div>
   <nav id="fp-cat-nav"></nav>
   <div class="v-bento" id="fp-wish-list"></div>
@@ -1230,8 +1226,7 @@ async function openFriendView(u) {
   document.getElementById('friend-profile').classList.add('visible');
 
   document.getElementById('fp-big-avatar').innerHTML = u.avatar ? `<img src="${u.avatar}" alt="">` : initials(u.name);
-  document.getElementById('fp-title-inline').textContent = 'The Liste';
-  document.getElementById('fp-title').textContent = u.name;
+  document.getElementById('fp-title').textContent = `The Liste · ${u.name}`;
   document.getElementById('fp-wish-list').innerHTML = '<div class="feed-empty">Chargement…</div>';
   document.getElementById('fp-cat-nav').innerHTML = '';
 
