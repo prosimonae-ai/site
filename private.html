@@ -639,16 +639,20 @@
 
 <script>
 const PWD = '2003';
-const BIN_ID  = '6a9f2950ffd5d16053eacd60';
-const API_KEY = '$2a$10$vt3P9GCkajVneXt7IECTjunMHw6I/9WF5V42dT0kRLTMG51RUdxR6';
-const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+const SB_URL = 'https://vxzjfwjxgewdqvfdsxjm.supabase.co';
+const SB_KEY = 'sb_publishable_4F2YhoPujwlrJFFWcW5onQ_X6M6LKIq';
+const SB_HDR = { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` };
 
 async function load() {
   try {
-    const res  = await fetch(BIN_URL + '/latest', { headers: { 'X-Master-Key': API_KEY } });
+    const res = await fetch(`${SB_URL}/rest/v1/wishlist?id=eq.main&select=items`, { headers: SB_HDR });
+    if (!res.ok) throw new Error(`Supabase ${res.status}`);
     const data = await res.json();
-    return Array.isArray(data.record.items) ? data.record.items : [];
-  } catch {
+    const cloud = Array.isArray(data[0]?.items) ? data[0].items : [];
+    console.log('[liste] loaded from Supabase:', cloud.length, 'items');
+    return cloud;
+  } catch(e) {
+    console.warn('[liste] Supabase load failed:', e.message, '— using localStorage');
     try { const r = localStorage.getItem('the-liste_v2'); if (r) return JSON.parse(r); } catch {}
     return [];
   }
@@ -657,12 +661,16 @@ async function load() {
 async function save(items) {
   try { localStorage.setItem('the-liste_v2', JSON.stringify(items)); } catch {}
   try {
-    await fetch(BIN_URL, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+    const res = await fetch(`${SB_URL}/rest/v1/wishlist?id=eq.main`, {
+      method: 'PATCH',
+      headers: { ...SB_HDR, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
       body: JSON.stringify({ items })
     });
-  } catch {}
+    if (!res.ok) throw new Error(`Supabase ${res.status}`);
+    console.log('[liste] saved to Supabase:', items.length, 'items');
+  } catch(e) {
+    console.error('[liste] Supabase save failed:', e.message);
+  }
 }
 
 /* LOCK */
@@ -670,11 +678,12 @@ const lockEl = document.getElementById('lock');
 const pwdInput = document.getElementById('pwd-input');
 const lockErr = document.getElementById('lock-error');
 
-function unlock() {
+async function unlock() {
   if (pwdInput.value.trim() === PWD) {
     lockEl.classList.add('out');
     setTimeout(() => lockEl.style.display = 'none', 520);
     document.getElementById('the-liste').classList.add('visible');
+    await initPromise;
     render();
   } else {
     lockErr.classList.add('show');
@@ -1038,10 +1047,7 @@ document.getElementById('modal-confirm').addEventListener('click', async () => {
   editingId = null;
 });
 
-async function init() {
-  items = await load();
-}
-init();
+const initPromise = (async () => { items = await load(); })();
 </script>
 </body>
 </html>
