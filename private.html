@@ -62,22 +62,24 @@
     gap: 12px;
   }
 
-  #pwd-input {
+  #name-input, #pwd-input {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 6px;
     color: var(--text);
     font-family: 'Inter', sans-serif;
-    font-size: 22px;
-    font-weight: 300;
-    letter-spacing: 0.5em;
     text-align: center;
-    width: 160px;
+    width: 180px;
     padding: 12px 16px;
     outline: none;
     transition: border-color 200ms;
   }
-  #pwd-input:focus { border-color: var(--text); }
+  #name-input { font-size: 15px; font-weight: 400; letter-spacing: 0.05em; }
+  #name-input:focus, #pwd-input:focus { border-color: var(--text); }
+  #name-input::placeholder { color: #ccc; }
+  #pwd-input {
+    font-size: 22px; font-weight: 300; letter-spacing: 0.5em;
+  }
   #pwd-input::placeholder { letter-spacing: 0.2em; color: #ccc; font-size: 18px; }
 
   .lock-error {
@@ -546,10 +548,11 @@
 
 <!-- LOCK -->
 <div id="lock">
-  <p class="lock-eyebrow">The Liste · Simon</p>
+  <p class="lock-eyebrow">The Liste</p>
   <div class="lock-field">
-    <input id="pwd-input" type="password" placeholder="····" maxlength="10" autocomplete="off">
-    <p class="lock-error" id="lock-error">Code incorrect</p>
+    <input id="name-input" type="text" placeholder="Prénom" maxlength="30" autocomplete="off" autocapitalize="none">
+    <input id="pwd-input" type="password" placeholder="····" maxlength="20" autocomplete="off">
+    <p class="lock-error" id="lock-error">Identifiants incorrects</p>
     <button id="lock-btn" type="button">Entrer</button>
   </div>
 </div>
@@ -639,49 +642,60 @@
 </div>
 
 <script>
-const PWD = '2003';
+let currentUser = null;
 const SB_URL = 'https://vxzjfwjxgewdqvfdsxjm.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4empmd2p4Z2V3ZHF2ZmRzeGptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4MTM1MDcsImV4cCI6MjEwNDM4OTUwN30.IuIcPXXrVozPDDreB-hkY1didQoboV0pEuH8-8GaWLo';
 const db = window.supabase.createClient(SB_URL, SB_KEY);
 
-async function load() {
+async function load(userId) {
   try {
-    const { data, error } = await db.from('wishlist').select('items').eq('id', 'main').single();
-    if (error) throw new Error(error.message);
-    const cloud = Array.isArray(data?.items) ? data.items : [];
-    console.log('[liste] loaded from Supabase:', cloud.length, 'items');
-    return cloud;
+    const { data, error } = await db.from('wishlist').select('items').eq('id', userId).single();
+    if (error) {
+      if (error.code === 'PGRST116') {
+        await db.from('wishlist').insert({ id: userId, items: [] });
+        return [];
+      }
+      throw new Error(error.message);
+    }
+    return Array.isArray(data?.items) ? data.items : [];
   } catch(e) {
-    console.warn('[liste] Supabase load failed:', e.message, '— using localStorage');
-    try { const r = localStorage.getItem('the-liste_v2'); if (r) return JSON.parse(r); } catch {}
+    console.warn('[liste] load failed:', e.message);
     return [];
   }
 }
 
 async function save(items) {
-  try { localStorage.setItem('the-liste_v2', JSON.stringify(items)); } catch {}
+  try { localStorage.setItem(`the-liste_${currentUser.id}`, JSON.stringify(items)); } catch {}
   try {
-    const { error } = await db.from('wishlist').update({ items }).eq('id', 'main');
+    const { error } = await db.from('wishlist').upsert({ id: currentUser.id, items });
     if (error) throw new Error(error.message);
-    console.log('[liste] saved to Supabase:', items.length, 'items');
+    console.log('[liste] saved:', items.length, 'items');
   } catch(e) {
-    console.error('[liste] Supabase save failed:', e.message);
+    console.error('[liste] save failed:', e.message);
   }
 }
 
 /* LOCK */
 const lockEl = document.getElementById('lock');
+const nameInput = document.getElementById('name-input');
 const pwdInput = document.getElementById('pwd-input');
 const lockErr = document.getElementById('lock-error');
 
 async function unlock() {
-  if (pwdInput.value.trim() === PWD) {
+  const nameVal = nameInput.value.trim().toLowerCase();
+  const passVal = pwdInput.value.trim();
+  if (!nameVal || !passVal) return;
+  try {
+    const { data, error } = await db.from('users').select('*').eq('id', nameVal).eq('password', passVal).single();
+    if (error || !data) throw new Error('invalid');
+    currentUser = data;
     lockEl.classList.add('out');
     setTimeout(() => lockEl.style.display = 'none', 520);
     document.getElementById('the-liste').classList.add('visible');
-    await initPromise;
+    document.querySelector('.v-logo').textContent = `The Liste · ${data.name}`;
+    items = await load(currentUser.id);
     render();
-  } else {
+  } catch {
     lockErr.classList.add('show');
     pwdInput.value = '';
     pwdInput.focus();
@@ -689,8 +703,9 @@ async function unlock() {
   }
 }
 document.getElementById('lock-btn').addEventListener('click', unlock);
-pwdInput.addEventListener('input', () => { if (pwdInput.value === PWD) unlock(); });
-setTimeout(() => pwdInput.focus(), 80);
+pwdInput.addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
+nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') pwdInput.focus(); });
+setTimeout(() => nameInput.focus(), 80);
 
 /* STATE */
 let items = [];
@@ -1043,7 +1058,7 @@ document.getElementById('modal-confirm').addEventListener('click', async () => {
   editingId = null;
 });
 
-const initPromise = (async () => { items = await load(); })();
+/* items chargés après login dans unlock() */
 </script>
 </body>
 </html>
