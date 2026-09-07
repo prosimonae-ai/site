@@ -151,6 +151,47 @@
   #profile-btn:hover { border-color: var(--text); }
   #profile-btn img { width: 100%; height: 100%; object-fit: cover; }
 
+  /* View toggle */
+  .v-toggle {
+    display: inline-flex;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 16px;
+  }
+  .v-toggle-btn {
+    background: none; border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 7px 18px; cursor: pointer; color: var(--muted);
+    transition: all 200ms;
+  }
+  .v-toggle-btn.active { background: var(--text); color: var(--bg); }
+
+  /* Owner badge on feed cards */
+  .card-owner {
+    position: absolute; top: 10px; left: 10px;
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(6px);
+    border-radius: 20px; padding: 4px 8px 4px 4px;
+    font-size: 11px; font-weight: 600; color: #222;
+  }
+  .card-owner-av {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #eee; display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700; overflow: hidden; flex-shrink: 0;
+  }
+  .card-owner-av img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* Empty feed */
+  .feed-empty {
+    grid-column: 1/-1; text-align: center;
+    padding: 60px 20px; color: var(--muted); font-size: 14px;
+  }
+
   /* Profile panel */
   #profile-panel {
     position: fixed; inset: 0; z-index: 900;
@@ -260,6 +301,12 @@
   .friend-action.remove:hover { background: #c0392b; color: #fff; border-color: #c0392b; }
   #friends-search-results { display: flex; flex-direction: column; }
   #friends-search-results .friend-row { border-bottom: 1px solid var(--border); }
+  .friend-action.pending { color: var(--muted); border-color: var(--border); cursor: default; }
+  .friend-action.pending:hover { background: none; color: var(--muted); border-color: var(--border); }
+  .friend-action.accept { color: #27ae60; border-color: #27ae60; }
+  .friend-action.accept:hover { background: #27ae60; color: #fff; border-color: #27ae60; }
+  .friend-action.decline { color: #c0392b; border-color: #c0392b; }
+  .friend-action.decline:hover { background: #c0392b; color: #fff; }
   .v-logo {
     font-family: 'stevie-sans', sans-serif;
     font-size: 52px;
@@ -718,6 +765,11 @@
       <p class="prof-msg" id="prof-pwd-msg"></p>
     </div>
 
+    <div class="prof-section" id="requests-section" hidden>
+      <p class="prof-section-title">Demandes reçues</p>
+      <div id="requests-list"></div>
+    </div>
+
     <div class="prof-section">
       <p class="prof-section-title">Amis</p>
       <input class="prof-input" id="friends-search" type="text" placeholder="Rechercher un prénom…" autocomplete="off" autocapitalize="none">
@@ -733,6 +785,10 @@
 <div id="the-liste">
   <div class="v-top">
     <p class="v-logo">The Liste</p>
+    <div class="v-toggle">
+      <button class="v-toggle-btn active" id="tab-mine">Ma liste</button>
+      <button class="v-toggle-btn" id="tab-friends">Amis</button>
+    </div>
     <button id="profile-btn" title="Profil"></button>
   </div>
 
@@ -1003,6 +1059,99 @@ function renderList() {
 }
 
 function render() { renderNav(); renderList(); }
+
+/* ── FRIENDS FEED ── */
+let currentView = 'mine'; // 'mine' | 'friends'
+let feedFriendFilter = null; // null = tous, sinon userId
+
+document.getElementById('tab-mine').addEventListener('click', () => {
+  currentView = 'mine'; feedFriendFilter = null;
+  document.getElementById('tab-mine').classList.add('active');
+  document.getElementById('tab-friends').classList.remove('active');
+  document.getElementById('add-btn').style.display = '';
+  document.getElementById('cat-nav').style.display = '';
+  render();
+});
+
+document.getElementById('tab-friends').addEventListener('click', () => {
+  currentView = 'friends';
+  document.getElementById('tab-friends').classList.add('active');
+  document.getElementById('tab-mine').classList.remove('active');
+  document.getElementById('add-btn').style.display = 'none';
+  document.getElementById('cat-nav').style.display = 'none';
+  renderFeed();
+});
+
+async function renderFeed(filterUserId = feedFriendFilter) {
+  feedFriendFilter = filterUserId;
+  const list = document.getElementById('wish-list');
+  list.innerHTML = '<div class="feed-empty">Chargement…</div>';
+
+  const accepted = myRequests.filter(r => r.status === 'accepted');
+  const friendIds = accepted.map(r => r.from_id === currentUser.id ? r.to_id : r.from_id);
+
+  if (friendIds.length === 0) {
+    list.innerHTML = '<div class="feed-empty">Ajoute des amis pour voir leur liste ici.</div>';
+    return;
+  }
+
+  const targetIds = filterUserId ? [filterUserId] : friendIds;
+
+  const [wishRes, userRes] = await Promise.all([
+    db.from('wishlist').select('id, items').in('id', targetIds),
+    db.from('users').select('id, name, avatar').in('id', targetIds),
+  ]);
+
+  const userMap = {};
+  (userRes.data || []).forEach(u => { userMap[u.id] = u; });
+
+  const allItems = [];
+  (wishRes.data || []).forEach(row => {
+    const owner = userMap[row.id];
+    if (!owner) return;
+    (row.items || []).forEach(item => allItems.push({ ...item, _owner: owner }));
+  });
+
+  list.innerHTML = '';
+  if (allItems.length === 0) {
+    list.innerHTML = '<div class="feed-empty">Tes amis n\'ont pas encore d\'items.</div>';
+    return;
+  }
+
+  allItems.sort(() => Math.random() - 0.5);
+
+  allItems.forEach((item, index) => {
+    const card = document.createElement('div');
+    card.className = 'wish-card';
+    const ownerAv = item._owner.avatar
+      ? `<img src="${item._owner.avatar}" alt="">`
+      : initials(item._owner.name);
+    card.innerHTML = `
+      ${item.img ? `<div class="card-bg" style="background-image:url('${item.img}')"></div>` : ''}
+      <div class="card-owner">
+        <div class="card-owner-av">${ownerAv}</div>
+        ${item._owner.name}
+      </div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-tags">
+            ${item.cat  ? `<span class="cat-tag">${item.cat}</span>` : ''}
+            ${item.pick ? `<span class="pick-tag">★</span>` : ''}
+          </div>
+        </div>
+        <div class="card-bottom">
+          ${item.brand ? `<p class="card-brand">${item.brand}</p>` : ''}
+          <p class="card-name">${item.name}</p>
+          <div class="card-footer">
+            <span class="card-price ${item.price ? '' : 'unknown'}">${item.price || '—'}</span>
+            ${item.url ? `<a class="card-link" href="${item.url}" target="_blank" rel="noopener">Voir <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 10L10 2M4.5 2H10v5.5"/></svg></a>` : ''}
+          </div>
+        </div>
+      </div>`;
+    card.style.animationDelay = `${index * 80}ms`;
+    list.appendChild(card);
+  });
+}
 
 /* MODAL */
 const modal      = document.getElementById('modal');
@@ -1289,47 +1438,124 @@ function renderProfAvatar() {
   profNameDisp.textContent = currentUser.name;
 }
 
-function makeFriendRow(u, isFriend) {
-  const row = document.createElement('div');
-  row.className = 'friend-row';
+let myRequests = []; // toutes les demandes me concernant
+
+async function loadAllRequests() {
+  const { data } = await db.from('friend_requests')
+    .select('*')
+    .or(`from_id.eq.${currentUser.id},to_id.eq.${currentUser.id}`);
+  myRequests = data || [];
+}
+
+function getRelation(uid) {
+  const req = myRequests.find(r =>
+    (r.from_id === currentUser.id && r.to_id === uid) ||
+    (r.from_id === uid && r.to_id === currentUser.id)
+  );
+  if (!req) return { type: 'none' };
+  if (req.status === 'accepted') return { type: 'friend', req };
+  if (req.from_id === currentUser.id) return { type: 'sent', req };
+  return { type: 'received', req };
+}
+
+function makeAvatarEl(u) {
   const av = document.createElement('div');
   av.className = 'friend-avatar';
   av.innerHTML = u.avatar ? `<img src="${u.avatar}" alt="">` : initials(u.name);
+  return av;
+}
+
+function makeFriendRow(u, buttons = []) {
+  const row = document.createElement('div');
+  row.className = 'friend-row';
+  row.appendChild(makeAvatarEl(u));
   const nm = document.createElement('span');
   nm.className = 'friend-name';
   nm.textContent = u.name;
-  const btn = document.createElement('button');
-  btn.className = isFriend ? 'friend-action remove' : 'friend-action';
-  btn.textContent = isFriend ? 'Retirer' : 'Ajouter';
-  btn.addEventListener('click', () => toggleFriend(u.id, isFriend));
-  row.appendChild(av); row.appendChild(nm); row.appendChild(btn);
+  row.appendChild(nm);
+  buttons.forEach(({ label, cls, onClick }) => {
+    const btn = document.createElement('button');
+    btn.className = `friend-action ${cls}`;
+    btn.textContent = label;
+    if (onClick) btn.addEventListener('click', onClick);
+    row.appendChild(btn);
+  });
   return row;
 }
 
 async function loadFriends() {
-  const friends = Array.isArray(currentUser.friends) ? currentUser.friends : [];
+  await loadAllRequests();
+  const accepted = myRequests.filter(r => r.status === 'accepted');
+  const friendIds = accepted.map(r => r.from_id === currentUser.id ? r.to_id : r.from_id);
   friendsList.innerHTML = '';
-  if (friends.length === 0) {
+  if (friendIds.length === 0) {
     friendsList.innerHTML = '<p style="font-size:13px;color:var(--muted);padding:8px 0">Aucun ami pour l\'instant</p>';
-    return;
+  } else {
+    const { data } = await db.from('users').select('id, name, avatar').in('id', friendIds);
+    (data || []).forEach(u => {
+      const row = makeFriendRow(u, [
+        { label: 'Retirer', cls: 'remove', onClick: () => removeFriend(u.id) }
+      ]);
+      row.style.cursor = 'pointer';
+      row.querySelector('.friend-name').addEventListener('click', () => {
+        closeProfile();
+        document.getElementById('tab-friends').click();
+        renderFeed(u.id);
+      });
+      row.querySelector('.friend-avatar').addEventListener('click', () => {
+        closeProfile();
+        document.getElementById('tab-friends').click();
+        renderFeed(u.id);
+      });
+      friendsList.appendChild(row);
+    });
   }
-  const { data } = await db.from('users').select('id, name, avatar').in('id', friends);
-  (data || []).forEach(u => friendsList.appendChild(makeFriendRow(u, true)));
+  await loadIncomingRequests();
 }
 
-async function toggleFriend(uid, isFriend) {
-  let friends = Array.isArray(currentUser.friends) ? [...currentUser.friends] : [];
-  if (isFriend) {
-    friends = friends.filter(f => f !== uid);
-  } else {
-    if (!friends.includes(uid)) friends.push(uid);
-  }
-  await db.from('users').update({ friends }).eq('id', currentUser.id);
-  currentUser.friends = friends;
-  loadFriends();
-  // Refresh search results
+async function loadIncomingRequests() {
+  const incoming = myRequests.filter(r => r.to_id === currentUser.id && r.status === 'pending');
+  const section = document.getElementById('requests-section');
+  const list = document.getElementById('requests-list');
+  list.innerHTML = '';
+  section.hidden = incoming.length === 0;
+  if (incoming.length === 0) return;
+  const fromIds = incoming.map(r => r.from_id);
+  const { data } = await db.from('users').select('id, name, avatar').in('id', fromIds);
+  incoming.forEach(req => {
+    const u = (data || []).find(x => x.id === req.from_id);
+    if (!u) return;
+    list.appendChild(makeFriendRow(u, [
+      { label: 'Accepter', cls: 'accept', onClick: () => acceptRequest(req.id) },
+      { label: 'Refuser', cls: 'decline', onClick: () => declineRequest(req.id) },
+    ]));
+  });
+}
+
+async function sendRequest(toId) {
+  await db.from('friend_requests').insert({ from_id: currentUser.id, to_id: toId, status: 'pending' });
+  await loadAllRequests();
   const q = document.getElementById('friends-search').value.trim();
   if (q.length >= 2) searchFriends(q);
+}
+
+async function acceptRequest(reqId) {
+  await db.from('friend_requests').update({ status: 'accepted' }).eq('id', reqId);
+  loadFriends();
+}
+
+async function declineRequest(reqId) {
+  await db.from('friend_requests').delete().eq('id', reqId);
+  loadFriends();
+}
+
+async function removeFriend(uid) {
+  const req = myRequests.find(r =>
+    (r.from_id === currentUser.id && r.to_id === uid) ||
+    (r.from_id === uid && r.to_id === currentUser.id)
+  );
+  if (req) await db.from('friend_requests').delete().eq('id', req.id);
+  loadFriends();
 }
 
 async function searchFriends(q) {
@@ -1341,8 +1567,18 @@ async function searchFriends(q) {
     results.innerHTML = '<p style="font-size:12px;color:var(--muted);padding:6px 0">Aucun résultat</p>';
     return;
   }
-  const friends = Array.isArray(currentUser.friends) ? currentUser.friends : [];
-  data.forEach(u => results.appendChild(makeFriendRow(u, friends.includes(u.id))));
+  data.forEach(u => {
+    const rel = getRelation(u.id);
+    let btns = [];
+    if (rel.type === 'friend') btns = [{ label: 'Amis ✓', cls: 'pending' }];
+    else if (rel.type === 'sent') btns = [{ label: 'Demande envoyée', cls: 'pending' }];
+    else if (rel.type === 'received') btns = [
+      { label: 'Accepter', cls: 'accept', onClick: () => acceptRequest(rel.req.id) },
+      { label: 'Refuser', cls: 'decline', onClick: () => declineRequest(rel.req.id) },
+    ];
+    else btns = [{ label: 'Demander', cls: '', onClick: () => sendRequest(u.id) }];
+    results.appendChild(makeFriendRow(u, btns));
+  });
 }
 
 function openProfile() {
