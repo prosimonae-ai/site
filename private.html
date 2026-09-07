@@ -129,7 +129,125 @@
     margin: 0 auto;
     padding: 48px 40px 32px;
     text-align: center;
+    position: relative;
   }
+  /* Profile button */
+  #profile-btn {
+    position: absolute;
+    top: 24px; right: 24px;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 600;
+    color: var(--text);
+    transition: border-color 200ms;
+    flex-shrink: 0;
+  }
+  #profile-btn:hover { border-color: var(--text); }
+  #profile-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* Profile panel */
+  #profile-panel {
+    position: fixed; inset: 0; z-index: 900;
+    display: flex; justify-content: flex-end;
+    pointer-events: none;
+  }
+  #profile-panel.open { pointer-events: all; }
+  #profile-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0);
+    transition: background 300ms;
+  }
+  #profile-panel.open #profile-overlay { background: rgba(0,0,0,0.18); }
+  #profile-drawer {
+    position: relative;
+    width: 320px; max-width: 90vw;
+    height: 100%;
+    background: var(--bg);
+    border-left: 1px solid var(--border);
+    padding: 32px 24px;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 350ms cubic-bezier(0.16,1,0.3,1);
+    display: flex; flex-direction: column; gap: 28px;
+  }
+  #profile-panel.open #profile-drawer { transform: translateX(0); }
+
+  .prof-avatar-wrap {
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+  }
+  #prof-avatar {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--surface); border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 600; color: var(--text);
+    overflow: hidden; cursor: pointer; position: relative;
+  }
+  #prof-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  #prof-avatar:hover::after {
+    content: '✎';
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 20px;
+    border-radius: 50%;
+  }
+  #prof-name-display {
+    font-size: 17px; font-weight: 600; color: var(--text);
+  }
+  #avatar-input { display: none; }
+
+  .prof-section { display: flex; flex-direction: column; gap: 10px; }
+  .prof-section-title {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .prof-input {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text);
+    font-family: 'Inter', sans-serif; font-size: 14px;
+    padding: 10px 12px; outline: none; width: 100%;
+    transition: border-color 200ms; box-sizing: border-box;
+  }
+  .prof-input:focus { border-color: var(--text); }
+  .prof-btn {
+    background: var(--text); color: var(--bg);
+    border: none; border-radius: 6px;
+    font-family: 'Inter', sans-serif; font-size: 11px;
+    font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 10px 16px; cursor: pointer; width: 100%;
+    transition: opacity 150ms;
+  }
+  .prof-btn:hover { opacity: 0.75; }
+  .prof-btn.secondary {
+    background: none; border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .prof-msg { font-size: 12px; color: var(--muted); min-height: 16px; }
+  .prof-msg.ok { color: #27ae60; }
+  .prof-msg.err { color: #c0392b; }
+
+  /* Friends */
+  .friend-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+  }
+  .friend-row:last-child { border-bottom: none; }
+  .friend-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--surface); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; color: var(--text);
+    overflow: hidden; flex-shrink: 0;
+  }
+  .friend-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .friend-name { font-size: 14px; color: var(--text); }
   .v-logo {
     font-family: 'stevie-sans', sans-serif;
     font-size: 52px;
@@ -570,10 +688,38 @@
   </div>
 </div>
 
+<!-- PROFILE PANEL -->
+<div id="profile-panel">
+  <div id="profile-overlay"></div>
+  <div id="profile-drawer">
+    <div class="prof-avatar-wrap">
+      <div id="prof-avatar"></div>
+      <input type="file" id="avatar-input" accept="image/*">
+      <p id="prof-name-display"></p>
+    </div>
+
+    <div class="prof-section">
+      <p class="prof-section-title">Changer le mot de passe</p>
+      <input class="prof-input" id="prof-pwd-cur" type="password" placeholder="Mot de passe actuel">
+      <input class="prof-input" id="prof-pwd-new" type="password" placeholder="Nouveau mot de passe">
+      <button class="prof-btn" id="prof-pwd-btn">Mettre à jour</button>
+      <p class="prof-msg" id="prof-pwd-msg"></p>
+    </div>
+
+    <div class="prof-section">
+      <p class="prof-section-title">Amis</p>
+      <div id="friends-list"></div>
+    </div>
+
+    <button class="prof-btn secondary" id="prof-close-btn">Fermer</button>
+  </div>
+</div>
+
 <!-- VAULT -->
 <div id="the-liste">
   <div class="v-top">
     <p class="v-logo">The Liste</p>
+    <button id="profile-btn" title="Profil"></button>
   </div>
 
   <nav class="v-filters" id="cat-nav"></nav>
@@ -740,6 +886,7 @@ async function loginOrRegister() {
   setTimeout(() => lockEl.style.display = 'none', 520);
   document.getElementById('the-liste').classList.add('visible');
   document.querySelector('.v-logo').textContent = `The Liste · ${data.name}`;
+  renderProfileBtn();
   items = await load(currentUser.id);
   render();
 }
@@ -1098,6 +1245,100 @@ document.getElementById('modal-confirm').addEventListener('click', async () => {
   render();
   modal.classList.remove('open');
   editingId = null;
+});
+
+/* ── PROFILE ── */
+const profilePanel   = document.getElementById('profile-panel');
+const profileOverlay = document.getElementById('profile-overlay');
+const profileBtn     = document.getElementById('profile-btn');
+const profAvatar     = document.getElementById('prof-avatar');
+const profNameDisp   = document.getElementById('prof-name-display');
+const avatarInput    = document.getElementById('avatar-input');
+const friendsList    = document.getElementById('friends-list');
+
+function initials(name) { return (name || '?').charAt(0).toUpperCase(); }
+
+function renderProfileBtn() {
+  if (currentUser.avatar) {
+    profileBtn.innerHTML = `<img src="${currentUser.avatar}" alt="">`;
+  } else {
+    profileBtn.textContent = initials(currentUser.name);
+  }
+}
+
+function renderProfAvatar() {
+  if (currentUser.avatar) {
+    profAvatar.innerHTML = `<img src="${currentUser.avatar}" alt="">`;
+  } else {
+    profAvatar.textContent = initials(currentUser.name);
+  }
+  profNameDisp.textContent = currentUser.name;
+}
+
+async function loadFriends() {
+  const { data } = await db.from('users').select('id, name, avatar').neq('id', currentUser.id);
+  friendsList.innerHTML = '';
+  if (!data || data.length === 0) {
+    friendsList.innerHTML = '<p style="font-size:13px;color:var(--muted)">Aucun ami pour l\'instant</p>';
+    return;
+  }
+  data.forEach(u => {
+    const row = document.createElement('div');
+    row.className = 'friend-row';
+    const av = document.createElement('div');
+    av.className = 'friend-avatar';
+    av.innerHTML = u.avatar ? `<img src="${u.avatar}" alt="">` : initials(u.name);
+    const nm = document.createElement('span');
+    nm.className = 'friend-name';
+    nm.textContent = u.name;
+    row.appendChild(av); row.appendChild(nm);
+    friendsList.appendChild(row);
+  });
+}
+
+function openProfile() {
+  renderProfAvatar();
+  loadFriends();
+  profilePanel.classList.add('open');
+}
+function closeProfile() { profilePanel.classList.remove('open'); }
+
+profileBtn.addEventListener('click', openProfile);
+document.getElementById('prof-close-btn').addEventListener('click', closeProfile);
+profileOverlay.addEventListener('click', closeProfile);
+
+/* Avatar upload */
+profAvatar.addEventListener('click', () => avatarInput.click());
+avatarInput.addEventListener('change', async () => {
+  const file = avatarInput.files[0];
+  if (!file) return;
+  const fd = new FormData();
+  fd.append('image', file);
+  try {
+    const r = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: 'POST', body: fd });
+    const j = await r.json();
+    const url = j.data.url;
+    await db.from('users').update({ avatar: url }).eq('id', currentUser.id);
+    currentUser.avatar = url;
+    renderProfileBtn();
+    renderProfAvatar();
+  } catch(e) { console.error('Avatar upload failed', e); }
+});
+
+/* Change password */
+document.getElementById('prof-pwd-btn').addEventListener('click', async () => {
+  const cur = document.getElementById('prof-pwd-cur').value.trim();
+  const nw  = document.getElementById('prof-pwd-new').value.trim();
+  const msg = document.getElementById('prof-pwd-msg');
+  if (!cur || !nw) { msg.textContent = 'Remplis les deux champs'; msg.className = 'prof-msg err'; return; }
+  if (cur !== currentUser.password) { msg.textContent = 'Mot de passe actuel incorrect'; msg.className = 'prof-msg err'; return; }
+  const { error } = await db.from('users').update({ password: nw }).eq('id', currentUser.id);
+  if (error) { msg.textContent = 'Erreur, réessaie'; msg.className = 'prof-msg err'; return; }
+  currentUser.password = nw;
+  document.getElementById('prof-pwd-cur').value = '';
+  document.getElementById('prof-pwd-new').value = '';
+  msg.textContent = 'Mot de passe mis à jour ✓'; msg.className = 'prof-msg ok';
+  setTimeout(() => { msg.textContent = ''; msg.className = 'prof-msg'; }, 3000);
 });
 
 /* items chargés après login dans unlock() */
