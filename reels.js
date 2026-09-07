@@ -24,7 +24,7 @@ async function getVimeoThumb(vimeoId, vimeoH) {
   return url;
 }
 const REELS = [
-  { label: 'Top App Spiderman',     year: 2026, color: '#0d0a1a', poster: '', vimeoId: '1221825120', vimeoH: '',            client: 'Kylianlebris',    volume: 1,   desc: "5 applications au cœur de l'univers Spider-Man — des expériences immersives, des easter eggs cachés et des interfaces qui font basculer dans la toile.",
+  { label: 'Top App Spiderman',     year: 2026, color: '#0d0a1a', poster: '', vimeoId: '1221825120', vimeoH: '',            client: 'Kylianlebris',    volume: 0.5,   desc: "5 applications au cœur de l'univers Spider-Man — des expériences immersives, des easter eggs cachés et des interfaces qui font basculer dans la toile.",
     keyframes: [
       { time:  0, url: 'assets/keyframes/spiderman/frame_001.jpg' },
       { time:  3, url: 'assets/keyframes/spiderman/frame_002.jpg' },
@@ -50,7 +50,7 @@ const REELS = [
       { time: 63, url: 'assets/keyframes/spiderman/frame_022.jpg' },
       { time: 66, url: 'assets/keyframes/spiderman/frame_023.jpg' }
     ] },
-  { label: 'Sélection de Chaises',   year: 2026, color: '#0a0d0f', poster: '', vimeoId: '1221849753', vimeoH: '', client: 'Vinceeh', volume: 0.6,   desc: "Une sélection de chaises choisies par Vinceeh — des pièces qui sortent de l'ordinaire, mises en valeur par une animation dynamique qui transforme un sujet du quotidien en vrai moment de style.",
+  { label: 'Sélection de Chaises',   year: 2026, color: '#0a0d0f', poster: '', vimeoId: '1221849753', vimeoH: '', client: 'Vinceeh', volume: 0.5,   desc: "Une sélection de chaises choisies par Vinceeh — des pièces qui sortent de l'ordinaire, mises en valeur par une animation dynamique qui transforme un sujet du quotidien en vrai moment de style.",
     keyframes: [
       { time:  0, url: 'assets/keyframes/vinceeh-chaises/frame_001.jpg' },
       { time:  3, url: 'assets/keyframes/vinceeh-chaises/frame_002.jpg' },
@@ -85,7 +85,7 @@ const REELS = [
       { time: 90, url: 'assets/keyframes/vinceeh-chaises/frame_031.jpg' },
       { time: 93, url: 'assets/keyframes/vinceeh-chaises/frame_032.jpg' }
     ] },
-  { label: 'Yakisugi',               year: 2026, color: '#0d0b08', poster: '', vimeoId: '1221851512', vimeoH: '', client: 'Vinceeh', volume: 0.6,   desc: "Le Yakisugi — une technique japonaise ancestrale qui consiste à brûler le bois pour le rendre plus résistant et lui donner un caractère unique. Mis en images pour Vinceeh avec une direction rythmée, entre matière brute et esthétique épurée.",
+  { label: 'Yakisugi',               year: 2026, color: '#0d0b08', poster: '', vimeoId: '1221851512', vimeoH: '', client: 'Vinceeh', volume: 0.5,   desc: "Le Yakisugi — une technique japonaise ancestrale qui consiste à brûler le bois pour le rendre plus résistant et lui donner un caractère unique. Mis en images pour Vinceeh avec une direction rythmée, entre matière brute et esthétique épurée.",
     keyframes: [
       { time:  0, url: 'assets/keyframes/vinceeh-yakisugi/frame_001.jpg' },
       { time:  3, url: 'assets/keyframes/vinceeh-yakisugi/frame_002.jpg' },
@@ -121,7 +121,7 @@ const REELS = [
       { time: 93, url: 'assets/keyframes/vinceeh-yakisugi/frame_032.jpg' },
       { time: 96, url: 'assets/keyframes/vinceeh-yakisugi/frame_033.jpg' }
     ] },
-  { label: 'Erreurs déco',           year: 2026, color: '#0f0c0a', poster: '', vimeoId: '1221861234', vimeoH: '', client: 'Vinceeh', volume: 0.6, desc: "Les erreurs à éviter quand on fait sa déco — conseils concrets et directs mis en scène avec une réalisation dynamique pour rendre le sujet accessible et accrocheur.",
+  { label: 'Erreurs déco',           year: 2026, color: '#0f0c0a', poster: '', vimeoId: '1221861234', vimeoH: '', client: 'Vinceeh', volume: 0.5, desc: "Les erreurs à éviter quand on fait sa déco — conseils concrets et directs mis en scène avec une réalisation dynamique pour rendre le sujet accessible et accrocheur.",
     keyframes: [
       { time:  0, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_001.jpg' },
       { time:  3, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_002.jpg' },
@@ -155,7 +155,7 @@ const REELS = [
       { time: 87, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_030.jpg' },
       { time: 90, url: 'assets/keyframes/vinceeh-deco-erreurs/frame_031.jpg' }
     ] },
-  { label: 'Couleurs du Métro',      year: 2026, color: '#08080f', poster: '', vimeoId: '1221861237', vimeoH: '', client: 'Vinceeh', volume: 0.6, desc: "L'histoire cachée derrière les couleurs des lignes du métro parisien — un sujet du quotidien raconté avec rythme et motion design pour révéler ce qu'on ne voit plus.",
+  { label: 'Couleurs du Métro',      year: 2026, color: '#08080f', poster: '', vimeoId: '1221861237', vimeoH: '', client: 'Vinceeh', volume: 0.5, desc: "L'histoire cachée derrière les couleurs des lignes du métro parisien — un sujet du quotidien raconté avec rythme et motion design pour révéler ce qu'on ne voit plus.",
     keyframes: [
       { time:  0, url: 'assets/keyframes/vinceeh-metro/frame_001.jpg' },
       { time:  3, url: 'assets/keyframes/vinceeh-metro/frame_002.jpg' },
@@ -195,7 +195,7 @@ const REELS = [
       { time: 105, url: 'assets/keyframes/vinceeh-metro/frame_036.jpg' },
       { time: 108, url: 'assets/keyframes/vinceeh-metro/frame_037.jpg' }
     ] },
-  { label: 'Sièges rouges au cinéma', year: 2026, color: '#120608', poster: '', vimeoId: '1221861235', vimeoH: '', client: 'Vinceeh', volume: 0.6, desc: "Pourquoi les fauteuils de cinéma sont-ils toujours rouges ? Une question du quotidien qui cache une réponse fascinante — racontée avec rythme et une direction visuelle soignée.",
+  { label: 'Sièges rouges au cinéma', year: 2026, color: '#120608', poster: '', vimeoId: '1221861235', vimeoH: '', client: 'Vinceeh', volume: 0.5, desc: "Pourquoi les fauteuils de cinéma sont-ils toujours rouges ? Une question du quotidien qui cache une réponse fascinante — racontée avec rythme et une direction visuelle soignée.",
     keyframes: [
       { time:  0, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_001.jpg' },
       { time:  3, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_002.jpg' },
@@ -235,7 +235,7 @@ const REELS = [
       { time: 105, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_036.jpg' },
       { time: 108, url: 'assets/keyframes/vinceeh-cinema-rouge/frame_037.jpg' }
     ] },
-  { label: 'Rolex — Ça vaut quoi ?', year: 2026, color: '#0f0d0a', poster: '', vimeoId: '1221870770', vimeoH: '', client: 'Lucallaccio', volume: 1, desc: "Ça vaut quoi une Rolex ? Une plongée dans l'univers de la montre de luxe, entre histoire, prestige et valeur réelle — mis en images pour Lucallaccio avec une réalisation soignée et rythmée.",
+  { label: 'Rolex — Ça vaut quoi ?', year: 2026, color: '#0f0d0a', poster: '', vimeoId: '1221870770', vimeoH: '', client: 'Lucallaccio', volume: 0.5, desc: "Ça vaut quoi une Rolex ? Une plongée dans l'univers de la montre de luxe, entre histoire, prestige et valeur réelle — mis en images pour Lucallaccio avec une réalisation soignée et rythmée.",
     keyframes: [
       { time:   0, url: 'assets/keyframes/rolex-lucallaccio/frame_001.jpg' },
       { time:   3, url: 'assets/keyframes/rolex-lucallaccio/frame_002.jpg' },
@@ -281,7 +281,7 @@ const REELS = [
       { time: 123, url: 'assets/keyframes/rolex-lucallaccio/frame_042.jpg' },
       { time: 126, url: 'assets/keyframes/rolex-lucallaccio/frame_043.jpg' }
     ] },
-  { label: 'Setup TCL — Kylianlebris', year: 2026, color: '#080c12', poster: 'https://i.vimeocdn.com/video/2194687912-1b987f3d39a2c12dda0f972d5dcb7dea60e652d1fd82c5a99cfcaf91f69a3015-d_1280?region=us', vimeoId: '1221871316', vimeoH: '', client: 'Kylianlebris', brandLogo: 'LOGO/TCL.png', volume: 1, desc: "Kylianlebris ne supportait plus son ancien setup — on a pris ça comme un défi. Une transformation complète autour d'une TCL, filmée et montée pour montrer chaque détail du résultat final.",
+  { label: 'Setup TCL — Kylianlebris', year: 2026, color: '#080c12', poster: 'https://i.vimeocdn.com/video/2194687912-1b987f3d39a2c12dda0f972d5dcb7dea60e652d1fd82c5a99cfcaf91f69a3015-d_1280?region=us', vimeoId: '1221871316', vimeoH: '', client: 'Kylianlebris', brandLogo: 'LOGO/TCL.png', volume: 0.5, desc: "Kylianlebris ne supportait plus son ancien setup — on a pris ça comme un défi. Une transformation complète autour d'une TCL, filmée et montée pour montrer chaque détail du résultat final.",
     keyframes: [
       { time:  0, url: 'assets/keyframes/kylian-tcl/frame_001.jpg' },
       { time:  3, url: 'assets/keyframes/kylian-tcl/frame_002.jpg' },
@@ -304,7 +304,7 @@ const REELS = [
       { time: 54, url: 'assets/keyframes/kylian-tcl/frame_019.jpg' },
       { time: 57, url: 'assets/keyframes/kylian-tcl/frame_020.jpg' }
     ] },
-  { label: 'DJI Mic Mini 2S',        year: 2026, color: '#080a0f', poster: 'https://i.vimeocdn.com/video/2194718058-f566d5c6f8eeefc6c0a61d83c850582d54fb9604c4e3c295d42a04abe3bac313-d_1280?region=us', vimeoId: '1221872650', vimeoH: '', client: 'Kylianlebris', brandLogo: 'LOGO/DJI.jpg', volume: 1, desc: "Les 5 détails qui font la différence sur le DJI Mic Mini 2S — un test produit réalisé pour Kylianlebris en collaboration avec DJI France, entre qualité audio et praticité terrain.",
+  { label: 'DJI Mic Mini 2S',        year: 2026, color: '#080a0f', poster: 'https://i.vimeocdn.com/video/2194718058-f566d5c6f8eeefc6c0a61d83c850582d54fb9604c4e3c295d42a04abe3bac313-d_1280?region=us', vimeoId: '1221872650', vimeoH: '', client: 'Kylianlebris', brandLogo: 'LOGO/DJI.jpg', volume: 0.5, desc: "Les 5 détails qui font la différence sur le DJI Mic Mini 2S — un test produit réalisé pour Kylianlebris en collaboration avec DJI France, entre qualité audio et praticité terrain.",
     keyframes: [
       { time:  0, url: 'assets/keyframes/kylian-dji/frame_001.jpg' },
       { time:  3, url: 'assets/keyframes/kylian-dji/frame_002.jpg' },
@@ -334,7 +334,7 @@ const REELS = [
       { time: 75, url: 'assets/keyframes/kylian-dji/frame_026.jpg' },
       { time: 78, url: 'assets/keyframes/kylian-dji/frame_027.jpg' }
     ] },
-  { label: 'Bottega Veneta',         year: 2026, color: '#120e09', poster: '', vimeoId: '1221896811', vimeoH: '', client: 'May Bartelot', volume: 1, desc: "Investir ou pas dans un sac Bottega Veneta ? Qualité, modèles à choisir, valeur sur le marché secondaire — un guide complet mis en images pour May Bartelot.",
+  { label: 'Bottega Veneta',         year: 2026, color: '#120e09', poster: '', vimeoId: '1221896811', vimeoH: '', client: 'May Bartelot', volume: 0.5, desc: "Investir ou pas dans un sac Bottega Veneta ? Qualité, modèles à choisir, valeur sur le marché secondaire — un guide complet mis en images pour May Bartelot.",
     keyframes: [
       { time:  0, url: 'assets/keyframes/bottega-may/frame_001.jpg' },
       { time:  3, url: 'assets/keyframes/bottega-may/frame_002.jpg' },
@@ -370,7 +370,7 @@ const REELS = [
       { time: 93, url: 'assets/keyframes/bottega-may/frame_032.jpg' }
     ] },
 
-  { label: 'Finder Apple',            year: 2026, color: '#0a0d0f', poster: 'https://i.vimeocdn.com/video/2194723099-9238ecce4409afe278561673f1c49bcf9855feade1047a6cd75c99de2eedd0b6-d_1280?region=us', vimeoId: '1221897580', vimeoH: '', client: 'Vinceeh', volume: 0.6, desc: "L'énigme derrière l'icône du Finder d'Apple — origines, anecdotes et symbolisme décortiqués par Vinceeh.",
+  { label: 'Finder Apple',            year: 2026, color: '#0a0d0f', poster: 'https://i.vimeocdn.com/video/2194723099-9238ecce4409afe278561673f1c49bcf9855feade1047a6cd75c99de2eedd0b6-d_1280?region=us', vimeoId: '1221897580', vimeoH: '', client: 'Vinceeh', volume: 0.5, desc: "L'énigme derrière l'icône du Finder d'Apple — origines, anecdotes et symbolisme décortiqués par Vinceeh.",
     keyframes: [
       { time:  0, url: 'assets/keyframes/vinceeh-finder/frame_001.jpg' },
       { time:  3, url: 'assets/keyframes/vinceeh-finder/frame_002.jpg' },
@@ -397,7 +397,7 @@ const REELS = [
       { time: 66, url: 'assets/keyframes/vinceeh-finder/frame_023.jpg' }
     ] },
 
-  { label: 'Friend — IA',             year: 2026, color: '#080a10', poster: '', vimeoId: '1221897579', vimeoH: '', client: 'Vinceeh', volume: 0.6, desc: "Et si ton meilleur ami était une IA ? Vinceeh explore Friend, le pendant IA d'un compagnon de poche.",
+  { label: 'Friend — IA',             year: 2026, color: '#080a10', poster: '', vimeoId: '1221897579', vimeoH: '', client: 'Vinceeh', volume: 0.5, desc: "Et si ton meilleur ami était une IA ? Vinceeh explore Friend, le pendant IA d'un compagnon de poche.",
     keyframes: [
       { time:  0, url: 'assets/keyframes/vinceeh-friend/frame_001.jpg' },
       { time:  3, url: 'assets/keyframes/vinceeh-friend/frame_002.jpg' },
@@ -434,7 +434,7 @@ const REELS = [
       { time: 96, url: 'assets/keyframes/vinceeh-friend/frame_033.jpg' }
     ] },
 
-  { label: 'Juice WRLD — Série',      year: 2026, color: '#0a0808', poster: '', vimeoId: '1221914572', vimeoH: '', client: 'Simba', volume: 1, desc: "",
+  { label: 'Juice WRLD — Série',      year: 2026, color: '#0a0808', poster: '', vimeoId: '1221914572', vimeoH: '', client: 'Simba', volume: 0.5, desc: "",
     keyframes: [
       { time:   0, url: 'assets/keyframes/simba-juicewrld/frame_001.jpg' },
       { time:   3, url: 'assets/keyframes/simba-juicewrld/frame_002.jpg' },
@@ -491,7 +491,7 @@ const REELS = [
       { time: 156, url: 'assets/keyframes/simba-juicewrld/frame_053.jpg' }
     ] },
 
-  { label: 'Jeux mobiles favoris',     year: 2026, color: '#080a0c', poster: '', vimeoId: '1221919375', vimeoH: '', client: 'Kylianlebris', volume: 1, desc: "",
+  { label: 'Jeux mobiles favoris',     year: 2026, color: '#080a0c', poster: '', vimeoId: '1221919375', vimeoH: '', client: 'Kylianlebris', volume: 0.5, desc: "",
     keyframes: [
       { time:  0, url: 'assets/keyframes/kylian-jeux-mobiles/frame_001.jpg' },
       { time:  3, url: 'assets/keyframes/kylian-jeux-mobiles/frame_002.jpg' },
@@ -520,7 +520,7 @@ const REELS = [
       { time: 72, url: 'assets/keyframes/kylian-jeux-mobiles/frame_025.jpg' }
     ] },
 
-  { label: 'La VMC, à quoi ça sert ?', year: 2026, color: '#080c0d', poster: '', vimeoId: '1221912901', vimeoH: '', client: 'The French Reno', volume: 1, desc: "",
+  { label: 'La VMC, à quoi ça sert ?', year: 2026, color: '#080c0d', poster: '', vimeoId: '1221912901', vimeoH: '', client: 'The French Reno', volume: 0.5, desc: "",
     keyframes: [
       { time:   0, url: 'assets/keyframes/frenchreno-vmc/frame_001.jpg' },
       { time:   3, url: 'assets/keyframes/frenchreno-vmc/frame_002.jpg' },
@@ -564,7 +564,7 @@ const REELS = [
       { time: 117, url: 'assets/keyframes/frenchreno-vmc/frame_040.jpg' }
     ] },
 
-  { label: 'Déco — Trade Republic',   year: 2026, color: '#090c0f', poster: '', vimeoId: '1221898501', vimeoH: '', client: 'Vinceeh', brandLogo: 'LOGO/TR.png', volume: 0.6, desc: "3 conseils pour économiser sur la déco de son intérieur — collaboration commerciale Trade Republic par Vinceeh.",
+  { label: 'Déco — Trade Republic',   year: 2026, color: '#090c0f', poster: '', vimeoId: '1221898501', vimeoH: '', client: 'Vinceeh', brandLogo: 'LOGO/TR.png', volume: 0.5, desc: "3 conseils pour économiser sur la déco de son intérieur — collaboration commerciale Trade Republic par Vinceeh.",
     keyframes: [
       { time:  0, url: 'assets/keyframes/vinceeh-deco-tips/frame_001.jpg' },
       { time:  3, url: 'assets/keyframes/vinceeh-deco-tips/frame_002.jpg' },
@@ -643,7 +643,7 @@ const YOUTUBE = [
 
 /* ─── DONNÉES ANIMATION / DA ─────────────── */
 const ANIMATION = [
-  { label: 'Yoshien — Matcha', year: 2025, color: '#0a1208', poster: '', vimeoId: '1221865522', vimeoH: '', client: 'Yoshien', volume: 1, ratio: '4/5', desc: "Stop motion réalisé pour Yoshien, marque de matcha fictive — une mise en scène produit soignée, entre texture, mouvement image par image et esthétique épurée.", spanRow: '1',
+  { label: 'Yoshien — Matcha', year: 2025, color: '#0a1208', poster: '', vimeoId: '1221865522', vimeoH: '', client: 'Yoshien', volume: 0.5, ratio: '4/5', desc: "Stop motion réalisé pour Yoshien, marque de matcha fictive — une mise en scène produit soignée, entre texture, mouvement image par image et esthétique épurée.", spanRow: '1',
     keyframes: [
       { time:  0, url: 'assets/keyframes/yoshien-matcha/frame_001.jpg' },
       { time:  3, url: 'assets/keyframes/yoshien-matcha/frame_002.jpg' },
@@ -657,7 +657,7 @@ const ANIMATION = [
       { time: 27, url: 'assets/keyframes/yoshien-matcha/frame_010.jpg' },
       { time: 30, url: 'assets/keyframes/yoshien-matcha/frame_011.jpg' }
     ] },
-  { label: 'Motion — Swave', year: 2026, color: '#0a0a0a', poster: '', vimeoId: '1221925020', vimeoH: '', client: 'Vinceeh', volume: 0.8, spanRow: '2', desc: 'Toutes les animations et motion graphics réalisés pour la vidéo YouTube de Vinceeh sur le magasin Swave.',
+  { label: 'Motion — Swave', year: 2026, color: '#0a0a0a', poster: '', vimeoId: '1221925020', vimeoH: '', client: 'Vinceeh', volume: 0.5, spanRow: '2', desc: 'Toutes les animations et motion graphics réalisés pour la vidéo YouTube de Vinceeh sur le magasin Swave.',
     keyframes: [
       { time:  0, url: 'assets/keyframes/vinceeh-swave/frame_001.jpg' },
       { time:  3, url: 'assets/keyframes/vinceeh-swave/frame_002.jpg' },
@@ -1728,238 +1728,72 @@ document.getElementById('rl-scroll-btn').addEventListener('click', () => {
 /* ─── INIT ───────────────────────────────── */
 renderBatch();
 
-/* ─── SHOWREEL PLAYER ────────────────────── */
-(function initShowreel() {
-  if (typeof Vimeo === 'undefined') { setTimeout(initShowreel, 80); return; }
+/* ─── ABOUT SCROLL REVEAL ────────────────── */
+(function initAboutReveal() {
+  if (!window.matchMedia('(hover: hover)').matches) return;
+  const section = document.getElementById('rl-showreel');
+  if (!section) return;
 
-  const iframe     = document.getElementById('rl2-iframe');
-  const hit        = document.getElementById('rl2-hit');
-  const muteCorner = document.getElementById('rl2-mute-btn');
-  const mutePill   = document.getElementById('rl2-pill-mute-btn');
-  const playBtn    = document.getElementById('rl2-play-btn');
-  const fill       = document.getElementById('rl2-fill');
-  const bar        = document.getElementById('rl2-bar');
-  const hoverFill  = document.getElementById('rl2-hover-fill');
-  const played     = document.getElementById('rl2-played');
-  const dot        = document.getElementById('rl2-dot');
-  const timeEl     = document.getElementById('rl2-time');
-  const fullBtn    = document.getElementById('rl2-full-btn');
-  const section    = document.getElementById('rl-showreel');
-
-  const p = new Vimeo.Player(iframe);
-  let dur = 0;
-  let isPlaying = false;
-  let isMuted   = false;
-
-  function si(hide, show) {
-    hide.style.opacity = '0'; hide.style.transform = 'scale(0.7)';
-    show.style.opacity = '1'; show.style.transform = 'scale(1)';
+  /* Découpe un élément en spans ct-word (préserve les <br>) */
+  function splitWords(el) {
+    const words = [];
+    const nodes = Array.from(el.childNodes);
+    el.innerHTML = '';
+    nodes.forEach(node => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        node.textContent.split(/(\s+)/).forEach(part => {
+          if (/^\s+$/.test(part)) {
+            el.appendChild(document.createTextNode(part));
+          } else if (part) {
+            const span = document.createElement('span');
+            span.className = 'ct-word';
+            span.textContent = part;
+            el.appendChild(span);
+            words.push(span);
+          }
+        });
+      } else {
+        el.appendChild(node.cloneNode(true));
+      }
+    });
+    return words;
   }
 
-  const rPlay    = playBtn.querySelector('.ri-play');
-  const rPause   = playBtn.querySelector('.ri-pause');
-  const mCornerU = muteCorner.querySelector('.ri-unmuted');
-  const mCornerM = muteCorner.querySelector('.ri-muted');
-  const mPillU   = mutePill.querySelector('.ri-unmuted');
-  const mPillM   = mutePill.querySelector('.ri-muted');
+  const titleEl = section.querySelector('.about-title');
+  const bodyEl  = section.querySelector('.about-body');
+  const ctaEl   = section.querySelector('.about-cta');
 
-  /* État initial : son ON, boutons rose dès le départ */
-  playBtn.classList.add('btn-active');
-  [muteCorner, mutePill].forEach(b => b.classList.add('btn-active'));
+  let aboutWords = [];
+  if (titleEl) aboutWords = aboutWords.concat(splitWords(titleEl));
+  if (bodyEl)  aboutWords = aboutWords.concat(splitWords(bodyEl));
 
-  function fmt(s) {
-    s = Math.max(0, Math.floor(s));
-    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  /* CTA apparaît en bloc une fois tous les mots allumés */
+  if (ctaEl) ctaEl.style.opacity = '0';
+
+  const WORD_STEP = 22;
+  let aboutAccum  = 0;
+  let aboutLocked = false;
+
+  function applyAbout() {
+    const litCount = Math.floor(Math.min(aboutWords.length * WORD_STEP, aboutAccum) / WORD_STEP);
+    aboutWords.forEach((w, i) => w.classList.toggle('lit', i < litCount));
+    if (ctaEl) ctaEl.style.opacity = litCount >= aboutWords.length ? '1' : '0';
   }
 
-  /* Volume proportionnel à la visibilité dans le viewport */
-  function updateScrollVolume() {
-    if (isMuted) return;
-    const rect  = section.getBoundingClientRect();
-    const viewH = window.innerHeight;
-    const visH  = Math.min(rect.bottom, viewH) - Math.max(rect.top, 0);
-    const ratio = Math.max(0, Math.min(1, visH / rect.height));
-    p.setVolume(ratio);
-  }
-
-  window.addEventListener('scroll', updateScrollVolume, { passive: true });
-
-  /* Curseur PLAY / PAUSE */
-  const cursor  = document.getElementById('rl2-cursor');
-  const vcText  = cursor.querySelector('.vc-text');
-  let vcX = 0, vcY = 0, vcTX = 0, vcTY = 0;
-
-  (function vcLoop() {
-    vcX += (vcTX - vcX) * 0.14;
-    vcY += (vcTY - vcY) * 0.14;
-    cursor.style.transform = `translate(${vcX}px,${vcY}px) rotate(-10deg)`;
-    requestAnimationFrame(vcLoop);
-  })();
-
-  hit.addEventListener('mouseenter', e => {
-    vcTX = e.clientX + 18; vcTY = e.clientY - 16;
-    vcX = vcTX; vcY = vcTY;
-    cursor.classList.add('visible');
-  });
-  hit.addEventListener('mouseleave', () => cursor.classList.remove('visible'));
-  hit.addEventListener('mousemove',  e => { vcTX = e.clientX + 18; vcTY = e.clientY - 16; });
-
-  function updateCursorLabel(playing) {
-    vcText.classList.add('vc-out');
-    vcText.addEventListener('animationend', () => {
-      vcText.classList.remove('vc-out');
-      vcText.textContent = playing ? 'Pause' : 'Play';
-      vcText.classList.add('vc-in');
-      vcText.addEventListener('animationend', () => vcText.classList.remove('vc-in'), { once: true });
-    }, { once: true });
-  }
-
-  function setPlayState(playing) {
-    isPlaying = playing;
-    si(playing ? rPlay : rPause, playing ? rPause : rPlay);
-    playBtn.classList.add('btn-active');
-    updateCursorLabel(playing);
-  }
-
-  function setMuteState(muted) {
-    isMuted = muted;
-    if (muted) { p.setVolume(0); } else { updateScrollVolume(); }
-    [muteCorner, mutePill].forEach(b => b.classList.toggle('btn-active', !muted));
-    si(muted ? mCornerU : mCornerM, muted ? mCornerM : mCornerU);
-    si(muted ? mPillU   : mPillM,   muted ? mPillM   : mPillU);
-  }
-
-  p.on('play',  () => setPlayState(true));
-  p.on('pause', () => setPlayState(false));
-  p.on('ended', () => { setPlayState(false); p.setCurrentTime(0); });
-  p.on('timeupdate', ({ seconds, duration: d }) => {
-    if (!d) return;
-    dur = d;
-    const pct = seconds / d * 100;
-    played.style.width = pct + '%';
-    dot.style.left     = pct + '%';
-    fill.style.width   = pct + '%';
-    timeEl.textContent = fmt(seconds);
-  });
-
-  /* Autoplay au scroll — fallback muet si bloqué par le navigateur */
-  let hasStarted = false;
-  const obs = new IntersectionObserver(([entry]) => {
-    if (entry.isIntersecting) {
-      p.play().catch(() => {
-        isMuted = true;
-        p.setVolume(0);
-        si(mCornerU, mCornerM); si(mPillU, mPillM);
-        muteCorner.classList.remove('btn-active');
-        mutePill.classList.remove('btn-active');
-      });
-    } else if (hasStarted) {
-      p.pause();
-    }
+  const io = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting && aboutAccum < aboutWords.length * WORD_STEP) aboutLocked = true;
+    if (!entry.isIntersecting) aboutLocked = false;
   }, { threshold: 0.3 });
+  io.observe(section);
 
-  p.on('play', () => { hasStarted = true; updateScrollVolume(); });
-  obs.observe(section);
-
-  /* Indicateur mobile showreel */
-  const rl2MobInd = document.getElementById('rl2-mob-indicator');
-  let rl2FlashTimer = null;
-  function showRl2Indicator(playing) {
-    if (!rl2MobInd) return;
-    rl2MobInd.classList.remove('playing', 'paused');
-    clearTimeout(rl2FlashTimer);
-    if (playing) {
-      rl2MobInd.classList.add('playing', 'visible');
-      rl2FlashTimer = setTimeout(() => rl2MobInd.classList.remove('visible'), 520);
-    } else {
-      rl2MobInd.classList.add('paused', 'visible');
-    }
-  }
-
-  /* Clic vidéo */
-  hit.addEventListener('click', () => isPlaying ? p.pause() : p.play());
-  playBtn.addEventListener('click', () => isPlaying ? p.pause() : p.play());
-
-  /* Tap mobile showreel */
-  hit.addEventListener('touchend', e => {
+  window.addEventListener('wheel', e => {
+    if (!aboutLocked) return;
     e.preventDefault();
-    if (isPlaying) { p.pause(); showRl2Indicator(false); }
-    else           { p.play();  showRl2Indicator(true);  }
+    aboutAccum = Math.max(0, Math.min(aboutWords.length * WORD_STEP, aboutAccum + e.deltaY * 0.85));
+    applyAbout();
+    if (aboutAccum >= aboutWords.length * WORD_STEP) aboutLocked = false;
+    if (aboutAccum <= 0) aboutLocked = false;
   }, { passive: false });
-
-  p.on('pause', () => { if (isTouch) showRl2Indicator(false); });
-  p.on('ended', () => { if (rl2MobInd) { rl2MobInd.classList.remove('visible','playing','paused'); } });
-  [muteCorner, mutePill].forEach(b => b.addEventListener('click', () => setMuteState(!isMuted)));
-
-  /* Plein écran — même système que l'accueil */
-  const rl2Outer = document.getElementById('rl2-outer');
-  const rl2Backdrop = document.getElementById('theater-backdrop');
-  let rl2Placeholder = null;
-
-  function toggleRl2Theater() {
-    const on = !rl2Outer.classList.contains('theater');
-    if (on) {
-      const rect = rl2Outer.getBoundingClientRect();
-      rl2Placeholder = document.createElement('div');
-      rl2Placeholder.style.cssText = `width:${rect.width}px;height:${rect.height}px;flex-shrink:0;`;
-      rl2Outer.parentNode.insertBefore(rl2Placeholder, rl2Outer);
-      document.body.classList.add('theater-open');
-    } else {
-      if (rl2Placeholder) { rl2Placeholder.remove(); rl2Placeholder = null; }
-      document.body.classList.remove('theater-open');
-    }
-    rl2Outer.classList.toggle('theater', on);
-    rl2Backdrop.classList.toggle('active', on);
-  }
-
-  fullBtn.addEventListener('click', toggleRl2Theater);
-  rl2Backdrop.addEventListener('click', () => {
-    if (rl2Outer.classList.contains('theater')) toggleRl2Theater();
-  });
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && rl2Outer.classList.contains('theater')) toggleRl2Theater();
-  });
-
-  /* Barre de progression avec drag */
-  const strip   = document.getElementById('rl2-strip');
-  let rl2Drag   = false;
-  let rl2Raf    = null;
-
-  function rl2Pct(e) {
-    const r = bar.getBoundingClientRect();
-    return Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
-  }
-  function rl2Apply(pct) {
-    played.style.width = (pct * 100) + '%';
-    dot.style.left     = (pct * 100) + '%';
-    fill.style.width   = (pct * 100) + '%';
-    cancelAnimationFrame(rl2Raf);
-    rl2Raf = requestAnimationFrame(() => { if (dur) p.setCurrentTime(pct * dur); });
-  }
-
-  strip.addEventListener('pointerdown', e => {
-    e.preventDefault();
-    strip.setPointerCapture(e.pointerId);
-    rl2Drag = true;
-    rl2Apply(rl2Pct(e));
-  });
-  strip.addEventListener('pointermove', e => {
-    const pct = rl2Pct(e);
-    if (rl2Drag) {
-      rl2Apply(pct);
-    } else {
-      hoverFill.style.width = (pct * 100) + '%';
-    }
-  });
-  strip.addEventListener('pointerup', e => {
-    if (!rl2Drag) return;
-    rl2Drag = false;
-    hoverFill.style.width = '0%';
-    rl2Apply(rl2Pct(e));
-  });
-  strip.addEventListener('pointerleave', () => {
-    if (!rl2Drag) hoverFill.style.width = '0%';
-  });
 })();
 
 
