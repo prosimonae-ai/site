@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Liste</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="https://use.typekit.net/kid8vvq.css">
+</head>
+<body>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #f7f6f3;
+    --surface: #ffffff;
+    --border:  #e5e3de;
+    --text:    #111110;
+    --muted:   #888580;
+    --accent:  #111110;
+    --tag-bg:  #eceae5;
+    --pick:    #2d5a3d;
+    --pick-bg: #e8f0eb;
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  /* ── LOCK SCREEN ── */
+  #lock {
+    position: fixed; inset: 0; z-index: 999;
+    background: var(--bg);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 40px;
+    transition: opacity 500ms ease, transform 500ms ease;
+  }
+  #lock.out { opacity: 0; transform: translateY(-8px); pointer-events: none; }
+
+  .lock-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .lock-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  #pwd-input {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 0.5em;
+    text-align: center;
+    width: 160px;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 200ms;
+  }
+  #pwd-input:focus { border-color: var(--text); }
+  #pwd-input::placeholder { letter-spacing: 0.2em; color: #ccc; font-size: 18px; }
+
+  .lock-error {
+    font-size: 11px;
+    color: #c0392b;
+    opacity: 0;
+    transition: opacity 250ms;
+    height: 14px;
+  }
+  .lock-error.show { opacity: 1; }
+
+  #lock-btn {
+    background: var(--text);
+    border: none;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 10px 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 150ms;
+  }
+  #lock-btn:hover { opacity: 0.75; }
+
+  /* ── VAULT ── */
+  #the-liste { display: none; }
+  #the-liste.visible { display: block; }
+
+  /* Top bar supprimée — titre + compteur intégrés au filtre */
+  .v-top {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 40px 32px;
+    text-align: center;
+  }
+  .v-logo {
+    font-family: 'stevie-sans', sans-serif;
+    font-size: 52px;
+    font-weight: 600;
+    font-style: italic;
+    letter-spacing: -0.03em;
+    text-transform: none;
+    color: var(--text);
+    opacity: 0.12;
+  }
+  #item-count {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* Filters */
+  .v-filters {
+    padding: 0 40px 0;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .v-filters::-webkit-scrollbar { display: none; }
+
+  /* Bouton add — flottant, cercle fin, zen */
+  #add-btn {
+    position: fixed;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    background: var(--text);
+    border: 1px solid var(--text);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    padding: 12px 28px;
+    border-radius: 100px;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+    transition: border-color 200ms, color 200ms, box-shadow 200ms;
+  }
+  #add-btn:hover { opacity: 0.85; box-shadow: 0 4px 28px rgba(0,0,0,0.2); }
+  #add-btn svg { width: 10px; height: 10px; opacity: 0.7; }
+
+  .cat-btn {
+    background: none;
+    border: none;
+    color: rgba(0,0,0,0.3);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    padding: 6px 14px;
+    border-radius: 100px;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex; align-items: center; gap: 6px;
+    transition: color 200ms, background 200ms;
+  }
+  .cat-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+  .cat-btn:hover { color: var(--text); }
+  .cat-btn.active { background: var(--text); color: #fff; }
+
+  /* Bento */
+  .v-bento {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 40px 120px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .wish-card {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid rgba(0,0,0,0.06);
+    cursor: default;
+    aspect-ratio: 1;
+    transition: box-shadow 400ms ease, transform 400ms ease;
+    animation: cardIn 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .wish-card:hover { box-shadow: 0 12px 48px rgba(0,0,0,0.07); transform: translateY(-2px); }
+
+  .card-bg {
+    position: absolute;
+    inset: 32px 32px 72px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    mix-blend-mode: multiply;
+    transition: transform 400ms ease;
+  }
+  .wish-card:hover .card-bg { transform: scale(1.05); }
+
+  .card-body {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 14px;
+  }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+  }
+
+  .card-tags { display: none; }
+  .cat-tag, .pick-tag { display: none; }
+
+  .card-actions {
+    display: flex; gap: 4px;
+    opacity: 0;
+    transition: opacity 150ms;
+  }
+  .wish-card:hover .card-actions { opacity: 1; }
+
+  .card-del, .card-edit {
+    background: rgba(255,255,255,0.85);
+    border: none;
+    cursor: pointer;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: color 150ms, background 150ms;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .card-del  { color: var(--muted); }
+  .card-edit { color: var(--muted); }
+  .card-del:hover  { color: #c0392b; background: #fdf0ee; }
+  .card-edit:hover { color: var(--text); background: var(--tag-bg); }
+  .card-del svg, .card-edit svg { width: 10px; height: 10px; }
+
+  .card-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .card-brand {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.3);
+  }
+  .card-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 5px;
+  }
+  .card-price {
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(0,0,0,0.45);
+  }
+  .card-price.unknown { display: none; }
+  .card-link {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.25);
+    text-decoration: none;
+    display: flex; align-items: center; gap: 3px;
+    transition: color 200ms;
+  }
+  .card-link:hover { color: var(--text); }
+  .card-link svg { width: 8px; height: 8px; }
+
+  .v-empty {
+    grid-column: 1/-1;
+    padding: 64px 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  /* ── MODAL ── */
+  .modal-backdrop {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.3);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 250ms;
+  }
+  .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    width: 100%;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+    transform: translateY(10px);
+    transition: transform 250ms ease;
+  }
+  .modal-backdrop.open .modal { transform: translateY(0); }
+
+  .modal-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+  .field label .auto-badge {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    color: var(--pick);
+    background: var(--pick-bg);
+    padding: 1px 6px;
+    border-radius: 100px;
+  }
+  .field input, .field select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 8px 12px;
+    outline: none;
+    transition: border-color 150ms;
+  }
+  .field input:focus { border-color: var(--text); }
+  .field input::placeholder { color: #bbb; }
+
+  /* URL field special */
+  .url-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .url-wrap input { padding-right: 36px; }
+  .url-spinner {
+    position: absolute; right: 10px;
+    width: 14px; height: 14px;
+    border: 1.5px solid var(--border);
+    border-top-color: var(--text);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  .url-wrap.loading .url-spinner { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .url-hint {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 5px;
+    transition: color 200ms;
+  }
+  .url-hint.ok { color: var(--pick); }
+  .url-hint.err { color: #c0392b; }
+
+  /* Fetch preview card */
+  .fetch-preview {
+    display: none;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .fetch-preview.show { display: flex; }
+  .fp-img {
+    width: 64px; height: 64px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #fff;
+    border: 1px solid var(--border);
+  }
+  .fp-info { flex: 1; min-width: 0; }
+  .fp-brand { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+  .fp-name  { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
+  .fp-price { font-size: 12px; color: var(--muted); }
+
+
+  .modal-actions { display: flex; gap: 8px; margin-top: 20px; }
+  .btn-cancel {
+    flex: 1;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: border-color 150ms;
+  }
+  .btn-cancel:hover { border-color: var(--muted); }
+  .btn-add {
+    flex: 2;
+    background: var(--text);
+    border: none;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity 150ms;
+  }
+  .btn-add:hover { opacity: 0.75; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .field-row .field { margin-bottom: 0; }
+
+  .cat-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .cp-tag {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 5px 13px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: background 150ms, color 150ms, border-color 150ms;
+  }
+  .cp-tag:hover { border-color: var(--text); color: var(--text); }
+  .cp-tag.selected { background: var(--text); border-color: var(--text); color: #fff; }
+  .cp-tag.new-tag { border-style: dashed; }
+
+  .img-upload-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .img-upload-row input[type="url"] { flex: 1; }
+  .img-upload-btn {
+    flex-shrink: 0;
+    width: 36px; height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: border-color 150ms, background 150ms;
+    color: var(--muted);
+  }
+  .img-upload-btn:hover { border-color: var(--text); color: var(--text); background: var(--surface); }
+  .img-upload-btn svg { width: 14px; height: 14px; }
+  .img-upload-hint { font-size: 10px; color: var(--muted); margin-top: 4px; min-height: 14px; }
+  .img-upload-hint.ok  { color: var(--pick); }
+  .img-upload-hint.err { color: #c0392b; }
+
+  .fallback-banner {
+    background: #fef8ec;
+    border: 1px solid #f0d98a;
+    border-radius: 6px;
+    color: #7a5f10;
+    font-size: 11px;
+    padding: 9px 12px;
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 600px) {
+    .v-bento { grid-template-columns: 1fr; padding: 12px 16px 100px; gap: 10px; }
+    .v-top { padding: 52px 16px 32px; }
+    .v-filters { padding: 0 16px; }
+  }
+</style>
+
+<!-- LOCK -->
+<div id="lock">
+  <p class="lock-eyebrow">The Liste · Simon</p>
+  <div class="lock-field">
+    <input id="pwd-input" type="password" placeholder="····" maxlength="10" autocomplete="off">
+    <p class="lock-error" id="lock-error">Code incorrect</p>
+    <button id="lock-btn" type="button">Entrer</button>
+  </div>
+</div>
+
+<!-- VAULT -->
+<div id="the-liste">
+  <div class="v-top">
+    <p class="v-logo">The Liste</p>
+  </div>
+
+  <nav class="v-filters" id="cat-nav"></nav>
+
+  <button id="add-btn" type="button">
+    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 1v10M1 6h10"/></svg>
+    Ajouter
+  </button>
+
+  <div class="v-bento" id="wish-list"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <p class="modal-title">Ajouter un objet</p>
+
+    <div class="field">
+      <label>Lien produit</label>
+      <div class="url-wrap" id="url-wrap">
+        <input id="f-url" type="url" placeholder="Colle le lien du produit…">
+        <div class="url-spinner"></div>
+      </div>
+      <p class="url-hint" id="url-hint">L'image, le nom et le prix sont récupérés automatiquement</p>
+    </div>
+
+    <!-- Preview card après fetch -->
+    <div class="fetch-preview" id="fetch-preview">
+      <div class="fp-img" id="fp-img"></div>
+      <div class="fp-info">
+        <p class="fp-brand" id="fp-brand"></p>
+        <p class="fp-name" id="fp-name"></p>
+        <p class="fp-price" id="fp-price"></p>
+      </div>
+    </div>
+
+    <!-- Champs toujours visibles -->
+    <div id="fallback-fields">
+      <div class="fallback-banner">Ce site bloque la récupération automatique — remplis les infos :</div>
+      <div class="field">
+        <label>Nom du produit *</label>
+        <input id="f-name" type="text" placeholder="Canapé Play 2 places bleu">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Marque</label>
+          <input id="f-brand" type="text" placeholder="Maisons du Monde">
+        </div>
+        <div class="field">
+          <label>Prix</label>
+          <input id="f-price" type="text" placeholder="499 €">
+        </div>
+      </div>
+      <div class="field">
+        <label>Image</label>
+        <div class="img-upload-row">
+          <input id="f-img" type="url" placeholder="URL ou upload ci-contre…">
+          <label class="img-upload-btn" id="img-upload-label">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M7 1v8M4 4l3-3 3 3M2 11h10"/></svg>
+            <input type="file" id="img-file-input" accept="image/*" style="display:none">
+          </label>
+        </div>
+        <p class="img-upload-hint" id="img-upload-hint"></p>
+      </div>
+    </div>
+
+    <!-- Catégorie -->
+    <div class="field" id="cat-field">
+      <label>Catégorie</label>
+      <div class="cat-picker" id="cat-picker"></div>
+      <input id="f-cat" type="text" placeholder="Nom de la catégorie…" style="display:none; margin-top:8px;">
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" id="modal-cancel">Annuler</button>
+      <button class="btn-add" id="modal-confirm">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PWD = '2003';
+const BIN_ID  = '6a9f2950ffd5d16053eacd60';
+const API_KEY = '$2a$10$vt3P9GCkajVneXt7IECTjunMHw6I/9WF5V42dT0kRLTMG51RUdxR6';
+const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+
+async function load() {
+  try {
+    const res  = await fetch(BIN_URL + '/latest', { headers: { 'X-Master-Key': API_KEY } });
+    const data = await res.json();
+    return Array.isArray(data.record.items) ? data.record.items : [];
+  } catch {
+    try { const r = localStorage.getItem('the-liste_v2'); if (r) return JSON.parse(r); } catch {}
+    return [];
+  }
+}
+
+async function save(items) {
+  try { localStorage.setItem('the-liste_v2', JSON.stringify(items)); } catch {}
+  try {
+    await fetch(BIN_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+      body: JSON.stringify({ items })
+    });
+  } catch {}
+}
+
+/* LOCK */
+const lockEl = document.getElementById('lock');
+const pwdInput = document.getElementById('pwd-input');
+const lockErr = document.getElementById('lock-error');
+
+function unlock() {
+  if (pwdInput.value.trim() === PWD) {
+    lockEl.classList.add('out');
+    setTimeout(() => lockEl.style.display = 'none', 520);
+    document.getElementById('the-liste').classList.add('visible');
+    render();
+  } else {
+    lockErr.classList.add('show');
+    pwdInput.value = '';
+    pwdInput.focus();
+    setTimeout(() => lockErr.classList.remove('show'), 2000);
+  }
+}
+document.getElementById('lock-btn').addEventListener('click', unlock);
+pwdInput.addEventListener('input', () => { if (pwdInput.value === PWD) unlock(); });
+setTimeout(() => pwdInput.focus(), 80);
+
+/* STATE */
+let items = [];
+let activeCat = 'all';
+
+function cats() {
+  const s = new Set(items.map(i => i.cat).filter(Boolean));
+  return ['all', ...s];
+}
+
+/* RENDER */
+const CAT_ICONS = {
+  'all':        `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="1" width="5" height="5" rx="1"/><rect x="8" y="1" width="5" height="5" rx="1"/><rect x="1" y="8" width="5" height="5" rx="1"/><rect x="8" y="8" width="5" height="5" rx="1"/></svg>`,
+  'vêtement':   `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 1c0 1.1-.9 2-2 2L1 4.5 3 7h1v6h6V7h1l2-2.5L11 3c-1.1 0-2-.9-2-2"/></svg>`,
+  'vêtements':  `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 1c0 1.1-.9 2-2 2L1 4.5 3 7h1v6h6V7h1l2-2.5L11 3c-1.1 0-2-.9-2-2"/></svg>`,
+  'chaussure':  `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 9.5c0 1 .8 1.5 2 1.5h8c1 0 2-.4 2-1.5 0-.8-.6-1.3-1.5-1.5L9 7.5V4L6 3 4 5v2L1.5 8C1.2 8.3 1 8.8 1 9.5z"/></svg>`,
+  'chaussures': `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 9.5c0 1 .8 1.5 2 1.5h8c1 0 2-.4 2-1.5 0-.8-.6-1.3-1.5-1.5L9 7.5V4L6 3 4 5v2L1.5 8C1.2 8.3 1 8.8 1 9.5z"/></svg>`,
+  'maison':     `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6.5L7 1l6 5.5"/><path d="M3 5.5V13h8V5.5"/><rect x="5" y="9" width="4" height="4"/></svg>`,
+  'meuble':     `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h8v5H3z"/><path d="M1 9h12"/><path d="M4 9v3M10 9v3"/><path d="M3 4V3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v1"/></svg>`,
+  'meubles':    `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h8v5H3z"/><path d="M1 9h12"/><path d="M4 9v3M10 9v3"/><path d="M3 4V3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v1"/></svg>`,
+  'tech':       `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="12" height="8" rx="1"/><path d="M4 13h6M7 10v3"/></svg>`,
+  'mode':       `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 1c0 1.1-.9 2-2 2L1 4.5 3 7h1v6h6V7h1l2-2.5L11 3c-1.1 0-2-.9-2-2"/></svg>`,
+  'home':       `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6.5L7 1l6 5.5"/><path d="M3 5.5V13h8V5.5"/><rect x="5" y="9" width="4" height="4"/></svg>`,
+  'workspace':  `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="3" width="10" height="7" rx="1"/><path d="M1 10h12M5 13h4"/></svg>`,
+};
+
+function getCatIcon(cat) {
+  const key = cat.toLowerCase().trim();
+  return CAT_ICONS[key] || `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="7" r="5"/></svg>`;
+}
+
+function renderNav() {
+  const nav = document.getElementById('cat-nav');
+  nav.innerHTML = '';
+  cats().forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-btn' + (c === activeCat ? ' active' : '');
+    btn.textContent = c === 'all' ? 'Tout' : c;
+    btn.addEventListener('click', () => { activeCat = c; render(); });
+    nav.appendChild(btn);
+  });
+}
+
+function renderList() {
+  const list = document.getElementById('wish-list');
+  const filtered = activeCat === 'all' ? items : items.filter(i => i.cat === activeCat);
+
+  if (!filtered.length) {
+    list.innerHTML = '<div class="v-empty">Rien dans cette catégorie.</div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  filtered.forEach((item, index) => {
+    const card = document.createElement('div');
+    card.className = 'wish-card';
+    card.innerHTML = `
+      ${item.img ? `<div class="card-bg" style="background-image:url('${item.img}')"></div>` : ''}
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-tags">
+            ${item.cat  ? `<span class="cat-tag">${item.cat}</span>` : ''}
+            ${item.pick ? `<span class="pick-tag">★</span>` : ''}
+          </div>
+          <div class="card-actions">
+            <button class="card-edit" title="Modifier">
+              <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8.5 1.5l2 2L4 10H2v-2L8.5 1.5z"/></svg>
+            </button>
+            <button class="card-del" title="Supprimer">
+              <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 2l8 8M10 2L2 10"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="card-bottom">
+          ${item.brand ? `<p class="card-brand">${item.brand}</p>` : ''}
+          <p class="card-name">${item.name}</p>
+          <div class="card-footer">
+            <span class="card-price ${item.price ? '' : 'unknown'}">${item.price || '—'}</span>
+            ${item.url ? `<a class="card-link" href="${item.url}" target="_blank" rel="noopener">Voir <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 10L10 2M4.5 2H10v5.5"/></svg></a>` : ''}
+          </div>
+        </div>
+      </div>`;
+    card.querySelector('.card-edit').addEventListener('click', () => openEdit(item));
+    card.querySelector('.card-del').addEventListener('click', async () => {
+      items = items.filter(i => i.id !== item.id);
+      await save(items);
+      render();
+    });
+    card.style.animationDelay = `${index * 100}ms`;
+    list.appendChild(card);
+  });
+}
+
+function render() { renderNav(); renderList(); }
+
+/* MODAL */
+const modal      = document.getElementById('modal');
+const urlWrap    = document.getElementById('url-wrap');
+const urlHint    = document.getElementById('url-hint');
+const fpPreview  = document.getElementById('fetch-preview');
+const fpImg      = document.getElementById('fp-img');
+const fpBrand    = document.getElementById('fp-brand');
+const fpName     = document.getElementById('fp-name');
+const fpPrice    = document.getElementById('fp-price');
+const catField   = document.getElementById('cat-field');
+
+let fetched = { name:'', brand:'', price:'', img:'', url:'' };
+let fetchTimer = null;
+let editingId = null;
+
+const PROXIES = [
+  u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+  u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
+  u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+];
+
+function getMeta(doc, ...props) {
+  for (const p of props) {
+    const el = doc.querySelector(`meta[property="${p}"], meta[name="${p}"]`);
+    if (el) { const c = el.getAttribute('content'); if (c) return c.trim(); }
+  }
+  return '';
+}
+
+async function tryProxy(proxyFn, rawUrl) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 5000);
+  try {
+    const res = await fetch(proxyFn(rawUrl), { signal: ctrl.signal });
+    if (!res.ok) throw new Error('err');
+    const text = await res.text();
+    let html = text;
+    try { const j = JSON.parse(text); html = j.contents || j.body || text; } catch {}
+    const doc   = new DOMParser().parseFromString(html, 'text/html');
+    // Exige og:title (pas juste doc.title qui peut être une page d'erreur)
+    const name  = getMeta(doc, 'og:title', 'twitter:title');
+    const image = getMeta(doc, 'og:image:secure_url', 'og:image', 'twitter:image');
+    const brand = getMeta(doc, 'og:site_name');
+    const price = getMeta(doc, 'og:price:amount', 'product:price:amount', 'twitter:data1');
+    if (!name) throw new Error('no og:title — probably error page');
+    return { name: name.slice(0, 120), brand, price, img: image };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function fetchProductMeta(rawUrl) {
+  urlWrap.classList.add('loading');
+  urlHint.className = 'url-hint';
+  urlHint.textContent = 'Récupération…';
+  fpPreview.classList.remove('show');
+
+  let meta = null;
+  try { meta = await Promise.any(PROXIES.map(fn => tryProxy(fn, rawUrl))); } catch {}
+
+  urlWrap.classList.remove('loading');
+
+  if (!meta) {
+    fetched.url = rawUrl;
+    urlHint.className = 'url-hint err';
+    urlHint.textContent = 'Récupération impossible — remplis manuellement';
+    return;
+  }
+
+  fetched = { ...meta, url: rawUrl };
+  fpBrand.textContent = meta.brand || new URL(rawUrl).hostname.replace('www.', '');
+  fpName.textContent  = meta.name.slice(0, 60) || rawUrl;
+  fpPrice.textContent = meta.price || '';
+  fpImg.style.backgroundImage = meta.img ? `url('${meta.img}')` : '';
+  if (!document.getElementById('f-name').value) document.getElementById('f-name').value = meta.name;
+  if (!document.getElementById('f-brand').value) document.getElementById('f-brand').value = meta.brand;
+  if (!document.getElementById('f-price').value) document.getElementById('f-price').value = meta.price;
+  fpPreview.classList.add('show');
+  urlHint.className = 'url-hint ok';
+  urlHint.textContent = '✓ Infos récupérées automatiquement';
+}
+
+document.getElementById('f-url').addEventListener('input', e => {
+  const val = e.target.value.trim();
+  clearTimeout(fetchTimer);
+  fpPreview.classList.remove('show');
+  fetched = { name:'', brand:'', price:'', img:'', url:'' };
+  if (!val) { urlHint.className = 'url-hint'; urlHint.textContent = 'Optionnel — colle le lien pour auto-remplir'; return; }
+  try { new URL(val); } catch { return; }
+  fetchTimer = setTimeout(() => fetchProductMeta(val), 700);
+});
+
+function resetModal() {
+  ['f-url','f-cat','f-name','f-brand','f-price','f-img'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  fetched = { name:'', brand:'', price:'', img:'', url:'' };
+  fpPreview.classList.remove('show');
+  fpImg.style.backgroundImage = '';
+  urlHint.className = 'url-hint';
+  urlHint.textContent = 'Optionnel — colle le lien pour auto-remplir';
+  urlWrap.classList.remove('loading');
+  clearTimeout(fetchTimer);
+  editingId = null;
+  buildCatPicker('');
+  document.querySelector('.modal-title').textContent = 'Ajouter un objet';
+  document.getElementById('modal-confirm').textContent = 'Ajouter';
+}
+
+const IMGBB_KEY = 'acd76d70271edca10c6673ab9e3684b4';
+
+document.getElementById('img-file-input').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const hint = document.getElementById('img-upload-hint');
+  hint.className = 'img-upload-hint';
+  hint.textContent = 'Upload en cours…';
+
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    const base64 = ev.target.result.split(',')[1];
+    try {
+      const form = new FormData();
+      form.append('key', IMGBB_KEY);
+      form.append('image', base64);
+      const res  = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: form });
+      const data = await res.json();
+      if (data.success) {
+        const url = data.data.url;
+        document.getElementById('f-img').value = url;
+        // Met à jour la preview si elle est visible
+        if (document.getElementById('fetch-preview').classList.contains('show')) {
+          document.getElementById('fp-img').style.backgroundImage = `url('${url}')`;
+        }
+        hint.className = 'img-upload-hint ok';
+        hint.textContent = '✓ Image uploadée';
+      } else throw new Error();
+    } catch {
+      hint.className = 'img-upload-hint err';
+      hint.textContent = 'Échec de l\'upload — réessaie';
+    }
+  };
+  reader.readAsDataURL(file);
+});
+
+function buildCatPicker(selectedCat) {
+  const picker = document.getElementById('cat-picker');
+  const input  = document.getElementById('f-cat');
+  picker.innerHTML = '';
+  input.style.display = 'none';
+  input.value = selectedCat || '';
+
+  const existing = [...new Set(items.map(i => i.cat).filter(Boolean))];
+
+  existing.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'cp-tag' + (cat === selectedCat ? ' selected' : '');
+    btn.textContent = cat;
+    btn.addEventListener('click', () => {
+      picker.querySelectorAll('.cp-tag').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      input.value = cat;
+      input.style.display = 'none';
+    });
+    picker.appendChild(btn);
+  });
+
+  const newBtn = document.createElement('button');
+  newBtn.type = 'button';
+  newBtn.className = 'cp-tag new-tag';
+  newBtn.textContent = '+ Nouvelle';
+  newBtn.addEventListener('click', () => {
+    picker.querySelectorAll('.cp-tag').forEach(b => b.classList.remove('selected'));
+    newBtn.classList.add('selected');
+    input.style.display = 'block';
+    input.value = '';
+    input.focus();
+  });
+  picker.appendChild(newBtn);
+
+  // Si la catégorie n'est pas dans la liste existante → activer "Nouvelle" avec sa valeur
+  if (selectedCat && !existing.includes(selectedCat)) {
+    newBtn.classList.add('selected');
+    input.style.display = 'block';
+    input.value = selectedCat;
+  }
+}
+
+function openEdit(item) {
+  resetModal();
+  editingId = item.id;
+  document.querySelector('.modal-title').textContent = 'Modifier l\'objet';
+  document.getElementById('modal-confirm').textContent = 'Enregistrer';
+
+  // Pré-rempli via fallback fields (on a déjà les données)
+  fetched = { name: item.name, brand: item.brand, price: item.price, img: item.img, url: item.url };
+  document.getElementById('f-url').value = item.url || '';
+  document.getElementById('f-name').value = item.name || '';
+  document.getElementById('f-brand').value = item.brand || '';
+  document.getElementById('f-price').value = (item.price || '').replace(/\s*€.*$/, '').trim();
+  document.getElementById('f-img').value = item.img || '';
+  document.getElementById('f-cat').value = item.cat || '';
+
+  if (item.img) {
+    fpImg.style.backgroundImage = `url('${item.img}')`;
+    fpBrand.textContent = item.brand || '';
+    fpName.textContent  = item.name  || '';
+    fpPrice.textContent = item.price || '';
+    fpPreview.classList.add('show');
+  }
+  buildCatPicker(item.cat);
+  urlHint.className = 'url-hint';
+  urlHint.textContent = 'Modifie les infos ci-dessous';
+  modal.classList.add('open');
+}
+
+document.getElementById('add-btn').addEventListener('click', () => {
+  resetModal();
+  editingId = null;
+  document.querySelector('.modal-title').textContent = 'Ajouter un objet';
+  document.getElementById('modal-confirm').textContent = 'Ajouter';
+  modal.classList.add('open');
+  setTimeout(() => document.getElementById('f-name').focus(), 50);
+});
+document.getElementById('modal-cancel').addEventListener('click', () => modal.classList.remove('open'));
+modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+
+document.getElementById('modal-confirm').addEventListener('click', async () => {
+  const url  = document.getElementById('f-url').value.trim();
+  const name = fetched.name || document.getElementById('f-name').value.trim();
+  if (!name) { document.getElementById('f-name').focus(); return; }
+
+  const rawPrice = (fetched.price || document.getElementById('f-price').value.trim()).replace(/\s*[€$£¥].*$/, '').trim();
+  const price = rawPrice ? rawPrice + ' €' : '';
+
+  const updated = {
+    name,
+    brand: fetched.brand || document.getElementById('f-brand').value.trim(),
+    price,
+    cat:   document.getElementById('f-cat').value.trim(),
+    img:   document.getElementById('f-img').value.trim() || fetched.img,
+    url,
+    pick:  false,
+  };
+
+  if (editingId) {
+    items = items.map(i => i.id === editingId ? { ...i, ...updated } : i);
+  } else {
+    items.unshift({ id: Date.now().toString(36), ...updated });
+  }
+
+  await save(items);
+  activeCat = 'all';
+  render();
+  modal.classList.remove('open');
+  editingId = null;
+});
+
+async function init() {
+  items = await load();
+}
+init();
+</script>
+</body>
+</html>
