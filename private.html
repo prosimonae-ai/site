@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Liste</title>
+<title>The Liste ✦</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap">
 <link rel="stylesheet" href="https://use.typekit.net/kid8vvq.css">
@@ -1231,6 +1231,7 @@ async function renderFeed(filterUserId = feedFriendFilter) {
   feedFriendFilter = filterUserId;
   const list = document.getElementById('wish-list');
   list.innerHTML = '<div class="feed-empty">Chargement…</div>';
+  await loadAllRequests();
 
   const accepted = myRequests.filter(r => r.status === 'accepted');
   const friendIds = accepted.map(r => r.from_id === currentUser.id ? r.to_id : r.from_id);
