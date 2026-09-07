@@ -193,38 +193,46 @@
   }
 
   /* Friend profile view */
-  #friend-profile {
-    display: none;
-    max-width: 1200px; margin: 0 auto;
-    padding: 48px 40px 32px;
-    text-align: center;
-    position: relative;
-  }
+  #friend-profile { display: none; }
   #friend-profile.visible { display: block; }
+  #fp-header {
+    max-width: 1200px; margin: 0 auto;
+    padding: 32px 40px 24px;
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+    position: relative; text-align: center;
+  }
   #fp-back {
-    position: absolute; top: 0; left: 24px;
+    position: absolute; top: 32px; left: 40px;
     background: none; border: none; cursor: pointer;
     color: var(--muted); font-family: 'Inter', sans-serif;
     font-size: 12px; font-weight: 500; letter-spacing: 0.06em;
     text-transform: uppercase; display: flex; align-items: center; gap: 6px;
-    padding: 8px 0; transition: color 200ms;
+    padding: 0; transition: color 200ms;
   }
   #fp-back:hover { color: var(--text); }
   #fp-big-avatar {
-    width: 88px; height: 88px; border-radius: 50%;
+    width: 80px; height: 80px; border-radius: 50%;
     background: var(--surface); border: 1.5px solid var(--border);
     display: flex; align-items: center; justify-content: center;
-    font-size: 32px; font-weight: 700; color: var(--text);
-    overflow: hidden; margin: 0 auto 20px;
+    font-size: 30px; font-weight: 700; color: var(--text);
+    overflow: hidden;
   }
   #fp-big-avatar img { width: 100%; height: 100%; object-fit: cover; }
   #fp-title {
     font-family: 'stevie-sans', sans-serif;
-    font-size: 52px; font-weight: 600; font-style: italic;
+    font-size: 42px; font-weight: 600; font-style: italic;
     letter-spacing: -0.03em; color: var(--text); opacity: 0.12;
+    margin: 0;
+  }
+  #fp-cat-nav {
+    padding: 0 40px;
+    display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
+    max-width: 1200px; margin: 0 auto;
   }
   @media (max-width: 600px) {
-    #friend-profile { padding: 40px 16px 24px; }
+    #fp-header { padding: 28px 16px 16px; }
+    #fp-back { left: 16px; top: 28px; }
+    #fp-cat-nav { padding: 0 16px; }
   }
 
   /* Profile panel */
@@ -839,12 +847,15 @@
 
 <!-- FRIEND PROFILE VIEW -->
 <div id="friend-profile">
-  <button id="fp-back">
-    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 1L3 6l5 5"/></svg>
-    Retour
-  </button>
-  <div id="fp-big-avatar"></div>
-  <p id="fp-title"></p>
+  <div id="fp-header">
+    <button id="fp-back">
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 1L3 6l5 5"/></svg>
+      Retour
+    </button>
+    <div id="fp-big-avatar"></div>
+    <p id="fp-title"></p>
+  </div>
+  <nav id="fp-cat-nav"></nav>
   <div class="v-bento" id="fp-wish-list"></div>
 </div>
 
@@ -1139,27 +1150,46 @@ document.getElementById('tab-friends').addEventListener('click', () => {
   renderFeed();
 });
 
-async function openFriendView(u) {
-  document.getElementById('the-liste').style.display = 'none';
-  const fp = document.getElementById('friend-profile');
-  fp.classList.add('visible');
+const wishlistCache = {};
 
-  const bigAv = document.getElementById('fp-big-avatar');
-  bigAv.innerHTML = u.avatar ? `<img src="${u.avatar}" alt="">` : initials(u.name);
-  document.getElementById('fp-title').textContent = `The Liste · ${u.name}`;
+async function getFriendItems(uid) {
+  if (wishlistCache[uid]) return wishlistCache[uid];
+  const { data } = await db.from('wishlist').select('items').eq('id', uid).single();
+  const result = Array.isArray(data?.items) ? data.items : [];
+  wishlistCache[uid] = result;
+  return result;
+}
 
+async function prefetchFriendWishlists(friendIds) {
+  const uncached = friendIds.filter(id => !wishlistCache[id]);
+  if (uncached.length === 0) return;
+  const { data } = await db.from('wishlist').select('id, items').in('id', uncached);
+  (data || []).forEach(row => {
+    wishlistCache[row.id] = Array.isArray(row.items) ? row.items : [];
+  });
+}
+
+function renderFriendItems(userItems, activeCatFP = 'all') {
   const fpList = document.getElementById('fp-wish-list');
-  fpList.innerHTML = '<div class="feed-empty">Chargement…</div>';
+  const fpNav  = document.getElementById('fp-cat-nav');
 
-  const { data } = await db.from('wishlist').select('items').eq('id', u.id).single();
-  const userItems = Array.isArray(data?.items) ? data.items : [];
-  fpList.innerHTML = '';
-
-  if (userItems.length === 0) {
-    fpList.innerHTML = '<div class="feed-empty">Pas encore d\'items.</div>';
-    return;
+  const allCats = [...new Set(userItems.map(i => i.cat).filter(Boolean))];
+  fpNav.innerHTML = '';
+  if (allCats.length > 0) {
+    ['all', ...allCats].forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'cat-btn' + (c === activeCatFP ? ' active' : '');
+      btn.textContent = c === 'all' ? 'Tout' : c;
+      btn.addEventListener('click', () => renderFriendItems(userItems, c));
+      fpNav.appendChild(btn);
+    });
   }
-  userItems.forEach((item, index) => {
+
+  const filtered = activeCatFP === 'all' ? userItems : userItems.filter(i => i.cat === activeCatFP);
+  fpList.innerHTML = '';
+  if (filtered.length === 0) { fpList.innerHTML = '<div class="feed-empty">Pas encore d\'items.</div>'; return; }
+
+  filtered.forEach((item, index) => {
     const card = document.createElement('div');
     card.className = 'wish-card';
     card.innerHTML = `
@@ -1178,9 +1208,22 @@ async function openFriendView(u) {
           </div>
         </div>
       </div>`;
-    card.style.animationDelay = `${index * 80}ms`;
+    card.style.animationDelay = `${index * 60}ms`;
     fpList.appendChild(card);
   });
+}
+
+async function openFriendView(u) {
+  document.getElementById('the-liste').style.display = 'none';
+  document.getElementById('friend-profile').classList.add('visible');
+
+  document.getElementById('fp-big-avatar').innerHTML = u.avatar ? `<img src="${u.avatar}" alt="">` : initials(u.name);
+  document.getElementById('fp-title').textContent = `The Liste · ${u.name}`;
+  document.getElementById('fp-wish-list').innerHTML = '<div class="feed-empty">Chargement…</div>';
+  document.getElementById('fp-cat-nav').innerHTML = '';
+
+  const userItems = await getFriendItems(u.id);
+  renderFriendItems(userItems);
 }
 
 async function renderFeed(filterUserId = feedFriendFilter) {
@@ -1592,6 +1635,7 @@ async function loadFriends() {
   if (friendIds.length === 0) {
     friendsList.innerHTML = '<p style="font-size:13px;color:var(--muted);padding:8px 0">Aucun ami pour l\'instant</p>';
   } else {
+    prefetchFriendWishlists(friendIds); // prefetch en arrière-plan
     const { data } = await db.from('users').select('id, name, avatar').in('id', friendIds);
     (data || []).forEach(u => {
       const row = makeFriendRow(u, [
