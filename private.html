@@ -106,6 +106,18 @@
     transition: opacity 150ms;
   }
   #lock-btn:hover { opacity: 0.75; }
+  #lock-switch {
+    font-size: 12px;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 4px;
+    text-decoration: underline;
+    font-family: 'Inter', sans-serif;
+  }
+  #lock-switch:hover { color: var(--text); }
 
   /* ── VAULT ── */
   #the-liste { display: none; }
@@ -548,12 +560,13 @@
 
 <!-- LOCK -->
 <div id="lock">
-  <p class="lock-eyebrow">The Liste</p>
+  <p class="lock-eyebrow" id="lock-title">The Liste</p>
   <div class="lock-field">
     <input id="name-input" type="text" placeholder="Prénom" maxlength="30" autocomplete="off" autocapitalize="none">
     <input id="pwd-input" type="password" placeholder="····" maxlength="20" autocomplete="off">
     <p class="lock-error" id="lock-error">Identifiants incorrects</p>
     <button id="lock-btn" type="button">Entrer</button>
+    <button id="lock-switch" type="button">Créer un compte</button>
   </div>
 </div>
 
@@ -680,30 +693,59 @@ const lockEl = document.getElementById('lock');
 const nameInput = document.getElementById('name-input');
 const pwdInput = document.getElementById('pwd-input');
 const lockErr = document.getElementById('lock-error');
+const lockBtn = document.getElementById('lock-btn');
+const lockSwitch = document.getElementById('lock-switch');
+const lockTitle = document.getElementById('lock-title');
+let lockMode = 'login'; // 'login' | 'register'
 
-async function unlock() {
+lockSwitch.addEventListener('click', () => {
+  lockMode = lockMode === 'login' ? 'register' : 'login';
+  lockTitle.textContent = lockMode === 'register' ? 'Créer un compte' : 'The Liste';
+  lockBtn.textContent = lockMode === 'register' ? 'Créer' : 'Entrer';
+  lockSwitch.textContent = lockMode === 'register' ? 'Déjà un compte' : 'Créer un compte';
+  lockErr.classList.remove('show');
+  nameInput.value = ''; pwdInput.value = '';
+  nameInput.focus();
+});
+
+async function loginOrRegister() {
   const nameVal = nameInput.value.trim().toLowerCase();
   const passVal = pwdInput.value.trim();
   if (!nameVal || !passVal) return;
-  try {
-    const { data, error } = await db.from('users').select('*').eq('id', nameVal).eq('password', passVal).single();
-    if (error || !data) throw new Error('invalid');
-    currentUser = data;
-    lockEl.classList.add('out');
-    setTimeout(() => lockEl.style.display = 'none', 520);
-    document.getElementById('the-liste').classList.add('visible');
-    document.querySelector('.v-logo').textContent = `The Liste · ${data.name}`;
-    items = await load(currentUser.id);
-    render();
-  } catch {
+
+  if (lockMode === 'register') {
+    const { data: existing } = await db.from('users').select('id').eq('id', nameVal).single();
+    if (existing) {
+      lockErr.textContent = 'Ce prénom est déjà pris';
+      lockErr.classList.add('show');
+      setTimeout(() => lockErr.classList.remove('show'), 2500);
+      return;
+    }
+    const displayName = nameInput.value.trim().charAt(0).toUpperCase() + nameInput.value.trim().slice(1);
+    const { error } = await db.from('users').insert({ id: nameVal, password: passVal, name: displayName });
+    if (error) { console.error(error); return; }
+  }
+
+  const { data, error } = await db.from('users').select('*').eq('id', nameVal).eq('password', passVal).single();
+  if (error || !data) {
+    lockErr.textContent = 'Identifiants incorrects';
     lockErr.classList.add('show');
     pwdInput.value = '';
     pwdInput.focus();
     setTimeout(() => lockErr.classList.remove('show'), 2000);
+    return;
   }
+  currentUser = data;
+  lockEl.classList.add('out');
+  setTimeout(() => lockEl.style.display = 'none', 520);
+  document.getElementById('the-liste').classList.add('visible');
+  document.querySelector('.v-logo').textContent = `The Liste · ${data.name}`;
+  items = await load(currentUser.id);
+  render();
 }
-document.getElementById('lock-btn').addEventListener('click', unlock);
-pwdInput.addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
+
+lockBtn.addEventListener('click', loginOrRegister);
+pwdInput.addEventListener('keydown', e => { if (e.key === 'Enter') loginOrRegister(); });
 nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') pwdInput.focus(); });
 setTimeout(() => nameInput.focus(), 80);
 
