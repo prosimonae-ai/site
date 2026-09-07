@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap">
 <link rel="stylesheet" href="https://use.typekit.net/kid8vvq.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
 
@@ -641,14 +642,13 @@
 const PWD = '2003';
 const SB_URL = 'https://vxzjfwjxgewdqvfdsxjm.supabase.co';
 const SB_KEY = 'sb_publishable_4F2YhoPujwlrJFFWcW5onQ_X6M6LKIq';
-const SB_HDR = { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` };
+const db = window.supabase.createClient(SB_URL, SB_KEY);
 
 async function load() {
   try {
-    const res = await fetch(`${SB_URL}/rest/v1/wishlist?id=eq.main&select=items`, { headers: SB_HDR });
-    if (!res.ok) throw new Error(`Supabase ${res.status}`);
-    const data = await res.json();
-    const cloud = Array.isArray(data[0]?.items) ? data[0].items : [];
+    const { data, error } = await db.from('wishlist').select('items').eq('id', 'main').single();
+    if (error) throw new Error(error.message);
+    const cloud = Array.isArray(data?.items) ? data.items : [];
     console.log('[liste] loaded from Supabase:', cloud.length, 'items');
     return cloud;
   } catch(e) {
@@ -661,12 +661,8 @@ async function load() {
 async function save(items) {
   try { localStorage.setItem('the-liste_v2', JSON.stringify(items)); } catch {}
   try {
-    const res = await fetch(`${SB_URL}/rest/v1/wishlist?id=eq.main`, {
-      method: 'PATCH',
-      headers: { ...SB_HDR, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ items })
-    });
-    if (!res.ok) throw new Error(`Supabase ${res.status}`);
+    const { error } = await db.from('wishlist').update({ items }).eq('id', 'main');
+    if (error) throw new Error(error.message);
     console.log('[liste] saved to Supabase:', items.length, 'items');
   } catch(e) {
     console.error('[liste] Supabase save failed:', e.message);
