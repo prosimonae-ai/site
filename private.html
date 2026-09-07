@@ -192,6 +192,41 @@
     padding: 60px 20px; color: var(--muted); font-size: 14px;
   }
 
+  /* Friend profile view */
+  #friend-profile {
+    display: none;
+    max-width: 1200px; margin: 0 auto;
+    padding: 48px 40px 32px;
+    text-align: center;
+    position: relative;
+  }
+  #friend-profile.visible { display: block; }
+  #fp-back {
+    position: absolute; top: 0; left: 24px;
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 500; letter-spacing: 0.06em;
+    text-transform: uppercase; display: flex; align-items: center; gap: 6px;
+    padding: 8px 0; transition: color 200ms;
+  }
+  #fp-back:hover { color: var(--text); }
+  #fp-big-avatar {
+    width: 88px; height: 88px; border-radius: 50%;
+    background: var(--surface); border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; font-weight: 700; color: var(--text);
+    overflow: hidden; margin: 0 auto 20px;
+  }
+  #fp-big-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  #fp-title {
+    font-family: 'stevie-sans', sans-serif;
+    font-size: 52px; font-weight: 600; font-style: italic;
+    letter-spacing: -0.03em; color: var(--text); opacity: 0.12;
+  }
+  @media (max-width: 600px) {
+    #friend-profile { padding: 40px 16px 24px; }
+  }
+
   /* Profile panel */
   #profile-panel {
     position: fixed; inset: 0; z-index: 900;
@@ -802,6 +837,17 @@
   <div class="v-bento" id="wish-list"></div>
 </div>
 
+<!-- FRIEND PROFILE VIEW -->
+<div id="friend-profile">
+  <button id="fp-back">
+    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 1L3 6l5 5"/></svg>
+    Retour
+  </button>
+  <div id="fp-big-avatar"></div>
+  <p id="fp-title"></p>
+  <div class="v-bento" id="fp-wish-list"></div>
+</div>
+
 <!-- MODAL -->
 <div class="modal-backdrop" id="modal">
   <div class="modal">
@@ -1064,8 +1110,19 @@ function render() { renderNav(); renderList(); }
 let currentView = 'mine'; // 'mine' | 'friends'
 let feedFriendFilter = null; // null = tous, sinon userId
 
+function showMainView() {
+  document.getElementById('the-liste').style.display = '';
+  document.getElementById('friend-profile').classList.remove('visible');
+}
+
+document.getElementById('fp-back').addEventListener('click', () => {
+  showMainView();
+  document.getElementById('tab-friends').click();
+});
+
 document.getElementById('tab-mine').addEventListener('click', () => {
   currentView = 'mine'; feedFriendFilter = null;
+  showMainView();
   document.getElementById('tab-mine').classList.add('active');
   document.getElementById('tab-friends').classList.remove('active');
   document.getElementById('add-btn').style.display = '';
@@ -1081,6 +1138,50 @@ document.getElementById('tab-friends').addEventListener('click', () => {
   document.getElementById('cat-nav').style.display = 'none';
   renderFeed();
 });
+
+async function openFriendView(u) {
+  document.getElementById('the-liste').style.display = 'none';
+  const fp = document.getElementById('friend-profile');
+  fp.classList.add('visible');
+
+  const bigAv = document.getElementById('fp-big-avatar');
+  bigAv.innerHTML = u.avatar ? `<img src="${u.avatar}" alt="">` : initials(u.name);
+  document.getElementById('fp-title').textContent = `The Liste · ${u.name}`;
+
+  const fpList = document.getElementById('fp-wish-list');
+  fpList.innerHTML = '<div class="feed-empty">Chargement…</div>';
+
+  const { data } = await db.from('wishlist').select('items').eq('id', u.id).single();
+  const userItems = Array.isArray(data?.items) ? data.items : [];
+  fpList.innerHTML = '';
+
+  if (userItems.length === 0) {
+    fpList.innerHTML = '<div class="feed-empty">Pas encore d\'items.</div>';
+    return;
+  }
+  userItems.forEach((item, index) => {
+    const card = document.createElement('div');
+    card.className = 'wish-card';
+    card.innerHTML = `
+      ${item.img ? `<div class="card-bg" style="background-image:url('${item.img}')"></div>` : ''}
+      <div class="card-body">
+        <div class="card-top"><div class="card-tags">
+          ${item.cat  ? `<span class="cat-tag">${item.cat}</span>` : ''}
+          ${item.pick ? `<span class="pick-tag">★</span>` : ''}
+        </div></div>
+        <div class="card-bottom">
+          ${item.brand ? `<p class="card-brand">${item.brand}</p>` : ''}
+          <p class="card-name">${item.name}</p>
+          <div class="card-footer">
+            <span class="card-price ${item.price ? '' : 'unknown'}">${item.price || '—'}</span>
+            ${item.url ? `<a class="card-link" href="${item.url}" target="_blank" rel="noopener">Voir <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 10L10 2M4.5 2H10v5.5"/></svg></a>` : ''}
+          </div>
+        </div>
+      </div>`;
+    card.style.animationDelay = `${index * 80}ms`;
+    fpList.appendChild(card);
+  });
+}
 
 async function renderFeed(filterUserId = feedFriendFilter) {
   feedFriendFilter = filterUserId;
@@ -1497,16 +1598,12 @@ async function loadFriends() {
         { label: 'Retirer', cls: 'remove', onClick: () => removeFriend(u.id) }
       ]);
       row.style.cursor = 'pointer';
-      row.querySelector('.friend-name').addEventListener('click', () => {
+      const openFriendProfile = () => {
         closeProfile();
-        document.getElementById('tab-friends').click();
-        renderFeed(u.id);
-      });
-      row.querySelector('.friend-avatar').addEventListener('click', () => {
-        closeProfile();
-        document.getElementById('tab-friends').click();
-        renderFeed(u.id);
-      });
+        openFriendView(u);
+      };
+      row.querySelector('.friend-name').addEventListener('click', openFriendProfile);
+      row.querySelector('.friend-avatar').addEventListener('click', openFriendProfile);
       friendsList.appendChild(row);
     });
   }
