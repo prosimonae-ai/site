@@ -1071,15 +1071,15 @@ modal.addEventListener('click', e => { if (e.target === modal) modal.classList.r
 
 document.getElementById('modal-confirm').addEventListener('click', async () => {
   const url  = document.getElementById('f-url').value.trim();
-  const name = fetched.name || document.getElementById('f-name').value.trim();
+  const name = document.getElementById('f-name').value.trim() || fetched.name;
   if (!name) { document.getElementById('f-name').focus(); return; }
 
-  const rawPrice = (fetched.price || document.getElementById('f-price').value.trim()).replace(/\s*[€$£¥].*$/, '').trim();
+  const rawPrice = (document.getElementById('f-price').value.trim() || fetched.price || '').replace(/\s*[€$£¥].*$/, '').trim();
   const price = rawPrice ? rawPrice + ' €' : '';
 
   const updated = {
     name,
-    brand: fetched.brand || document.getElementById('f-brand').value.trim(),
+    brand: document.getElementById('f-brand').value.trim() || fetched.brand,
     price,
     cat:   document.getElementById('f-cat').value.trim(),
     img:   document.getElementById('f-img').value.trim() || fetched.img,
