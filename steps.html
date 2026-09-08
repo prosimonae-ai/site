@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>万歩</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,400;1,500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --bg:      #f2ede6;
+  --ink:     #1a1714;
+  --ink-2:   #7a7570;
+  --ink-3:   #d4cfc8;
+  --red:     #c13535;
+  --red-dim: #e8d8d0;
+  --white:   #faf8f4;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+html, body {
+  width:100%; min-height:100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'DM Mono', 'Courier New', monospace;
+  overscroll-behavior: none;
+}
+
+/* ── LAYOUT ──────────────────────────────────────────────────────────── */
+.page {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 0 28px env(safe-area-inset-bottom, 28px);
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+}
+
+/* ── HEADER ──────────────────────────────────────────────────────────── */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: calc(env(safe-area-inset-top, 16px) + 16px);
+  padding-bottom: 8px;
+}
+
+.date-label {
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.rank-badge {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: .08em;
+  color: var(--red);
+  border: 1px solid var(--red-dim);
+  border-radius: 20px;
+  padding: 3px 10px;
+  transition: all .3s;
+}
+
+/* ── RING ─────────────────────────────────────────────────────────────── */
+.ring-wrap {
+  flex: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 0 24px;
+}
+
+.ring-svg {
+  width: 260px;
+  height: 260px;
+  overflow: visible;
+}
+
+.ring-bg { fill: none; stroke: var(--ink-3); stroke-width: 2; }
+.ring-fg {
+  fill: none;
+  stroke: var(--red);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  transform-origin: center;
+  transform: rotate(-90deg);
+  transition: stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1);
+}
+.ring-done .ring-fg { stroke: var(--ink); }
+
+.ring-center {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.ring-wrap { position: relative; }
+.ring-inner {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 200px;
+}
+
+.step-count {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 72px;
+  line-height: 1;
+  letter-spacing: -.02em;
+  color: var(--ink);
+  transition: color .5s;
+}
+.ring-done .step-count { color: var(--red); }
+
+.step-unit {
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-top: 4px;
+}
+
+.step-pct {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink-2);
+  margin-top: 2px;
+}
+
+/* ── MESSAGE ─────────────────────────────────────────────────────────── */
+.message {
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 16px;
+  color: var(--ink-2);
+  line-height: 1.55;
+  padding: 0 8px 32px;
+  min-height: 52px;
+  transition: opacity .4s;
+}
+
+/* ── DIVIDER ─────────────────────────────────────────────────────────── */
+.divider {
+  width: 40px;
+  height: 1px;
+  background: var(--ink-3);
+  margin: 0 auto 28px;
+}
+
+/* ── STATS ROW ───────────────────────────────────────────────────────── */
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px;
+  background: var(--ink-3);
+  border: 1px solid var(--ink-3);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+.stat {
+  background: var(--white);
+  padding: 16px 12px;
+  text-align: center;
+}
+
+.stat-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.stat-val.streak-active { color: var(--red); }
+
+.stat-lbl {
+  font-size: 8px;
+  font-weight: 400;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-top: 5px;
+}
+
+/* ── WEEK ────────────────────────────────────────────────────────────── */
+.week-section { margin-bottom: 28px; }
+
+.section-label {
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 12px;
+}
+
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.day-dot {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: var(--white);
+  border: 1px solid var(--ink-3);
+  transition: all .4s;
+}
+.day-dot.done { background: var(--ink); border-color: var(--ink); }
+.day-dot.today { border-color: var(--red); }
+.day-dot.today .day-d { color: var(--red); }
+
+.day-d {
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.day-dot.done .day-d { color: var(--white); opacity: .5; }
+
+.day-bar {
+  width: 70%;
+  height: 3px;
+  background: var(--ink-3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.day-bar-fill {
+  height: 100%;
+  background: var(--ink-2);
+  border-radius: 2px;
+  transition: width .6s ease;
+}
+.day-dot.done .day-bar-fill { background: rgba(255,255,255,.3); width: 100% !important; }
+
+/* ── ACHIEVEMENTS ────────────────────────────────────────────────────── */
+.ach-section { margin-bottom: 32px; }
+
+.ach-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ach {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--white);
+  border: 1px solid var(--ink-3);
+  border-radius: 3px;
+  opacity: .35;
+  transition: opacity .4s;
+}
+.ach.unlocked { opacity: 1; }
+.ach.unlocked .ach-icon { color: var(--red); }
+
+.ach-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  color: var(--ink-3);
+}
+.ach-body {}
+.ach-name {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--ink);
+  letter-spacing: .04em;
+}
+.ach-desc {
+  font-size: 9px;
+  font-weight: 300;
+  color: var(--ink-2);
+  margin-top: 2px;
+}
+
+/* ── FOOTER ──────────────────────────────────────────────────────────── */
+footer {
+  margin-top: auto;
+  padding: 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sync-info {
+  font-size: 9px;
+  font-weight: 300;
+  color: var(--ink-3);
+  letter-spacing: .05em;
+}
+
+.setup-btn {
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  background: none;
+  border: 1px solid var(--ink-3);
+  border-radius: 2px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  transition: all .2s;
+}
+.setup-btn:hover { border-color: var(--ink-2); color: var(--ink); }
+
+/* ── SETUP MODAL ─────────────────────────────────────────────────────── */
+.modal-bg {
+  position: fixed; inset: 0;
+  background: rgba(26,23,20,.6);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s;
+}
+.modal-bg.open { opacity: 1; pointer-events: all; }
+
+.modal {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  background: var(--white);
+  border-radius: 12px 12px 0 0;
+  padding: 28px 28px calc(28px + env(safe-area-inset-bottom, 0px));
+  transform: translateY(20px);
+  transition: transform .3s;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.modal-bg.open .modal { transform: translateY(0); }
+
+.modal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 22px;
+  font-weight: 300;
+  margin-bottom: 20px;
+  color: var(--ink);
+}
+
+.modal-step {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.modal-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.modal-body {}
+.modal-step-title {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 3px;
+}
+.modal-step-desc {
+  font-size: 10px;
+  font-weight: 300;
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+.code-block {
+  background: #ede9e2;
+  border-radius: 3px;
+  padding: 10px 12px;
+  margin-top: 8px;
+  font-size: 9px;
+  line-height: 1.6;
+  color: var(--ink);
+  word-break: break-all;
+}
+.code-block strong { color: var(--red); font-weight: 400; }
+
+.close-btn {
+  width: 100%;
+  margin-top: 24px;
+  padding: 12px;
+  background: var(--ink);
+  color: var(--white);
+  border: none;
+  border-radius: 3px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+/* ── CELEBRATION ─────────────────────────────────────────────────────── */
+.confetti-wrap {
+  position: fixed; inset: 0; pointer-events: none; z-index: 200; overflow: hidden;
+}
+.confetti-piece {
+  position: absolute;
+  width: 6px; height: 6px;
+  border-radius: 1px;
+  animation: fall linear forwards;
+}
+@keyframes fall {
+  0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* ── DARK THEME ──────────────────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:      #111009;
+    --ink:     #e8e2d8;
+    --ink-2:   #7a7268;
+    --ink-3:   #2a2824;
+    --red:     #d04040;
+    --red-dim: #3a2020;
+    --white:   #181612;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:      #111009;
+  --ink:     #e8e2d8;
+  --ink-2:   #7a7268;
+  --ink-3:   #2a2824;
+  --red:     #d04040;
+  --red-dim: #3a2020;
+  --white:   #181612;
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <header>
+    <span class="date-label" id="date-lbl">—</span>
+    <span class="rank-badge" id="rank-badge">—</span>
+  </header>
+
+  <div class="ring-wrap" id="ring-wrap">
+    <svg class="ring-svg" viewBox="0 0 260 260">
+      <circle class="ring-bg" cx="130" cy="130" r="110"/>
+      <circle class="ring-fg" cx="130" cy="130" r="110"
+        id="ring" stroke-dasharray="691" stroke-dashoffset="691"/>
+    </svg>
+    <div class="ring-inner">
+      <div class="step-count" id="step-count">0</div>
+      <div class="step-unit">pas</div>
+      <div class="step-pct" id="step-pct">0 %</div>
+    </div>
+  </div>
+
+  <p class="message" id="msg">Une longue marche commence par un seul pas.</p>
+
+  <div class="divider"></div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-val" id="stat-streak">0</div>
+      <div class="stat-lbl">Série 🔥</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-avg">—</div>
+      <div class="stat-lbl">Moy. 7j</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-best">—</div>
+      <div class="stat-lbl">Record</div>
+    </div>
+  </div>
+
+  <div class="week-section">
+    <div class="section-label">7 derniers jours</div>
+    <div class="week-grid" id="week-grid"></div>
+  </div>
+
+  <div class="ach-section">
+    <div class="section-label">Accomplissements</div>
+    <div class="ach-list" id="ach-list"></div>
+  </div>
+
+  <footer>
+    <span class="sync-info" id="sync-info">—</span>
+    <button class="setup-btn" onclick="openSetup()">⚙ Raccourci</button>
+  </footer>
+</div>
+
+<!-- SETUP MODAL -->
+<div class="modal-bg" id="modal-bg" onclick="e => {if(e.target===this)closeSetup()}">
+  <div class="modal">
+    <div class="modal-title">Configurer le raccourci</div>
+
+    <div class="modal-step">
+      <div class="modal-num">1</div>
+      <div class="modal-body">
+        <div class="modal-step-title">Créer la table Supabase</div>
+        <div class="modal-step-desc">Dans ton tableau de bord Supabase → SQL Editor, colle et execute :</div>
+        <div class="code-block">CREATE TABLE steps_log (<br>
+  date text PRIMARY KEY,<br>
+  steps integer DEFAULT 0,<br>
+  updated_at timestamptz DEFAULT now()<br>
+);<br>
+ALTER TABLE steps_log DISABLE ROW LEVEL SECURITY;<br>
+GRANT ALL ON TABLE steps_log TO anon;</div>
+      </div>
+    </div>
+
+    <div class="modal-step">
+      <div class="modal-num">2</div>
+      <div class="modal-body">
+        <div class="modal-step-title">Créer le Raccourci iPhone</div>
+        <div class="modal-step-desc">Dans l'app Raccourcis → Nouveau raccourci :<br><br>
+        1. Ajoute <strong>« Obtenir mes pas »</strong> (dans Santé)<br>
+        2. Ajoute <strong>« Récupérer le contenu d'une URL »</strong> avec :<br>
+        </div>
+        <div class="code-block">
+URL : <strong>https://vxzjfwjxgewdqvfdsxjm.supabase.co/rest/v1/steps_log</strong><br><br>
+Méthode : <strong>POST</strong><br><br>
+En-têtes :<br>
+apikey → <strong>[ta clé anon]</strong><br>
+Content-Type → application/json<br>
+Prefer → resolution=merge-duplicates<br><br>
+Corps (JSON) :<br>
+{<br>
+  "date": "<strong>[Variable : Date actuelle, format YYYY-MM-DD]</strong>",<br>
+  "steps": <strong>[Variable : Résultat des pas]</strong>,<br>
+  "updated_at": "<strong>[Variable : Date actuelle, format ISO8601]</strong>"<br>
+}
+        </div>
+        <div class="modal-step-desc" style="margin-top:8px">3. Ajoute <strong>« Ouvrir les URL »</strong> → <strong id="site-url-modal">ce site</strong></div>
+      </div>
+    </div>
+
+    <div class="modal-step">
+      <div class="modal-num">3</div>
+      <div class="modal-body">
+        <div class="modal-step-title">Ajouter à l'écran d'accueil</div>
+        <div class="modal-step-desc">Dans le raccourci → ··· → « Ajouter à l'écran d'accueil ». Dès que tu appuies dessus, tes pas s'envoient et le site s'ouvre à jour.</div>
+      </div>
+    </div>
+
+    <div class="modal-step">
+      <div class="modal-num">4</div>
+      <div class="modal-body">
+        <div class="modal-step-title">Automatisation (optionnel)</div>
+        <div class="modal-step-desc">Raccourcis → Automatisation → + → Heure → toutes les heures → même raccourci sans ouvrir le site. Données toujours à jour en fond.</div>
+      </div>
+    </div>
+
+    <button class="close-btn" onclick="closeSetup()">Compris</button>
+  </div>
+</div>
+
+<!-- CONFETTI -->
+<div class="confetti-wrap" id="confetti-wrap"></div>
+
+<script>
+const SB_URL = 'https://vxzjfwjxgewdqvfdsxjm.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4empmd2p4Z2V3ZHF2ZmRzeGptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4MTM1MDcsImV4cCI6MjEwNDM4OTUwN30.IuIcPXXrVozPDDreB-hkY1didQoboV0pEuH8-8GaWLo';
+const GOAL = 10000;
+
+const { createClient } = supabase;
+const db = createClient(SB_URL, SB_KEY);
+
+// ── Achievements ──────────────────────────────────────────────────────
+const ACHIEVEMENTS = [
+  { id:'first', icon:'⛩', name:'Premier pas', desc:'Atteindre 10 000 pas pour la première fois', check:(d)=>d.totalDays>=1 },
+  { id:'streak3', icon:'🌿', name:'3 jours', desc:'3 jours consécutifs à 10 000 pas', check:(d)=>d.streak>=3 },
+  { id:'streak7', icon:'🌸', name:'Semaine complète', desc:'7 jours consécutifs à 10 000 pas', check:(d)=>d.streak>=7 },
+  { id:'streak30', icon:'⛰', name:'Un mois', desc:'30 jours consécutifs à 10 000 pas', check:(d)=>d.streak>=30 },
+  { id:'best15k', icon:'🏮', name:'15 000', desc:'Dépasser 15 000 pas en un jour', check:(d)=>d.best>=15000 },
+  { id:'total100k', icon:'🗻', name:'100 000 pas', desc:'100 000 pas au total', check:(d)=>d.total>=100000 },
+];
+
+// ── State ─────────────────────────────────────────────────────────────
+let currentSteps = 0;
+let displayedSteps = 0;
+let animFrame = null;
+let lastData = {};
+let confettiFired = false;
+
+// ── Helpers ───────────────────────────────────────────────────────────
+function today() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function fmtDate() {
+  return new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long' });
+}
+
+function fmtK(n) {
+  if (!n || n === 0) return '—';
+  return n >= 1000 ? (n/1000).toFixed(1).replace('.0','') + 'k' : String(n);
+}
+
+const MESSAGES = [
+  [0,     1999,  'Une longue marche commence par un seul pas.'],
+  [2000,  3999,  'Le mouvement est là. Continue.'],
+  [4000,  5999,  'À mi-chemin. L\'élan est le tien.'],
+  [6000,  7999,  'Plus que quelques milliers. Tu y es presque.'],
+  [8000,  9499,  'Si près du but. Chaque pas compte maintenant.'],
+  [9500,  9999,  'Encore quelques pas… c\'est pour bientôt.'],
+  [10000, Infinity, 'Objectif atteint. 万歩。'],
+];
+
+function getMessage(n) {
+  const r = MESSAGES.find(([a,b]) => n >= a && n <= b);
+  return r ? r[2] : '';
+}
+
+const RANKS = [
+  [0,  '初心者'],
+  [1,  'En marche'],
+  [3,  'Marcheur'],
+  [7,  'Explorateur'],
+  [14, 'Maître'],
+  [30, 'Légende'],
+];
+
+function getRank(streak) {
+  let rank = RANKS[0][1];
+  for (const [s, r] of RANKS) { if (streak >= s) rank = r; }
+  return rank;
+}
+
+// ── Ring animation ─────────────────────────────────────────────────────
+const CIRCUMFERENCE = 691; // 2π × 110
+
+function setRing(steps) {
+  const pct = Math.min(steps / GOAL, 1);
+  const offset = CIRCUMFERENCE * (1 - pct);
+  document.getElementById('ring').style.strokeDashoffset = offset;
+  document.getElementById('step-pct').textContent = Math.round(pct * 100) + ' %';
+  document.getElementById('ring-wrap').classList.toggle('ring-done', steps >= GOAL);
+}
+
+function animateCount(target) {
+  if (animFrame) cancelAnimationFrame(animFrame);
+  const start = displayedSteps;
+  const diff = target - start;
+  const dur = Math.min(Math.abs(diff) * 0.04, 1200);
+  const t0 = performance.now();
+  function frame(t) {
+    const prog = Math.min((t - t0) / dur, 1);
+    const ease = 1 - Math.pow(1 - prog, 3);
+    displayedSteps = Math.round(start + diff * ease);
+    document.getElementById('step-count').textContent = displayedSteps.toLocaleString('fr-FR');
+    setRing(displayedSteps);
+    if (prog < 1) animFrame = requestAnimationFrame(frame);
+    else { displayedSteps = target; document.getElementById('step-count').textContent = target.toLocaleString('fr-FR'); }
+  }
+  if (Math.abs(diff) < 1) {
+    document.getElementById('step-count').textContent = target.toLocaleString('fr-FR');
+    setRing(target);
+    return;
+  }
+  animFrame = requestAnimationFrame(frame);
+}
+
+// ── Confetti ──────────────────────────────────────────────────────────
+function fireConfetti() {
+  if (confettiFired) return;
+  confettiFired = true;
+  const wrap = document.getElementById('confetti-wrap');
+  const colors = ['#c13535','#1a1714','#c4a882','#8ab4c8','#c4b49a'];
+  for (let i = 0; i < 60; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = `
+      left:${Math.random()*100}%;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration:${1.5+Math.random()*2}s;
+      animation-delay:${Math.random()*.8}s;
+      width:${4+Math.random()*6}px;
+      height:${4+Math.random()*6}px;
+      border-radius:${Math.random()>0.5?'50%':'1px'};
+    `;
+    wrap.appendChild(el);
+  }
+  setTimeout(() => { wrap.innerHTML = ''; confettiFired = false; }, 4000);
+}
+
+// ── Week grid ─────────────────────────────────────────────────────────
+function renderWeek(rows) {
+  const grid = document.getElementById('week-grid');
+  grid.innerHTML = '';
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    days.push(d.toISOString().slice(0,10));
+  }
+  days.forEach(date => {
+    const row = rows.find(r => r.date === date);
+    const steps = row ? row.steps : 0;
+    const done = steps >= GOAL;
+    const isToday = date === today();
+    const pct = Math.min(steps / GOAL, 1);
+    const dayNum = new Date(date+'T12:00:00').getDate();
+    const el = document.createElement('div');
+    el.className = 'day-dot' + (done?' done':'') + (isToday?' today':'');
+    el.innerHTML = `<div class="day-d">${dayNum}</div>
+      <div class="day-bar"><div class="day-bar-fill" style="width:${pct*100}%"></div></div>`;
+    el.title = `${steps.toLocaleString('fr-FR')} pas`;
+    grid.appendChild(el);
+  });
+}
+
+// ── Achievements ──────────────────────────────────────────────────────
+function renderAchievements(data) {
+  const list = document.getElementById('ach-list');
+  list.innerHTML = '';
+  ACHIEVEMENTS.forEach(a => {
+    const unlocked = a.check(data);
+    const el = document.createElement('div');
+    el.className = 'ach' + (unlocked ? ' unlocked' : '');
+    el.innerHTML = `<div class="ach-icon">${a.icon}</div>
+      <div class="ach-body">
+        <div class="ach-name">${a.name}</div>
+        <div class="ach-desc">${a.desc}</div>
+      </div>`;
+    list.appendChild(el);
+  });
+}
+
+// ── Streak calc ───────────────────────────────────────────────────────
+function calcStreak(rows) {
+  let streak = 0;
+  const d = new Date();
+  // check today first, if no entry yet don't break streak
+  const todayRow = rows.find(r => r.date === today());
+  let startOffset = (todayRow && todayRow.steps >= GOAL) ? 0 : 1;
+  for (let i = startOffset; i < 365; i++) {
+    const check = new Date(d);
+    check.setDate(d.getDate() - i);
+    const dateStr = check.toISOString().slice(0,10);
+    const row = rows.find(r => r.date === dateStr);
+    if (row && row.steps >= GOAL) streak++;
+    else break;
+  }
+  if (todayRow && todayRow.steps >= GOAL) streak++;
+  return streak;
+}
+
+// ── Main render ───────────────────────────────────────────────────────
+function render(rows) {
+  const todayRow = rows.find(r => r.date === today());
+  const steps = todayRow ? todayRow.steps : 0;
+
+  // Update count
+  if (steps !== currentSteps) {
+    if (steps >= GOAL && currentSteps < GOAL) fireConfetti();
+    currentSteps = steps;
+    animateCount(steps);
+  }
+
+  // Message
+  document.getElementById('msg').textContent = getMessage(steps);
+
+  // Streak
+  const streak = calcStreak(rows);
+  const streakEl = document.getElementById('stat-streak');
+  streakEl.textContent = streak;
+  streakEl.className = 'stat-val' + (streak > 0 ? ' streak-active' : '');
+
+  // Average 7d
+  const last7 = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const row = rows.find(r => r.date === d.toISOString().slice(0,10));
+    if (row) last7.push(row.steps);
+  }
+  const avg = last7.length ? Math.round(last7.reduce((a,b)=>a+b,0)/last7.length) : 0;
+  document.getElementById('stat-avg').textContent = avg > 0 ? fmtK(avg) : '—';
+
+  // Best
+  const best = rows.length ? Math.max(...rows.map(r=>r.steps)) : 0;
+  document.getElementById('stat-best').textContent = best > 0 ? fmtK(best) : '—';
+
+  // Rank
+  document.getElementById('rank-badge').textContent = getRank(streak);
+
+  // Week
+  renderWeek(rows);
+
+  // Achievements
+  const total = rows.reduce((acc,r) => acc+r.steps, 0);
+  const totalDays = rows.filter(r => r.steps >= GOAL).length;
+  renderAchievements({ streak, best, total, totalDays });
+
+  // Sync time
+  if (todayRow?.updated_at) {
+    const mins = Math.floor((Date.now() - new Date(todayRow.updated_at)) / 60000);
+    document.getElementById('sync-info').textContent =
+      mins < 1 ? 'Mis à jour à l\'instant' :
+      mins < 60 ? `Mis à jour il y a ${mins} min` :
+      `Mis à jour il y a ${Math.floor(mins/60)}h`;
+  } else {
+    document.getElementById('sync-info').textContent = 'Aucune donnée aujourd\'hui';
+  }
+
+  lastData = { rows, steps, streak };
+}
+
+// ── Supabase ──────────────────────────────────────────────────────────
+async function fetchSteps() {
+  const { data, error } = await db
+    .from('steps_log')
+    .select('*')
+    .order('date', { ascending: false })
+    .limit(90);
+  if (error) { console.error(error); return; }
+  render(data || []);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────
+document.getElementById('date-lbl').textContent = fmtDate();
+document.getElementById('site-url-modal').textContent = window.location.href;
+
+// Initial load
+fetchSteps();
+
+// Poll every 30s
+setInterval(fetchSteps, 30000);
+
+// Supabase realtime subscription
+try {
+  db.channel('steps-realtime')
+    .on('postgres_changes', { event:'*', schema:'public', table:'steps_log' }, () => fetchSteps())
+    .subscribe();
+} catch(e) {}
+
+// ── Modal ─────────────────────────────────────────────────────────────
+function openSetup() { document.getElementById('modal-bg').classList.add('open'); }
+function closeSetup() { document.getElementById('modal-bg').classList.remove('open'); }
+document.getElementById('modal-bg').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeSetup();
+});
+</script>
+</body>
+</html>
