@@ -621,7 +621,7 @@ function today() {
 }
 
 function normDate(d) {
-  return d ? String(d).slice(0, 10) : '';
+  return d ? String(d).trim().slice(0, 10) : '';
 }
 
 function fmtDate() {
