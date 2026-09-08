@@ -619,6 +619,10 @@ function today() {
   return new Date().toISOString().slice(0, 10);
 }
 
+function normDate(d) {
+  return d ? String(d).slice(0, 10) : '';
+}
+
 function fmtDate() {
   return new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long' });
 }
@@ -726,7 +730,7 @@ function renderWeek(rows) {
     days.push(d.toISOString().slice(0,10));
   }
   days.forEach(date => {
-    const row = rows.find(r => r.date === date);
+    const row = rows.find(r => normDate(r.date) === date);
     const steps = row ? row.steps : 0;
     const done = steps >= GOAL;
     const isToday = date === today();
@@ -763,13 +767,13 @@ function calcStreak(rows) {
   let streak = 0;
   const d = new Date();
   // check today first, if no entry yet don't break streak
-  const todayRow = rows.find(r => r.date === today());
+  const todayRow = rows.find(r => normDate(r.date) === today());
   let startOffset = (todayRow && todayRow.steps >= GOAL) ? 0 : 1;
   for (let i = startOffset; i < 365; i++) {
     const check = new Date(d);
     check.setDate(d.getDate() - i);
     const dateStr = check.toISOString().slice(0,10);
-    const row = rows.find(r => r.date === dateStr);
+    const row = rows.find(r => normDate(r.date) === dateStr);
     if (row && row.steps >= GOAL) streak++;
     else break;
   }
@@ -779,7 +783,7 @@ function calcStreak(rows) {
 
 // ── Main render ───────────────────────────────────────────────────────
 function render(rows) {
-  const todayRow = rows.find(r => r.date === today());
+  const todayRow = rows.find(r => normDate(r.date) === today());
   const steps = todayRow ? todayRow.steps : 0;
 
   // Update count
@@ -802,7 +806,7 @@ function render(rows) {
   const last7 = [];
   for (let i = 0; i < 7; i++) {
     const d = new Date(); d.setDate(d.getDate()-i);
-    const row = rows.find(r => r.date === d.toISOString().slice(0,10));
+    const row = rows.find(r => normDate(r.date) === d.toISOString().slice(0,10));
     if (row) last7.push(row.steps);
   }
   const avg = last7.length ? Math.round(last7.reduce((a,b)=>a+b,0)/last7.length) : 0;
