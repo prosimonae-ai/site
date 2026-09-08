@@ -1422,38 +1422,57 @@ function resetModal() {
 
 const IMGBB_KEY = 'acd76d70271edca10c6673ab9e3684b4';
 
+let bgRemovalLib = null;
+async function loadBgRemoval() {
+  if (bgRemovalLib) return bgRemovalLib;
+  const mod = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/bundle.browser.esm.js');
+  bgRemovalLib = mod.removeBackground;
+  return bgRemovalLib;
+}
+
+async function uploadToImgBB(blob, filename = 'image.png') {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async ev => {
+      try {
+        const base64 = ev.target.result.split(',')[1];
+        const form = new FormData();
+        form.append('key', IMGBB_KEY);
+        form.append('image', base64);
+        const res  = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: form });
+        const data = await res.json();
+        if (data.success) resolve(data.data.url);
+        else reject(new Error('imgbb failed'));
+      } catch(e) { reject(e); }
+    };
+    reader.readAsDataURL(blob instanceof File ? blob : new File([blob], filename));
+  });
+}
+
 document.getElementById('img-file-input').addEventListener('change', async e => {
   const file = e.target.files[0];
   if (!file) return;
   const hint = document.getElementById('img-upload-hint');
   hint.className = 'img-upload-hint';
-  hint.textContent = 'Upload en cours…';
 
-  const reader = new FileReader();
-  reader.onload = async ev => {
-    const base64 = ev.target.result.split(',')[1];
-    try {
-      const form = new FormData();
-      form.append('key', IMGBB_KEY);
-      form.append('image', base64);
-      const res  = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: form });
-      const data = await res.json();
-      if (data.success) {
-        const url = data.data.url;
-        document.getElementById('f-img').value = url;
-        // Met à jour la preview si elle est visible
-        if (document.getElementById('fetch-preview').classList.contains('show')) {
-          document.getElementById('fp-img').style.backgroundImage = `url('${url}')`;
-        }
-        hint.className = 'img-upload-hint ok';
-        hint.textContent = '✓ Image uploadée';
-      } else throw new Error();
-    } catch {
-      hint.className = 'img-upload-hint err';
-      hint.textContent = 'Échec de l\'upload — réessaie';
+  try {
+    hint.textContent = '⏳ Suppression du fond…';
+    const removeBg = await loadBgRemoval();
+    const cleanBlob = await removeBg(file, {
+      publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/'
+    });
+    hint.textContent = '⬆️ Upload en cours…';
+    const url = await uploadToImgBB(cleanBlob, 'product.png');
+    document.getElementById('f-img').value = url;
+    if (document.getElementById('fetch-preview').classList.contains('show')) {
+      document.getElementById('fp-img').style.backgroundImage = `url('${url}')`;
     }
-  };
-  reader.readAsDataURL(file);
+    hint.className = 'img-upload-hint ok';
+    hint.textContent = '✓ Image sans fond uploadée';
+  } catch {
+    hint.className = 'img-upload-hint err';
+    hint.textContent = 'Échec — réessaie';
+  }
 });
 
 function buildCatPicker(selectedCat) {
