@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>万歩</title>
+<title>万歩計</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,400;1,500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -13,7 +13,7 @@
   --ink:     #1a1714;
   --ink-2:   #7a7570;
   --ink-3:   #d4cfc8;
-  --red:     #b03080;
+  --red:     #c13535;
   --red-dim: #e8d8d0;
   --white:   #faf8f4;
 }
@@ -844,13 +844,22 @@ function render(rows) {
 
 // ── Supabase ──────────────────────────────────────────────────────────
 async function fetchSteps() {
-  const { data, error } = await db
-    .from('steps_log')
-    .select('*')
-    .order('date', { ascending: false })
-    .limit(90);
+  const t = today();
+  const [{ data: allData, error }, { data: todayData }] = await Promise.all([
+    db.from('steps_log').select('*').order('date', { ascending: false }).limit(90),
+    db.from('steps_log').select('*').gte('date', t).lte('date', t + 'z')
+  ]);
   if (error) { console.error(error); return; }
-  render(data || []);
+  const rows = allData || [];
+  // inject today row from direct query if client-side match fails
+  const todayFromServer = todayData && todayData[0];
+  if (todayFromServer && !rows.find(r => normDate(r.date) === t)) {
+    rows.unshift({ ...todayFromServer, date: t });
+  } else if (todayFromServer) {
+    const idx = rows.findIndex(r => normDate(r.date) === t);
+    if (idx >= 0) rows[idx] = { ...rows[idx], steps: todayFromServer.steps };
+  }
+  render(rows);
 }
 
 // ── Init ──────────────────────────────────────────────────────────────
