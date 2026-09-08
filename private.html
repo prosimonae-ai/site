@@ -767,6 +767,22 @@
   .img-upload-hint { font-size: 10px; color: var(--muted); margin-top: 4px; min-height: 14px; }
   .img-upload-hint.ok  { color: var(--pick); }
   .img-upload-hint.err { color: #c0392b; }
+  #img-crop-wrap { margin-top: 14px; }
+  #img-crop-preview {
+    width: 100%; aspect-ratio: 1; max-width: 240px;
+    margin: 0 auto; border-radius: 14px; overflow: hidden;
+    background: var(--surface) no-repeat center/100%;
+    cursor: grab; user-select: none;
+    border: 1px solid var(--border);
+    touch-action: none;
+  }
+  #img-crop-preview:active { cursor: grabbing; }
+  .crop-controls {
+    display: flex; align-items: center; gap: 8px; margin-top: 10px;
+  }
+  #img-zoom-slider { flex: 1; accent-color: var(--text); }
+  #img-zoom-val { font-size: 11px; color: var(--muted); min-width: 36px; text-align: right; }
+  .crop-hint { font-size: 11px; color: var(--muted); text-align: center; margin-top: 6px; }
 
   .fallback-banner {
     background: #fef8ec;
@@ -920,6 +936,16 @@
           </label>
         </div>
         <p class="img-upload-hint" id="img-upload-hint"></p>
+        <div id="img-crop-wrap" hidden>
+          <div id="img-crop-preview"></div>
+          <div class="crop-controls">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" style="width:12px;flex-shrink:0;opacity:.4"><circle cx="6" cy="6" r="4"/></svg>
+            <input type="range" id="img-zoom-slider" min="50" max="300" value="100" step="5">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;flex-shrink:0;opacity:.4"><circle cx="6" cy="6" r="5"/></svg>
+            <span id="img-zoom-val">100%</span>
+          </div>
+          <p class="crop-hint">Glisse pour recadrer</p>
+        </div>
       </div>
     </div>
 
@@ -1090,7 +1116,7 @@ function renderList() {
     const card = document.createElement('div');
     card.className = 'wish-card';
     card.innerHTML = `
-      ${item.img ? `<div class="card-bg" style="background-image:url('${item.img}')"></div>` : ''}
+      ${item.img ? `<div class="card-bg" style="background-image:url('${item.img}');background-size:${item.imgSize || 100}%;background-position:calc(50% + ${item.imgX || 0}px) calc(50% + ${item.imgY || 0}px)"></div>` : ''}
       <div class="card-body">
         <div class="card-top">
           <div class="card-tags">
@@ -1393,6 +1419,7 @@ async function fetchProductMeta(rawUrl) {
   fpPreview.classList.add('show');
   urlHint.className = 'url-hint ok';
   urlHint.textContent = '✓ Infos récupérées automatiquement';
+  showCropTool(meta.img);
 }
 
 document.getElementById('f-url').addEventListener('input', e => {
@@ -1407,6 +1434,10 @@ document.getElementById('f-url').addEventListener('input', e => {
 
 function resetModal() {
   ['f-url','f-cat','f-name','f-brand','f-price','f-img'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  cropX = 0; cropY = 0; cropSize = 100;
+  document.getElementById('img-zoom-slider').value = 100;
+  document.getElementById('img-zoom-val').textContent = '100%';
+  document.getElementById('img-crop-wrap').hidden = true;
   fetched = { name:'', brand:'', price:'', img:'', url:'' };
   fpPreview.classList.remove('show');
   fpImg.style.backgroundImage = '';
@@ -1422,15 +1453,7 @@ function resetModal() {
 
 const IMGBB_KEY = 'acd76d70271edca10c6673ab9e3684b4';
 
-let bgRemovalLib = null;
-async function loadBgRemoval() {
-  if (bgRemovalLib) return bgRemovalLib;
-  const mod = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/bundle.browser.esm.js');
-  bgRemovalLib = mod.removeBackground;
-  return bgRemovalLib;
-}
-
-async function uploadToImgBB(blob, filename = 'image.png') {
+async function uploadToImgBB(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = async ev => {
@@ -1445,64 +1468,8 @@ async function uploadToImgBB(blob, filename = 'image.png') {
         else reject(new Error('imgbb failed'));
       } catch(e) { reject(e); }
     };
-    reader.readAsDataURL(blob instanceof File ? blob : new File([blob], filename));
+    reader.readAsDataURL(file);
   });
-}
-
-async function isAlreadyTransparent(blob) {
-  return new Promise(resolve => {
-    const objUrl = URL.createObjectURL(blob);
-    const img = new Image();
-    img.onload = () => {
-      try {
-        const canvas = document.createElement('canvas');
-        const size = 80;
-        canvas.width = size; canvas.height = size;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, size, size);
-        const data = ctx.getImageData(0, 0, size, size).data;
-        let transparent = 0;
-        for (let i = 3; i < data.length; i += 4) if (data[i] < 10) transparent++;
-        resolve(transparent / (data.length / 4) > 0.10);
-      } catch { resolve(false); }
-      finally { URL.revokeObjectURL(objUrl); }
-    };
-    img.onerror = () => { URL.revokeObjectURL(objUrl); resolve(false); };
-    img.src = objUrl;
-  });
-}
-
-async function fetchImageBlob(url) {
-  try {
-    const res = await fetch(url, { mode: 'cors' });
-    if (res.ok) return await res.blob();
-  } catch {}
-  try {
-    const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`);
-    if (res.ok) return await res.blob();
-  } catch {}
-  return null;
-}
-
-async function processImage(source, hintEl) {
-  let blob = typeof source === 'string' ? await fetchImageBlob(source) : source;
-  if (!blob) return typeof source === 'string' ? source : null;
-
-  const alreadyOk = await isAlreadyTransparent(blob);
-  if (alreadyOk) {
-    if (hintEl) { hintEl.textContent = '✓ Fond déjà transparent'; hintEl.className = 'img-upload-hint ok'; }
-    return await uploadToImgBB(blob, 'product.png');
-  }
-
-  if (hintEl) hintEl.textContent = '⏳ Suppression du fond…';
-  const removeBg = await loadBgRemoval();
-  const cleanBlob = await removeBg(blob, {
-    publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/'
-  });
-  if (hintEl) hintEl.textContent = '⬆️ Upload en cours…';
-  const url = await uploadToImgBB(cleanBlob, 'product.png');
-  if (hintEl) { hintEl.textContent = '✓ Image sans fond uploadée'; hintEl.className = 'img-upload-hint ok'; }
-  return url;
 }
 
 document.getElementById('img-file-input').addEventListener('change', async e => {
@@ -1510,18 +1477,72 @@ document.getElementById('img-file-input').addEventListener('change', async e => 
   if (!file) return;
   const hint = document.getElementById('img-upload-hint');
   hint.className = 'img-upload-hint';
-  hint.textContent = '⏳ Analyse…';
+  hint.textContent = '⬆️ Upload en cours…';
   try {
-    const url = await processImage(file, hint);
+    const url = await uploadToImgBB(file);
     document.getElementById('f-img').value = url;
     if (document.getElementById('fetch-preview').classList.contains('show')) {
       document.getElementById('fp-img').style.backgroundImage = `url('${url}')`;
     }
+    hint.className = 'img-upload-hint ok';
+    hint.textContent = '✓ Image uploadée';
+    showCropTool(url);
   } catch {
     hint.className = 'img-upload-hint err';
     hint.textContent = 'Échec — réessaie';
   }
 });
+
+/* ── IMAGE CROP ── */
+let cropX = 0, cropY = 0, cropSize = 100;
+let cropDragging = false, cropLastX = 0, cropLastY = 0;
+
+function showCropTool(imgUrl) {
+  if (!imgUrl) { document.getElementById('img-crop-wrap').hidden = true; return; }
+  const wrap = document.getElementById('img-crop-wrap');
+  wrap.hidden = false;
+  updateCropPreview();
+}
+
+function updateCropPreview() {
+  const imgUrl = document.getElementById('f-img').value.trim() || fetched.img;
+  const p = document.getElementById('img-crop-preview');
+  if (!imgUrl) return;
+  p.style.backgroundImage = `url('${imgUrl}')`;
+  p.style.backgroundSize = `${cropSize}%`;
+  p.style.backgroundPosition = `calc(50% + ${cropX}px) calc(50% + ${cropY}px)`;
+}
+
+const cropPreview = document.getElementById('img-crop-preview');
+
+function onCropStart(x, y) { cropDragging = true; cropLastX = x; cropLastY = y; }
+function onCropMove(x, y) {
+  if (!cropDragging) return;
+  cropX += x - cropLastX; cropY += y - cropLastY;
+  cropLastX = x; cropLastY = y;
+  updateCropPreview();
+}
+function onCropEnd() { cropDragging = false; }
+
+cropPreview.addEventListener('mousedown',  e => onCropStart(e.clientX, e.clientY));
+document.addEventListener('mousemove',     e => onCropMove(e.clientX, e.clientY));
+document.addEventListener('mouseup',       onCropEnd);
+cropPreview.addEventListener('touchstart', e => { e.preventDefault(); onCropStart(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+document.addEventListener('touchmove',     e => { if (cropDragging) { e.preventDefault(); onCropMove(e.touches[0].clientX, e.touches[0].clientY); } }, { passive: false });
+document.addEventListener('touchend',      onCropEnd);
+
+document.getElementById('img-zoom-slider').addEventListener('input', e => {
+  cropSize = +e.target.value;
+  document.getElementById('img-zoom-val').textContent = cropSize + '%';
+  updateCropPreview();
+});
+
+// Affiche le crop dès qu'une image est disponible (fetch auto ou upload)
+function checkShowCrop() {
+  const url = document.getElementById('f-img').value.trim() || fetched.img;
+  showCropTool(url);
+}
+document.getElementById('f-img').addEventListener('input', checkShowCrop);
 
 function buildCatPicker(selectedCat) {
   const picker = document.getElementById('cat-picker');
@@ -1580,6 +1601,10 @@ function openEdit(item) {
   document.getElementById('f-brand').value = item.brand || '';
   document.getElementById('f-price').value = (item.price || '').replace(/\s*€.*$/, '').trim();
   document.getElementById('f-img').value = item.img || '';
+  cropX = item.imgX || 0; cropY = item.imgY || 0; cropSize = item.imgSize || 100;
+  document.getElementById('img-zoom-slider').value = cropSize;
+  document.getElementById('img-zoom-val').textContent = cropSize + '%';
+  if (item.img) setTimeout(() => showCropTool(item.img), 50);
   document.getElementById('f-cat').value = item.cat || '';
 
   if (item.img) {
@@ -1614,14 +1639,7 @@ document.getElementById('modal-confirm').addEventListener('click', async () => {
   const rawPrice = (document.getElementById('f-price').value.trim() || fetched.price || '').replace(/\s*[€$£¥].*$/, '').trim();
   const price = rawPrice ? rawPrice + ' €' : '';
 
-  const hint = document.getElementById('img-upload-hint');
-  let imgUrl = document.getElementById('f-img').value.trim() || fetched.img || '';
-
-  // Traitement bg removal pour les images non encore traitées (pas imgBB)
-  if (imgUrl && !imgUrl.includes('ibb.co')) {
-    hint.className = 'img-upload-hint'; hint.textContent = '⏳ Traitement image…';
-    try { imgUrl = await processImage(imgUrl, hint); } catch { /* garde l'original */ }
-  }
+  const imgUrl = document.getElementById('f-img').value.trim() || fetched.img || '';
 
   const updated = {
     name,
@@ -1629,6 +1647,7 @@ document.getElementById('modal-confirm').addEventListener('click', async () => {
     price,
     cat:   document.getElementById('f-cat').value.trim(),
     img:   imgUrl,
+    imgX: cropX, imgY: cropY, imgSize: cropSize,
     url,
     pick:  false,
   };
