@@ -1449,26 +1449,74 @@ async function uploadToImgBB(blob, filename = 'image.png') {
   });
 }
 
+async function isAlreadyTransparent(blob) {
+  return new Promise(resolve => {
+    const objUrl = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        const size = 80;
+        canvas.width = size; canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, size, size);
+        const data = ctx.getImageData(0, 0, size, size).data;
+        let transparent = 0;
+        for (let i = 3; i < data.length; i += 4) if (data[i] < 10) transparent++;
+        resolve(transparent / (data.length / 4) > 0.10);
+      } catch { resolve(false); }
+      finally { URL.revokeObjectURL(objUrl); }
+    };
+    img.onerror = () => { URL.revokeObjectURL(objUrl); resolve(false); };
+    img.src = objUrl;
+  });
+}
+
+async function fetchImageBlob(url) {
+  try {
+    const res = await fetch(url, { mode: 'cors' });
+    if (res.ok) return await res.blob();
+  } catch {}
+  try {
+    const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`);
+    if (res.ok) return await res.blob();
+  } catch {}
+  return null;
+}
+
+async function processImage(source, hintEl) {
+  let blob = typeof source === 'string' ? await fetchImageBlob(source) : source;
+  if (!blob) return typeof source === 'string' ? source : null;
+
+  const alreadyOk = await isAlreadyTransparent(blob);
+  if (alreadyOk) {
+    if (hintEl) { hintEl.textContent = '✓ Fond déjà transparent'; hintEl.className = 'img-upload-hint ok'; }
+    return await uploadToImgBB(blob, 'product.png');
+  }
+
+  if (hintEl) hintEl.textContent = '⏳ Suppression du fond…';
+  const removeBg = await loadBgRemoval();
+  const cleanBlob = await removeBg(blob, {
+    publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/'
+  });
+  if (hintEl) hintEl.textContent = '⬆️ Upload en cours…';
+  const url = await uploadToImgBB(cleanBlob, 'product.png');
+  if (hintEl) { hintEl.textContent = '✓ Image sans fond uploadée'; hintEl.className = 'img-upload-hint ok'; }
+  return url;
+}
+
 document.getElementById('img-file-input').addEventListener('change', async e => {
   const file = e.target.files[0];
   if (!file) return;
   const hint = document.getElementById('img-upload-hint');
   hint.className = 'img-upload-hint';
-
+  hint.textContent = '⏳ Analyse…';
   try {
-    hint.textContent = '⏳ Suppression du fond…';
-    const removeBg = await loadBgRemoval();
-    const cleanBlob = await removeBg(file, {
-      publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/'
-    });
-    hint.textContent = '⬆️ Upload en cours…';
-    const url = await uploadToImgBB(cleanBlob, 'product.png');
+    const url = await processImage(file, hint);
     document.getElementById('f-img').value = url;
     if (document.getElementById('fetch-preview').classList.contains('show')) {
       document.getElementById('fp-img').style.backgroundImage = `url('${url}')`;
     }
-    hint.className = 'img-upload-hint ok';
-    hint.textContent = '✓ Image sans fond uploadée';
   } catch {
     hint.className = 'img-upload-hint err';
     hint.textContent = 'Échec — réessaie';
@@ -1566,12 +1614,21 @@ document.getElementById('modal-confirm').addEventListener('click', async () => {
   const rawPrice = (document.getElementById('f-price').value.trim() || fetched.price || '').replace(/\s*[€$£¥].*$/, '').trim();
   const price = rawPrice ? rawPrice + ' €' : '';
 
+  const hint = document.getElementById('img-upload-hint');
+  let imgUrl = document.getElementById('f-img').value.trim() || fetched.img || '';
+
+  // Traitement bg removal pour les images non encore traitées (pas imgBB)
+  if (imgUrl && !imgUrl.includes('ibb.co')) {
+    hint.className = 'img-upload-hint'; hint.textContent = '⏳ Traitement image…';
+    try { imgUrl = await processImage(imgUrl, hint); } catch { /* garde l'original */ }
+  }
+
   const updated = {
     name,
     brand: document.getElementById('f-brand').value.trim() || fetched.brand,
     price,
     cat:   document.getElementById('f-cat').value.trim(),
-    img:   document.getElementById('f-img').value.trim() || fetched.img,
+    img:   imgUrl,
     url,
     pick:  false,
   };
