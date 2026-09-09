@@ -1908,6 +1908,16 @@ function render(){
   document.getElementById('pa-fill').style.width='0%';
   document.getElementById('pa-val').textContent='';
 
+  // Texte dynamique du bouton attaque
+  const aName=document.querySelector('#btn-attack .a-name');
+  if(aName){
+    if(!charged&&!G.attack_used_today&&!G.boss_killed_today){
+      const reste=C.CHARGE-stepsToday;
+      aName.textContent=reste.toLocaleString('fr-FR')+' PAS';
+    } else {
+      aName.textContent='ATTAQUE';
+    }
+  }
   // Bouton attaque — actif si 10K atteints, pas encore utilisé, boss vivant, pas de level-up en attente
   setAbtn('btn-attack',G.boss_killed_today||G.attack_used_today||stepsToday<C.CHARGE||levelUpPending);
 
