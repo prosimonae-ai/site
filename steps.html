@@ -1913,7 +1913,7 @@ function render(){
   if(aName){
     if(!charged&&!G.attack_used_today&&!G.boss_killed_today){
       const reste=C.CHARGE-stepsToday;
-      aName.textContent=reste.toLocaleString('fr-FR')+' PAS';
+      aName.textContent='-'+reste.toLocaleString('fr-FR')+' PAS';
     } else {
       aName.textContent='ATTAQUE';
     }
