@@ -447,7 +447,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 <div id="bottom-ui">
   <!-- pas en grand -->
   <div id="steps-display">
-    <div id="steps-big">0<span style="font-size:14px;opacity:.35;margin-left:6px;letter-spacing:.1em">PAS</span></div>
+    <div id="steps-big">0<span style="font-size:9px;color:#fff;margin-left:8px;letter-spacing:.12em;vertical-align:middle">PAS</span></div>
     <div id="steps-label" style="display:none">PAS AUJOURD'HUI</div>
     <!-- barre charge + fraction -->
     <div id="charge-bar-row">
@@ -1859,7 +1859,7 @@ function render(){
   const sc=document.getElementById('souls-count');if(sc)sc.textContent=G.souls;
   const stk=document.getElementById('streak-count');if(stk)stk.textContent=G.flame_streak||0;
   // Pas en gros + barre boss + hint
-  const sb=document.getElementById('steps-big');if(sb)sb.innerHTML=stepsToday.toLocaleString('fr-FR')+'<span style="font-size:14px;opacity:.35;margin-left:6px;letter-spacing:.1em">PAS</span>';
+  const sb=document.getElementById('steps-big');if(sb)sb.innerHTML=stepsToday.toLocaleString('fr-FR')+'<span style="font-size:9px;color:#fff;margin-left:8px;letter-spacing:.12em;vertical-align:middle">PAS</span>';
   const bossBarFill=document.getElementById('steps-boss-bar-fill');
   const bossHint=document.getElementById('steps-boss-hint');
   const atksEl=document.getElementById('steps-attacks-avail');
