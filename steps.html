@@ -26,33 +26,44 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 /* ── TOP HUD ── */
 #hud-top{
   position:fixed;top:0;left:0;right:0;z-index:20;
-  padding:calc(var(--safe-top) + 52px) 16px 14px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-  background:linear-gradient(to bottom,rgba(0,0,0,.8) 0%,transparent 100%);
+  padding:calc(var(--safe-top) + 52px) 16px 12px;
+  display:flex;flex-direction:column;gap:5px;
+  background:linear-gradient(to bottom,rgba(0,0,0,.82) 0%,transparent 100%);
 }
-.hud-zone{font-family:var(--px);font-size:9px;color:var(--zone);letter-spacing:.06em;text-align:center}
-.hud-floor{font-family:var(--px);font-size:8px;color:rgba(255,255,255,.45);text-align:center}
-.hud-floor b{color:#fff}
-/* pills cachés — zone+étage uniquement */
+#hud-info-row{
+  display:flex;justify-content:center;align-items:center;gap:8px;
+}
+.hud-zone{font-family:var(--px);font-size:10px;color:var(--zone);letter-spacing:.07em;}
+.hud-floor{font-family:var(--px);font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.06em;}
+.hud-floor b{color:rgba(255,255,255,.75);}
 .hud-pills{display:none}
 .hpill,.hpill.souls,.hpill.flame{display:none}
 
-/* ── BOSS NAME FLOAT ── */
-#boss-label{
-  position:fixed;z-index:20;
-  text-align:center;pointer-events:none;
-  transform:translate(-50%,-100%);
+/* BARRE BOSS HUD */
+#hud-boss-bar-wrap{
+  width:100%;height:28px;border-radius:6px;
+  background:rgba(255,255,255,.07);
+  position:relative;overflow:hidden;
 }
-.boss-name-txt{
-  font-family:var(--px);font-size:11px;color:rgba(255,255,255,.85);
-  text-shadow:0 0 14px var(--zone);letter-spacing:.05em;
+#boss-bar-fill{
+  position:absolute;top:0;left:0;bottom:0;
+  width:100%;border-radius:6px;
+  background:linear-gradient(90deg,#006633,#00e676);
+  transition:width .4s,background .4s;
 }
-.boss-bar-wrap{
-  width:100%;height:6px;
-  background:rgba(255,255,255,.1);border:none;
-  margin:6px 0 0;border-radius:3px;overflow:hidden;
+#hud-boss-bar-txt{
+  position:absolute;inset:0;z-index:1;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 12px;
+  font-family:var(--px);font-size:9px;letter-spacing:.08em;
+  color:#fff;text-shadow:0 0 10px rgba(0,0,0,.8);
 }
-#boss-bar-fill{height:100%;background:#00e676;border-radius:3px;transition:width .4s,background .4s}
+#hud-boss-hp-lbl{color:rgba(255,255,255,.6);font-size:8px;}
+
+/* fantôme boss-label (JS positionne) */
+#boss-label{position:fixed;z-index:20;text-align:center;pointer-events:none;transform:translate(-50%,-100%);}
+.boss-name-txt{font-family:var(--px);font-size:11px;color:rgba(255,255,255,.85);text-shadow:0 0 14px var(--zone);letter-spacing:.05em;}
+.boss-bar-wrap{display:none}
 
 /* ── BOTTOM OVERLAY ── */
 #bottom-ui{
@@ -70,9 +81,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
   flex:1;height:13px;
   background:rgba(255,255,255,.09);
   border:1px solid rgba(255,255,255,.12);
-  border-radius:7px;overflow:hidden;
+  border-radius:4px;overflow:hidden;
 }
-.bar-fill{height:100%;border-radius:7px;transition:width .5s ease}
+.bar-fill{height:100%;border-radius:4px;transition:width .5s ease}
 #hp-fill{background:linear-gradient(to right,#ff2255,#ff6688)}
 #hp-fill.med{background:linear-gradient(to right,#cc8800,#ffcc00)}
 #hp-fill.hi{background:linear-gradient(to right,#0088cc,#40c4ff)}
@@ -88,7 +99,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 #btn-attack{
   width:100%;height:17vh;
   display:flex;flex-direction:row;align-items:center;justify-content:center;
-  gap:12px;border-radius:18px;cursor:pointer;user-select:none;
+  gap:12px;border-radius:14px;cursor:pointer;user-select:none;
   background:rgba(255,50,50,.13);
   border:2px solid rgba(255,80,80,.3);
   backdrop-filter:blur(6px);
@@ -105,16 +116,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 .a-name{font-family:var(--px);font-size:13px;color:rgba(255,255,255,.95);letter-spacing:.08em}
 
 /* ── ZONE PAS + BARRES ── */
-#steps-display{padding:8px 0 4px;}
+#steps-display{padding:8px 0 8px;}
 #steps-label{display:none}
 #steps-big{
-  font-family:var(--px);font-size:48px;color:#fff;letter-spacing:.03em;line-height:1;
-  text-align:center;
-  text-shadow:0 0 36px rgba(255,255,255,.22);
+  font-family:var(--px);font-size:42px;color:#fff;letter-spacing:.03em;line-height:1;
 }
 
 /* BLOC BARRE générique */
-.bar-block{margin-top:10px;}
+.bar-block{margin-top:5px;}
 .bar-header{display:none}/* headers supprimés — texte dans la barre */
 
 /* Barre avec texte interne */
@@ -123,7 +132,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
   background:rgba(255,255,255,.07);overflow:hidden;
 }
 .bar-fill-bg{
-  position:absolute;inset:0;border-radius:10px;
+  position:absolute;inset:0;border-radius:8px;
   transition:width .6s cubic-bezier(.4,0,.2,1);
 }
 .bar-txt{
@@ -137,12 +146,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 /* BARRE CHARGE */
 #charge-bar-row{display:none}
 #steps-boss-bar-wrap{
-  width:100%;height:22px;border-radius:10px;
-  background:rgba(255,255,255,.07);overflow:hidden;
-  position:relative;
+  width:100%;height:44px;border-radius:6px;
+  background:rgba(255,255,255,.07);
+  position:relative;overflow:hidden;
 }
 #steps-boss-bar-fill{
-  position:absolute;inset:0;height:100%;border-radius:10px;
+  position:absolute;top:0;left:0;bottom:0;
+  width:0%;border-radius:6px;
   background:linear-gradient(90deg,#cc2200,#ff6600,#ffaa00);
   transition:width .6s cubic-bezier(.4,0,.2,1);
   box-shadow:0 0 12px rgba(255,100,0,.35);
@@ -150,20 +160,21 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 .charge-txt{
   position:absolute;inset:0;z-index:1;
   display:flex;justify-content:space-between;align-items:center;
-  padding:0 10px;
-  font-family:var(--px);font-size:6px;letter-spacing:.1em;
-  color:rgba(255,255,255,.8);
+  padding:0 14px;
+  font-family:var(--px);font-size:8px;letter-spacing:.1em;
+  color:rgba(255,255,255,.45);
 }
 #steps-boss-hint{display:none}
 
 /* BARRE XP */
 #xp-bar-wrap{
-  width:100%;height:48px;border-radius:14px;
-  background:rgba(255,255,255,.07);overflow:hidden;
-  position:relative;
+  width:100%;height:22px;border-radius:6px;
+  background:rgba(255,255,255,.07);
+  position:relative;overflow:hidden;
 }
 #xp-bar-fill{
-  position:absolute;inset:0;height:100%;border-radius:10px;
+  position:absolute;top:0;left:0;bottom:0;
+  width:0%;border-radius:6px;
   background:linear-gradient(90deg,#5820a0,#c060ff);
   transition:width .6s cubic-bezier(.4,0,.2,1);
 }
@@ -179,7 +190,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 /* STATUT ATTAQUE */
 #steps-attacks-avail{
   font-family:var(--px);font-size:8px;letter-spacing:.08em;
-  text-align:center;margin-top:9px;
+  text-align:center;margin-top:2px;
   color:rgba(255,140,60,.95);min-height:14px;
   transition:color .2s;
 }
@@ -200,7 +211,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 .chip{
   font-family:var(--px);font-size:8px;
   background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.12);
-  padding:7px 9px;border-radius:10px;line-height:1.9;
+  padding:7px 9px;border-radius:8px;line-height:1.9;
   backdrop-filter:blur(6px);color:rgba(255,255,255,.65);
 }
 .chip b{display:block;color:rgba(255,255,255,.92);margin-bottom:2px}
@@ -225,7 +236,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 .toast-line{
   font-family:var(--px);font-size:7px;
   background:rgba(0,0,0,.8);border:1px solid rgba(255,255,255,.15);
-  padding:5px 10px;border-radius:16px;white-space:nowrap;
+  padding:5px 10px;border-radius:20px;
+  white-space:normal;word-break:break-word;
+  max-width:calc(100vw - 40px);text-align:center;
   backdrop-filter:blur(8px);
   animation:toastIn .2s ease,toastOut .4s ease 1.8s forwards;
 }
@@ -238,12 +251,30 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 .toast-line.event{color:#c060ff}
 
 /* ── TOP CORNERS ── */
-#streak-top{
-  position:fixed;top:calc(var(--safe-top) + 10px);right:12px;z-index:30;
-  font-family:var(--px);font-size:7px;color:rgba(255,149,0,.85);
-  background:rgba(0,0,0,.35);border:1px solid rgba(255,149,0,.2);
-  padding:5px 9px;border-radius:8px;pointer-events:none;
-  display:flex;align-items:center;gap:5px;
+#streak-top{display:none!important}
+
+#xp-top-row{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:4px;
+}
+#xp-left-col{
+  display:flex;flex-direction:column;gap:3px;align-items:flex-start;
+}
+#xp-inv-btn,#xp-streak-btn{
+  font-family:var(--px);letter-spacing:.1em;
+  border-radius:6px;
+  display:inline-flex;align-items:center;line-height:1;
+  cursor:pointer;
+}
+#xp-inv-btn{font-size:7px;padding:4px 9px;}
+#xp-streak-btn{font-size:6px;padding:3px 7px;}
+#xp-inv-btn{
+  color:rgba(255,255,255,.55);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+}
+#xp-streak-btn{
+  color:rgba(255,149,0,.85);
+  background:rgba(0,0,0,.3);border:1px solid rgba(255,149,0,.2);
 }
 #souls-top{display:none}
 #dev-btn{
@@ -252,12 +283,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
   background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.06);
   padding:5px 8px;border-radius:8px;cursor:pointer;
 }
-#inv-top{
-  position:fixed;top:calc(var(--safe-top) + 10px);left:52px;z-index:30;
-  font-family:var(--px);font-size:7px;color:rgba(255,255,255,.45);
-  background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);
-  padding:5px 9px;border-radius:8px;cursor:pointer;
-}
+#inv-top{display:none!important}
 
 /* ── SLIDES / OVERLAYS (glass style) ── */
 .overlay{
@@ -272,7 +298,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 .gpanel{
   width:100%;max-width:380px;
   background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);
-  border-radius:16px;padding:16px;backdrop-filter:blur(6px);
+  border-radius:12px;padding:16px;backdrop-filter:blur(6px);
 }
 .gpanel-title{font-family:var(--px);font-size:9px;color:#fff;margin-bottom:12px}
 
@@ -315,19 +341,19 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 .souls-earn{font-family:var(--px);font-size:11px;color:#c060ff;text-align:center;text-shadow:0 0 16px #c060ff}
 
 /* PRESTIGE */
-.pitem{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);margin-bottom:6px}
+.pitem{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);margin-bottom:6px}
 .pico{font-size:20px;flex-shrink:0}.pbody{flex:1}
 .pname{font-family:var(--px);font-size:9px;color:#fff;margin-bottom:4px}
 .peff{font-size:12px;color:rgba(255,255,255,.4)}
 .plvl{font-family:var(--px);font-size:8px;color:#ffd600;margin-right:8px;flex-shrink:0}
-.pbtn{font-family:var(--px);font-size:8px;padding:9px 12px;background:#7030c0;color:#fff;border:none;border-radius:10px;cursor:pointer;flex-shrink:0}
+.pbtn{font-family:var(--px);font-size:8px;padding:9px 12px;background:#7030c0;color:#fff;border:none;border-radius:8px;cursor:pointer;flex-shrink:0}
 .pbtn:disabled{opacity:.3;pointer-events:none}
 .souls-left-lbl{font-family:var(--px);font-size:9px;color:rgba(255,255,255,.4);text-align:center;padding:8px}
 
 /* LOOT */
 .loot-title{font-family:var(--px);font-size:13px;color:#ffd600;text-shadow:0 0 16px #ffd600}
 .loot-sub{font-size:12px;color:rgba(255,255,255,.45)}
-.litem{display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);margin-bottom:8px;transition:border-color .2s}
+.litem{display:flex;align-items:center;gap:12px;padding:14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);margin-bottom:8px;transition:border-color .2s}
 .litem:active{border-color:rgba(255,213,0,.4)}
 .lico{font-size:26px;flex-shrink:0}
 .lbody{flex:1}.ltype{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
@@ -339,7 +365,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 /* CAMP */
 .camp-title{font-family:var(--px);font-size:11px;color:#ff6d00;text-shadow:0 0 16px #ff6d00}
 .camp-xp{font-family:var(--px);font-size:8px;color:#40c4ff}
-.citem{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);margin-bottom:6px}
+.citem{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);margin-bottom:6px}
 .cico{font-size:18px;flex-shrink:0}.cbody{flex:1}
 .cname{font-family:var(--px);font-size:9px;color:#fff;margin-bottom:4px}
 .cdesc{font-size:12px;color:rgba(255,255,255,.4)}
@@ -349,10 +375,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 /* SLIDE PANEL */
 .slide-panel{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:150;display:flex;flex-direction:column;justify-content:flex-end;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(6px)}
 .slide-panel.open{opacity:1;pointer-events:all}
-.slide-inner{background:rgba(14,12,24,.95);border-top:1.5px solid rgba(255,255,255,.12);max-height:72vh;overflow-y:auto;padding:18px 18px calc(18px + var(--safe-bot));border-radius:20px 20px 0 0;transform:translateY(20px);transition:transform .25s}
+.slide-inner{background:rgba(14,12,24,.95);border-top:1.5px solid rgba(255,255,255,.12);max-height:72vh;overflow-y:auto;padding:18px 18px calc(18px + var(--safe-bot));border-radius:18px 18px 0 0;transform:translateY(20px);transition:transform .25s}
 .slide-panel.open .slide-inner{transform:none}
 .slide-title{font-family:var(--px);font-size:9px;color:#ffd600;margin-bottom:16px}
-.eq-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);margin-bottom:6px}
+.eq-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);margin-bottom:6px}
 .eq-icon{font-size:20px;flex-shrink:0}.eq-body{flex:1}
 .eq-slot{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px}
 .eq-name{font-family:var(--px);font-size:9px;color:#fff}.eq-desc{font-size:11px;color:#00e676;margin-top:3px}
@@ -362,7 +388,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 /* MODAL */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(8px)}
 .modal-bg.open{opacity:1;pointer-events:all}
-.modal{width:100%;max-width:420px;margin:0 auto;background:rgba(14,12,28,.97);border:1.5px solid rgba(255,255,255,.12);border-bottom:none;padding:20px 20px calc(20px + var(--safe-bot));transform:translateY(20px);transition:transform .3s;max-height:80vh;overflow-y:auto;border-radius:20px 20px 0 0}
+.modal{width:100%;max-width:420px;margin:0 auto;background:rgba(14,12,28,.97);border:1.5px solid rgba(255,255,255,.12);border-bottom:none;padding:20px 20px calc(20px + var(--safe-bot));transform:translateY(20px);transition:transform .3s;max-height:80vh;overflow-y:auto;border-radius:18px 18px 0 0}
 .modal-bg.open .modal{transform:none}
 .mtitle{font-family:var(--px);font-size:9px;color:#ffd600;margin-bottom:14px}
 .mstep{display:flex;gap:10px;margin-bottom:12px}
@@ -386,7 +412,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
   font-family:var(--px);font-size:8px;padding:11px 6px;
   color:rgba(255,255,255,.75);
   background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-  border-radius:10px;cursor:pointer;text-align:center;
+  border-radius:8px;cursor:pointer;text-align:center;
   transition:background .12s;
 }
 .devbtn:active{background:rgba(255,255,255,.18)}
@@ -396,26 +422,60 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 .devbtn.close{color:rgba(255,255,255,.3);border-color:rgba(255,255,255,.08)}
 
 /* XP BAR — même layout que charge-bar-row */
-#xp-display{
-  display:flex;align-items:center;gap:8px;margin:6px 0 0;
+#xp-display{display:none}
+#xp-level-lbl{white-space:nowrap;}
+#xp-val-lbl{white-space:nowrap;}
+
+/* ── CARTES ITEM (starter + loot) ── */
+.item-card{
+  display:flex;align-items:center;gap:14px;
+  padding:16px;border-radius:10px;
+  border:1.5px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.04);
+  margin-bottom:10px;cursor:pointer;
+  width:100%;max-width:380px;
+  transition:border-color .15s,background .15s;
+  -webkit-tap-highlight-color:transparent;
 }
-#xp-level-lbl{
-  font-family:var(--px);font-size:6px;color:#c060ff;
-  white-space:nowrap;min-width:40px;opacity:.85;
+.item-card:active{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.1);}
+.item-card.offensive{border-color:rgba(255,80,80,.25);}
+.item-card.defensive{border-color:rgba(80,180,255,.25);}
+.item-card.utility{border-color:rgba(192,96,255,.25);}
+.item-card.offensive:active{border-color:rgba(255,80,80,.7);}
+.item-card.defensive:active{border-color:rgba(80,180,255,.7);}
+.item-card.utility:active{border-color:rgba(192,96,255,.7);}
+.ic-ico{font-size:28px;flex-shrink:0;width:36px;text-align:center;}
+.ic-body{flex:1;}
+.ic-tag{font-family:var(--px);font-size:5px;letter-spacing:.15em;color:rgba(255,255,255,.3);margin-bottom:4px;}
+.ic-name{font-family:var(--px);font-size:9px;color:#fff;letter-spacing:.06em;margin-bottom:5px;}
+.ic-desc{font-size:11px;color:rgba(255,255,255,.65);line-height:1.5;}
+.ic-rarity{font-family:var(--px);font-size:5px;letter-spacing:.12em;}
+.ic-rarity.common{color:#aaa;}.ic-rarity.rare{color:#5ab8ff;}.ic-rarity.epic{color:#c060ff;}.ic-rarity.cursed{color:#ff4444;}
+
+/* ── JOURNAL ── */
+.jnode{
+  display:flex;gap:12px;
+  padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06);
+  position:relative;
 }
-#xp-bar-wrap{
-  flex:1;height:5px;background:rgba(255,255,255,.07);
-  border-radius:4px;overflow:hidden;
+.jnode:last-child{border-bottom:none;}
+.jnode-dot{
+  width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px;
+  border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);
 }
-#xp-bar-fill{
-  height:100%;border-radius:4px;
-  background:linear-gradient(90deg,#5820a0,#c060ff);
-  transition:width .6s cubic-bezier(.4,0,.2,1);
-}
-#xp-val-lbl{
-  font-family:var(--px);font-size:6px;color:rgba(192,96,255,.45);
-  white-space:nowrap;min-width:52px;text-align:right;
-}
+.jnode-dot.kill{background:#00e676;border-color:#00e676;}
+.jnode-dot.fled{background:#ffaa00;border-color:#ffaa00;}
+.jnode-dot.died{background:#ff2255;border-color:#ff2255;}
+.jnode-dot.current{background:#c060ff;border-color:#c060ff;box-shadow:0 0 8px #c060ff;}
+.jnode-body{flex:1;}
+.jnode-day{font-family:var(--px);font-size:6px;color:rgba(255,255,255,.35);letter-spacing:.12em;margin-bottom:3px;}
+.jnode-boss{font-family:var(--px);font-size:8px;color:#fff;letter-spacing:.05em;margin-bottom:3px;}
+.jnode-detail{font-size:10px;color:rgba(255,255,255,.45);line-height:1.6;}
+.jnode-badge{display:inline-block;font-family:var(--px);font-size:5px;padding:2px 6px;border-radius:4px;margin-top:4px;}
+.jnode-badge.kill{background:rgba(0,230,118,.15);color:#00e676;}
+.jnode-badge.fled{background:rgba(255,170,0,.15);color:#ffaa00;}
+.jnode-badge.died{background:rgba(255,34,85,.15);color:#ff2255;}
+.jnode-badge.current{background:rgba(192,96,255,.2);color:#c060ff;}
 
 /* LEVEL-UP OVERLAY */
 .levelup-title{
@@ -428,7 +488,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 }
 .lu-choice{
   display:flex;align-items:center;gap:14px;
-  padding:14px 16px;border-radius:14px;
+  padding:14px 16px;border-radius:10px;
   border:1.5px solid rgba(192,96,255,.28);
   background:rgba(112,48,192,.08);
   margin-bottom:10px;cursor:pointer;
@@ -444,6 +504,95 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 
 /* LOADING */
 #loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#07080f;font-family:var(--px);font-size:9px;color:rgba(255,255,255,.3);z-index:999}
+
+/* ── BOSS KILLED ── */
+#screen-boss-killed{gap:14px;}
+.bkill-star{font-family:var(--px);font-size:44px;color:#ffd600;text-shadow:0 0 40px #ffd600;animation:bkill-pop .4s cubic-bezier(.175,.885,.32,1.275) both;}
+.bkill-name{font-family:var(--px);font-size:12px;color:#fff;text-align:center;letter-spacing:.06em;}
+.bkill-floor{font-family:var(--px);font-size:7px;color:rgba(255,255,255,.4);text-align:center;letter-spacing:.12em;margin-top:-6px;}
+.bkill-msg{font-family:var(--px);font-size:7px;color:rgba(255,255,255,.45);text-align:center;letter-spacing:.1em;border:1px solid rgba(255,255,255,.12);padding:12px 20px;border-radius:8px;background:rgba(255,255,255,.04);line-height:2;}
+@keyframes bkill-pop{from{transform:scale(0)}to{transform:scale(1)}}
+
+/* ── DUNGEON MAP ── */
+#screen-dungeon{overflow-y:auto;padding:20px 0 32px;align-items:stretch;justify-content:flex-start;gap:0;}
+.dmap-header{font-family:var(--px);font-size:6px;color:rgba(255,255,255,.3);letter-spacing:.15em;text-align:center;padding:0 16px 3px;}
+.dmap-title{font-family:var(--px);font-size:11px;color:#fff;letter-spacing:.06em;text-align:center;padding:0 16px 6px;}
+.dmap-streak{font-family:var(--px);font-size:7px;color:rgba(255,149,0,.85);letter-spacing:.1em;text-align:center;padding:7px 14px;border:1px solid rgba(255,149,0,.2);border-radius:8px;background:rgba(0,0,0,.3);margin:0 16px 16px;}
+.dmap-inner{width:100%;max-width:400px;margin:0 auto;padding:0 14px;}
+.dmap-zone-banner{font-family:var(--px);font-size:6px;letter-spacing:.14em;padding:5px 10px;border-radius:4px;margin:10px 0 6px;text-align:center;}
+.dmap-floor-row{display:flex;gap:8px;position:relative;}
+.dmap-dot-col{display:flex;flex-direction:column;align-items:center;width:18px;flex-shrink:0;padding-top:12px;}
+.dmap-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
+.dmap-dot.killed{background:#00e676;}
+.dmap-dot.fled{background:#ffaa00;}
+.dmap-dot.died{background:#ff2255;}
+.dmap-dot.current{background:#c060ff;box-shadow:0 0 6px #c060ff;animation:dmap-glow 2s ease-in-out infinite;}
+.dmap-dot.locked{background:rgba(255,255,255,.12);}
+.dmap-dot.major{background:#ffd600;}
+.dmap-line{width:1px;flex:1;min-height:6px;background:rgba(255,255,255,.09);margin-top:3px;}
+@keyframes dmap-glow{0%,100%{box-shadow:0 0 6px #c060ff}50%{box-shadow:0 0 14px #c060ff}}
+.dmap-room{flex:1;padding:9px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025);margin-bottom:4px;position:relative;}
+.dmap-room.killed{border-color:rgba(0,230,118,.22);background:rgba(0,230,118,.05);}
+.dmap-room.fled{border-color:rgba(255,170,0,.18);}
+.dmap-room.died{border-color:rgba(255,34,85,.18);}
+.dmap-room.current{border-color:rgba(192,96,255,.4);background:rgba(112,48,192,.1);box-shadow:0 0 14px rgba(192,96,255,.12);}
+.dmap-room.major{border-color:rgba(255,213,0,.28);background:rgba(255,213,0,.04);}
+.dmap-room.locked{opacity:.28;}
+.dmap-room-inner{display:flex;align-items:center;gap:9px;}
+.dmap-boss-canvas{image-rendering:pixelated;flex-shrink:0;}
+.dmap-room-info{flex:1;min-width:0;}
+.dmap-floor-num{font-family:var(--px);font-size:5px;color:rgba(255,255,255,.3);letter-spacing:.1em;margin-bottom:2px;}
+.dmap-boss-name{font-family:var(--px);font-size:7px;color:#fff;letter-spacing:.04em;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dmap-outcome{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.dmap-badge{font-family:var(--px);font-size:5px;padding:2px 6px;border-radius:3px;letter-spacing:.08em;}
+.dmap-badge.killed{background:rgba(0,230,118,.15);color:#00e676;}
+.dmap-badge.fled{background:rgba(255,170,0,.15);color:#ffaa00;}
+.dmap-badge.died{background:rgba(255,34,85,.15);color:#ff2255;}
+.dmap-badge.current{background:rgba(192,96,255,.2);color:#c060ff;}
+.dmap-badge.locked{background:rgba(255,255,255,.06);color:rgba(255,255,255,.25);}
+.dmap-badge.major{background:rgba(255,213,0,.18);color:#ffd600;}
+.dmap-hp-bar{height:3px;background:rgba(255,255,255,.1);border-radius:2px;margin-top:5px;overflow:hidden;}
+.dmap-hp-fill{height:100%;border-radius:2px;}
+
+/* ── SKILL TREE ── */
+#screen-skills{overflow-y:auto;padding:20px 16px 32px;align-items:stretch;justify-content:flex-start;gap:0;}
+.stree-header{text-align:center;margin-bottom:4px;}
+.stree-title{font-family:var(--px);font-size:10px;color:#ffd600;letter-spacing:.06em;margin-bottom:4px;}
+.stree-souls{font-family:var(--px);font-size:7px;color:rgba(255,255,255,.4);letter-spacing:.1em;margin-bottom:14px;text-align:center;}
+.stree-branches{display:flex;gap:6px;width:100%;max-width:400px;margin:0 auto 14px;}
+.stree-branch{flex:1;display:flex;flex-direction:column;align-items:center;}
+.stree-branch-title{font-family:var(--px);font-size:6px;letter-spacing:.1em;padding:5px 4px;border-radius:4px;margin-bottom:8px;text-align:center;width:100%;}
+.stree-branch-title.force{color:#ff6644;background:rgba(255,100,68,.1);border:1px solid rgba(255,100,68,.2);}
+.stree-branch-title.destin{color:#00e676;background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.14);}
+.stree-branch-title.savoir{color:#c060ff;background:rgba(192,96,255,.07);border:1px solid rgba(192,96,255,.14);}
+.stree-node{width:100%;padding:7px 6px;border-radius:7px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04);margin-bottom:0;cursor:pointer;transition:border-color .15s,background .15s;}
+.stree-node.owned{border-color:rgba(255,213,0,.4);background:rgba(255,213,0,.07);}
+.stree-node.available.force{border-color:rgba(255,100,68,.3);}
+.stree-node.available.destin{border-color:rgba(0,230,118,.28);}
+.stree-node.available.savoir{border-color:rgba(192,96,255,.28);}
+.stree-node.locked{opacity:.3;pointer-events:none;}
+.stree-node-icon{font-size:14px;text-align:center;margin-bottom:3px;}
+.stree-node-name{font-family:var(--px);font-size:5px;color:#fff;text-align:center;margin-bottom:2px;letter-spacing:.05em;}
+.stree-node-desc{font-size:9px;color:rgba(255,255,255,.45);text-align:center;line-height:1.4;margin-bottom:3px;}
+.stree-node-cost{font-family:var(--px);font-size:5px;text-align:center;}
+.stree-node-cost.can{color:#ffd600;}.stree-node-cost.cant{color:rgba(255,255,255,.22);}.stree-node-cost.owned{color:#00e676;}
+.stree-connector{width:1px;height:7px;margin:0 auto;background:rgba(255,255,255,.12);}
+
+/* ── SKIN ── */
+#screen-skin{overflow-y:auto;padding:24px 16px 32px;gap:14px;}
+.skin-title{font-family:var(--px);font-size:10px;color:#fff;letter-spacing:.06em;text-align:center;}
+.skin-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:320px;}
+.skin-card{display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 10px;border-radius:10px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);cursor:pointer;transition:border-color .15s,background .15s;}
+.skin-card.active{border-color:rgba(255,213,0,.5);background:rgba(255,213,0,.07);}
+.skin-card:active{background:rgba(255,255,255,.1);}
+.skin-canvas{image-rendering:pixelated;}
+.skin-name{font-family:var(--px);font-size:7px;color:#fff;letter-spacing:.08em;}
+.skin-desc{font-size:10px;color:rgba(255,255,255,.38);text-align:center;line-height:1.4;}
+.skin-badge{font-family:var(--px);font-size:5px;color:#ffd600;letter-spacing:.1em;}
+
+/* ── PIXEL ART ICONS ── */
+.item-canvas{image-rendering:pixelated;flex-shrink:0;display:block;}
+canvas.lico{flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -453,11 +602,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 
 <!-- ── TOP HUD ── -->
 <div id="hud-top">
-  <span class="hud-zone" id="hud-zone">ZONE I — LA CRYPTE</span>
-  <span class="hud-floor">ÉT. <b id="h-floor">1</b></span>
-  <div class="boss-name-txt" id="boss-name-txt">—</div>
-  <div class="boss-bar-wrap"><div id="boss-bar-fill" style="width:100%"></div></div>
-  <!-- pills cachées mais IDs préservés -->
+  <!-- zone + étage en haut -->
+  <div id="hud-info-row">
+    <span class="hud-zone" id="hud-zone">ZONE I — LA CRYPTE</span>
+    <span class="hud-floor">ÉT. <b id="h-floor">1</b></span>
+  </div>
+  <!-- barre boss en dessous -->
+  <div id="hud-boss-bar-wrap">
+    <div id="boss-bar-fill" style="width:100%"></div>
+    <div id="hud-boss-bar-txt">
+      <span id="boss-name-txt">—</span>
+      <span id="hud-boss-hp-lbl">100%</span>
+    </div>
+  </div>
+  <!-- IDs fantômes -->
   <span id="h-xp" style="display:none"></span>
   <span id="h-souls" style="display:none">0</span>
   <span id="h-flames" style="display:none">0</span>
@@ -483,20 +641,16 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 
 <!-- ── BOTTOM UI ── -->
 <div id="bottom-ui">
-  <!-- pas en grand -->
   <div id="steps-display">
-    <div id="steps-big">0<span style="font-size:9px;color:#fff;margin-left:8px;letter-spacing:.12em;vertical-align:middle">PAS</span></div>
     <div id="steps-label" style="display:none">PAS AUJOURD'HUI</div>
 
-    <!-- BARRE CHARGE -->
-    <div class="bar-block">
-      <div id="steps-boss-bar-wrap">
-        <div id="steps-boss-bar-fill" style="width:0%"></div>
-        <div class="charge-txt">
-          <span>CHARGE</span>
-          <span id="charge-rval">0 / 10 000</span>
-        </div>
+    <!-- STREAK + INVENTAIRE à gauche, nombre de pas à droite -->
+    <div id="xp-top-row">
+      <div id="xp-left-col">
+        <div id="xp-streak-btn" onclick="openDungeonMap()">🔥 <span id="streak-count-bar">0</span></div>
+        <div id="xp-inv-btn" onclick="openEquip()">INVENTAIRE</div>
       </div>
+      <div id="steps-big">0</div>
     </div>
 
     <!-- BARRE XP -->
@@ -510,10 +664,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
       </div>
     </div>
 
-    <!-- statut unique -->
-    <div id="steps-attacks-avail" class="zero">—</div>
+    <!-- BARRE CHARGE -->
+    <div class="bar-block">
+      <div id="steps-boss-bar-wrap">
+        <div id="steps-boss-bar-fill" style="width:0%"></div>
+        <div class="charge-txt">
+          <span>CHARGE</span>
+          <span id="charge-rval">0/10 000 PAS</span>
+        </div>
+      </div>
+    </div>
 
+    <!-- statut unique -->
     <!-- IDs fantômes conservés pour le JS -->
+    <div id="steps-attacks-avail" style="display:none"></div>
     <span id="steps-boss-hint" style="display:none"></span>
     <div id="charge-bar-row" style="display:none"></div>
     <div id="xp-display" style="display:none"></div>
@@ -572,6 +736,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
     <button class="devbtn" onclick="devTriggerNight()">SIMULER NUIT</button>
     <button class="devbtn" onclick="devTestLevelUp()">TEST LEVELUP</button>
     <button class="devbtn" onclick="devAddXp(100)">+100 XP</button>
+    <button class="devbtn" onclick="showStarterScreen()">TEST STARTER</button>
+    <button class="devbtn" onclick="openDungeonMap()">CARTE</button>
+    <button class="devbtn" onclick="openSkillTree()">ARBRE</button>
+    <button class="devbtn" onclick="openSkinScreen()">SKIN</button>
     <button class="devbtn danger wide" onclick="devResetAll()">RESET ALL — TOUT EFFACER</button>
     <button class="devbtn close wide" onclick="toggleDev()">FERMER</button>
   </div>
@@ -583,8 +751,28 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
     <div class="slide-title">▶ ÉQUIPEMENT</div>
     <div id="eq-list"></div>
     <div class="eq-crit" id="eq-crit">CRIT —%</div>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button class="gbtn ppl" style="flex:1;font-size:7px;padding:11px 8px" onclick="closeEquipDirect();openSkillTree()">⭐ ARBRE</button>
+      <button class="gbtn" style="flex:1;font-size:7px;padding:11px 8px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.15);" onclick="closeEquipDirect();openSkinScreen()">🎨 SKIN</button>
+    </div>
     <button class="gbtn grn" style="margin-top:8px" onclick="closeEquipDirect()">FERMER</button>
   </div>
+</div>
+
+<!-- ══ CHOIX ITEM DE DÉPART ══ -->
+<div id="screen-starter" class="overlay hidden" style="overflow-y:auto;padding:24px 16px 32px">
+  <div style="font-family:var(--px);font-size:7px;color:rgba(255,255,255,.4);letter-spacing:.15em;text-align:center;margin-bottom:6px" id="starter-run-lbl">NOUVELLE VIE</div>
+  <div style="font-family:var(--px);font-size:12px;color:#fff;letter-spacing:.06em;text-align:center;margin-bottom:4px">CHOISISSEZ CE QUE VOUS EMPORTEZ</div>
+  <div style="font-family:var(--px);font-size:6px;color:rgba(255,255,255,.3);letter-spacing:.1em;text-align:center;margin-bottom:20px">UN SEUL OBJET POUR COMMENCER</div>
+  <div id="starter-items" style="width:100%;max-width:380px"></div>
+</div>
+
+<!-- ══ JOURNAL DE RUN ══ -->
+<div id="screen-journal" class="overlay hidden" style="overflow-y:auto;padding:20px 16px 32px">
+  <div style="font-family:var(--px);font-size:7px;color:rgba(255,255,255,.35);letter-spacing:.15em;text-align:center;margin-bottom:6px">VIE ACTUELLE</div>
+  <div style="font-family:var(--px);font-size:11px;color:#fff;letter-spacing:.06em;text-align:center;margin-bottom:16px">JOURNAL DU DONJON</div>
+  <div id="journal-list" style="width:100%;max-width:380px"></div>
+  <button class="gbtn" style="margin-top:16px;background:transparent;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);font-size:7px" onclick="hide('screen-journal')">FERMER</button>
 </div>
 
 <!-- ══ EVENT OVERLAY ══ -->
@@ -652,6 +840,41 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
   <button class="gbtn grn" onclick="startNewRun()">NOUVELLE RUN →</button>
 </div>
 
+<!-- ══ BOSS VAINCU ══ -->
+<div id="screen-boss-killed" class="overlay hidden">
+  <div class="bkill-star">★</div>
+  <div class="bkill-name" id="bkill-name">VEILLEUR VAINCU</div>
+  <div class="bkill-floor" id="bkill-floor">ÉTAGE 1</div>
+  <div class="bkill-msg">VICTOIRE DU JOUR<br>REVENEZ DEMAIN POUR AVANCER</div>
+  <button class="gbtn grn" style="max-width:260px" onclick="closeBossKilled()">RÉCUPÉRER LE BUTIN →</button>
+</div>
+
+<!-- ══ CARTE DU DONJON ══ -->
+<div id="screen-dungeon" class="overlay hidden">
+  <div class="dmap-header">RUN ACTUELLE</div>
+  <div class="dmap-title">CARTE DU DONJON</div>
+  <div class="dmap-streak" id="dmap-streak">🔥 0 JOURS CONSÉCUTIFS</div>
+  <div class="dmap-inner" id="dmap-content"></div>
+  <button class="gbtn" style="margin-top:12px;background:transparent;border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.45);font-size:7px;max-width:260px" onclick="hide('screen-dungeon')">FERMER</button>
+</div>
+
+<!-- ══ ARBRE DE COMPÉTENCES ══ -->
+<div id="screen-skills" class="overlay hidden">
+  <div class="stree-header">
+    <div class="stree-title">ARBRE DE COMPÉTENCES</div>
+  </div>
+  <div class="stree-souls" id="skill-souls-lbl">💀 0 ÂMES</div>
+  <div id="stree-container" style="width:100%;max-width:400px;margin:0 auto;"></div>
+  <button class="gbtn" style="margin-top:10px;background:transparent;border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.45);font-size:7px;max-width:260px" onclick="hide('screen-skills')">FERMER</button>
+</div>
+
+<!-- ══ APPARENCE (SKIN) ══ -->
+<div id="screen-skin" class="overlay hidden">
+  <div class="skin-title">APPARENCE</div>
+  <div class="skin-grid" id="skin-grid"></div>
+  <button class="gbtn" style="margin-top:4px;background:transparent;border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.45);font-size:7px;max-width:260px" onclick="hide('screen-skin')">FERMER</button>
+</div>
+
 <!-- ══ LEVEL-UP OVERLAY ══ -->
 <div id="screen-levelup" class="overlay hidden" style="gap:16px;padding:28px 20px">
   <div class="levelup-title">NIVEAU <span id="lu-level">2</span></div>
@@ -709,8 +932,8 @@ const C={
   BASE_ATK:1000,         // dégâts de base avant items/prestige
   BASE_CRIT:0.05,        // 5% crit de base
   CRIT_MULT:2,           // ×2 par défaut
-  BOSS_BASE:10000,       // HP boss étage 1
-  BOSS_STEP:1000,        // +1000 HP par étage
+  BOSS_HP_BASE:1000,     // HP boss étage 1
+  BOSS_HP_GROW:1.22,     // facteur exponentiel par étage
   LOG_MAX:20,
 };
 
@@ -734,25 +957,61 @@ const ZONES=[
 ];
 function getZone(f){return ZONES.find(z=>f>=z.floors[0]&&f<=z.floors[1])||{name:'ZONE ?',color:'#7070aa',sky:'#0a0b1e',fog:'#10121e'};}
 
-const BOSS_TYPES=[
-  {id:1,name:'LE VEILLEUR',type:'standard',atk:20,sentBonus:0,  desc:'Observateur impassible.'},
-  {id:2,name:'LE BOURREAU',type:'sentence',atk:18,sentBonus:20, desc:'Sentence +20%.'},
-  {id:3,name:'LE PHÉNIX',  type:'phoenix', atk:22,sentBonus:0,  desc:'Renaît une fois à 30% HP.'},
-  {id:4,name:'LE JUGE',    type:'judge',   atk:20,sentBonus:0,  desc:'Sous 5K pas : ATK ×2.'},
-  {id:5,name:'LE DORMEUR', type:'dormant', atk:10,sentBonus:-15,desc:'Jour 3 : Sentence 100%.'},
+// ─── VEILLEURS ────────────────────────────────────────────────────────
+// hp_mult: multiplicateur sur bossMaxHp(f) — mechanic: clé mécanique
+const ALL_WATCHERS=[
+  // ZONE I — LA CRYPTE (étages 1-9)
+  {id:1, zone:1,name:'LE VEILLEUR CREUX', type:'standard',icon:'👁️',hp_mult:1.0, atk:18,sentBonus:0,   mechanic:null,      desc:'Gardien impassible. Aucune mécanique.'},
+  {id:2, zone:1,name:'LE BOURREAU',       type:'sentence', icon:'🪓',hp_mult:0.9, atk:18,sentBonus:20,  mechanic:'sent+',   desc:'Sentence +20% de mortalité.'},
+  {id:3, zone:1,name:'LE MOINILLON',      type:'glass',    icon:'🧎',hp_mult:0.5, atk:28,sentBonus:35,  mechanic:'glass',   desc:'Peu de HP — mais la fuite est très difficile.'},
+  {id:4, zone:1,name:'LA STATUE',         type:'armored',  icon:'🗿',hp_mult:2.2, atk:7, sentBonus:-15, mechanic:'daily_def',desc:'Chaque nuit passée contre lui : -15% DEF.'},
+  {id:5, zone:1,name:'LE DUELLISTE',      type:'duelist',  icon:'🤺',hp_mult:0.8, atk:20,sentBonus:20,  mechanic:'duelist', desc:'Si dégâts < 50% HP boss : Sentence +20%.'},
+  // ZONE II — LA FORGE (étages 11-19)
+  {id:6, zone:2,name:'LE CENDRÉ',         type:'ember',    icon:'🔥',hp_mult:1.0, atk:22,sentBonus:10,  mechanic:'ember',   desc:'Si il survit : dégâts reçus +10% le lendemain.'},
+  {id:7, zone:2,name:'LE COLOSSE',        type:'armored',  icon:'🏔️',hp_mult:2.6, atk:10,sentBonus:-20, mechanic:null,      desc:'HP colossaux — Sentence faible.'},
+  {id:8, zone:2,name:'LE BOUCHER',        type:'butcher',  icon:'🔪',hp_mult:1.2, atk:15,sentBonus:0,   mechanic:'butcher', desc:'Plus il a de HP restants, plus la Sentence est mortelle.'},
+  {id:9, zone:2,name:'LE SANGUIN',        type:'berserk',  icon:'🩸',hp_mult:1.0, atk:20,sentBonus:5,   mechanic:'berserk', desc:'Plus il perd de HP, plus il devient dangereux.'},
+  {id:10,zone:2,name:'LE PHÉNIX',         type:'phoenix',  icon:'🦅',hp_mult:1.1, atk:22,sentBonus:0,   mechanic:'phoenix', desc:'Renaît une fois à 25% HP quand il tombe.'},
+  // ZONE III — L'ABÎME (étages 21-29)
+  {id:11,zone:3,name:'LE FANTÔME',        type:'ghost',    icon:'👻',hp_mult:0.8, atk:18,sentBonus:0,   mechanic:'ghost',   desc:'25% de chances d\'esquiver le coup.'},
+  {id:12,zone:3,name:'LE DORMEUR',        type:'dormant',  icon:'😴',hp_mult:1.4, atk:10,sentBonus:-10, mechanic:'dormant', desc:'Gagne +40% HP et Sentence renforcée chaque nuit passée.'},
+  {id:13,zone:3,name:'LE MIROIR',         type:'mirror',   icon:'🪞',hp_mult:0.9, atk:20,sentBonus:5,   mechanic:'mirror',  desc:'Copie 25% de ton multiplicateur d\'ATK.'},
+  {id:14,zone:3,name:'LE PARASITE',       type:'regen',    icon:'🦠',hp_mult:1.0, atk:18,sentBonus:0,   mechanic:'regen',   desc:'Regagne 10% HP chaque nuit. Gagne +15% HP max.'},
+  {id:15,zone:3,name:"L'INÉVITABLE",      type:'inevitable',icon:'⚫',hp_mult:1.3, atk:25,sentBonus:15,  mechanic:'inevitable',desc:'La première attaque ne peut jamais le tuer. Force une Sentence.'},
+  // ZONE IV — LE SANCTUAIRE (étages 31-39)
+  {id:16,zone:4,name:'LE JUGE',           type:'judge',    icon:'⚖️',hp_mult:1.0, atk:20,sentBonus:0,   mechanic:'judge',   desc:'Réduit de 20% ta statistique de run la plus élevée.'},
+  {id:17,zone:4,name:"L'ORACLE",          type:'oracle',   icon:'🔮',hp_mult:0.9, atk:15,sentBonus:0,   mechanic:'oracle',  desc:'Révèle ton ATK exacte avant de frapper — mais -10% dégâts.'},
+  {id:18,zone:4,name:"L'AVEUGLE",         type:'blind',    icon:'🙈',hp_mult:1.0, atk:18,sentBonus:0,   mechanic:'blind',   desc:'Crit +10% — dégâts non-critiques -15%.'},
+  {id:19,zone:4,name:'LA VEUVE',          type:'widow',    icon:'🕷️',hp_mult:0.9, atk:20,sentBonus:5,   mechanic:'widow',   desc:'Chaque nuit qui passe : Âmes bonus augmentent, fuite diminue.'},
+  {id:20,zone:4,name:'LE PÈLERIN NOIR',   type:'pilgrim',  icon:'🧳',hp_mult:1.0, atk:18,sentBonus:0,   mechanic:'pilgrim', desc:'Ses HP augmentent avec ton niveau de run.'},
+  // ZONE V — LE TRÔNE (étages 41-49)
+  {id:21,zone:5,name:'LE GEÔLIER',        type:'jailer',   icon:'⛓️',hp_mult:1.3, atk:28,sentBonus:10,  mechanic:null,      desc:'Gardien des profondeurs.'},
+  {id:22,zone:5,name:'LE TRAQUEUR',       type:'hunter',   icon:'🎯',hp_mult:1.1, atk:25,sentBonus:0,   mechanic:null,      desc:'Implacable chasseur.'},
+  // BOSS MAJEURS (tous les 10 étages)
+  {id:99, zone:1,name:'GARDIEN DE LA CRYPTE', type:'major',icon:'🗝️',hp_mult:1.8, atk:30,sentBonus:5,  mechanic:'major', desc:'Premier sceau brisé.'},
+  {id:100,zone:2,name:'ROI DES RACINES',       type:'major',icon:'🌿',hp_mult:1.8, atk:35,sentBonus:10, mechanic:'major', desc:'Ses racines drainent la fuite.'},
+  {id:101,zone:3,name:"HORLOGER ENDORMI",      type:'major',icon:'⏰',hp_mult:1.8, atk:40,sentBonus:8,  mechanic:'major', desc:'Ralentit chaque run.'},
+  {id:102,zone:4,name:'SAINT SANS VISAGE',     type:'major',icon:'👤',hp_mult:1.8, atk:45,sentBonus:5,  mechanic:'major', desc:'Annule un bonus aléatoire.'},
+  {id:103,zone:5,name:'LE PREMIER MORT',       type:'major',icon:'💀',hp_mult:1.8, atk:55,sentBonus:20, mechanic:'major', desc:'Sentence toujours ≥50%.'},
 ];
-const ZONE_BOSSES=[
-  {name:'GARDIEN DE LA CRYPTE',atk:30,sentBonus:5},
-  {name:'MAÎTRE DE LA FORGE',  atk:35,sentBonus:10},
-  {name:"ROI DE L'ABÎME",     atk:40,sentBonus:8},
-  {name:'ORACLE DU SANCTUAIRE',atk:45,sentBonus:5},
-  {name:'LE ROI DÉCHU',        atk:55,sentBonus:20},
-];
+// Sélection Veilleur par zone + étage — évite répétition immédiate
 function getBoss(f){
-  if(f%10===0){const z=ZONE_BOSSES[Math.min(Math.floor((f-1)/10),4)];return{id:99,name:z.name,type:'major',atk:z.atk,sentBonus:z.sentBonus};}
-  return BOSS_TYPES[(f-1)%BOSS_TYPES.length];
+  if(f%10===0){
+    const zi=Math.min(Math.floor((f-1)/10),4);
+    const major=ALL_WATCHERS.find(w=>w.type==='major'&&w.zone===zi+1)||ALL_WATCHERS.find(w=>w.id===99);
+    return major;
+  }
+  const zone=getZone(f);
+  const zid=zone.id||1;
+  const pool=ALL_WATCHERS.filter(w=>w.zone===zid&&w.type!=='major');
+  // Déterministe par étage pour cohérence
+  return pool[((f-1)%10)%pool.length]||ALL_WATCHERS[0];
 }
-function bossMaxHp(f){const h=C.BOSS_BASE+(f-1)*C.BOSS_STEP;return f%10===0?Math.floor(h*1.5):h;}
+function bossMaxHp(f){
+  const h=Math.floor(C.BOSS_HP_BASE*Math.pow(C.BOSS_HP_GROW,f-1));
+  const boss=getBoss(f);
+  return Math.round(h*(boss.hp_mult||1.0));
+}
 
 // Arcanes/events/milestones/flames supprimés — simplifié sur le core walk→attack
 
@@ -800,7 +1059,44 @@ const ALL_ITEMS=[
   {id:'w13',name:"LAME DE L'ÉTUDIANT",type:'weapon',rarity:'rare', icon:'📖', desc:'+8% dégâts par niveau de run',         fx:{dmgPerLevel:.08}},
   {id:'a7', name:'GRIMOIRE DÉFENSIF', type:'armor', rarity:'rare',  icon:'🔖', desc:'+10% fuite — +15% XP pas',            fx:{escapeMod:.10,xpStepBonus:.15}},
 ];
-function findItem(id){return ALL_ITEMS.find(i=>i.id===id);}
+// ─── ITEMS DE DÉPART (garantis diversifiés) ──────────────────────────
+// Pools séparées: 1 offensif, 1 défensif, 1 utilitaire
+const STARTER_POOLS={
+  first:[ // Première run : items simples et clairs
+    {id:'s1',name:'LAME ÉBRÉCHÉE',    type:'weapon',rarity:'common',icon:'⚔️',desc:'+25% dégâts. Simple et fiable.',fx:{dmgMult:1.25}},
+    {id:'s2',name:'BOTTES DU FUYARD', type:'armor', rarity:'common',icon:'👟',desc:'+20% fuite. Plus safe.',fx:{escapeMod:.20}},
+    {id:'s3',name:'MANUEL USÉ',       type:'ring',  rarity:'common',icon:'📖',desc:'+25% XP des pas.',fx:{xpStepBonus:.25}},
+  ],
+  offensive:[
+    {id:'s1',name:'LAME ÉBRÉCHÉE',    type:'weapon',rarity:'common',icon:'⚔️',desc:'+20% dégâts.',fx:{dmgMult:1.20}},
+    {id:'s4',name:"ŒIL FISSURÉ",      type:'ring',  rarity:'common',icon:'👁️',desc:'+10% crit.',fx:{critChance:.10}},
+    {id:'s5',name:'MARTEAU LOURD',    type:'weapon',rarity:'common',icon:'🔨',desc:'+35% dégâts — crit -8%.',fx:{dmgMult:1.35,critChance:-.08}},
+    {id:'s6',name:'ÉCHO FÊLÉ',        type:'ring',  rarity:'common',icon:'🔔',desc:'8% de chance de répéter l\'attaque à 50%.',fx:{repeatChance:.08}},
+    {id:'s7',name:'PREMIER SANG',     type:'weapon',rarity:'common',icon:'🩸',desc:'+40% sur la 1ère attaque d\'un boss.',fx:{firstBlood:.40}},
+  ],
+  defensive:[
+    {id:'s2',name:'BOTTES DU FUYARD', type:'armor', rarity:'common',icon:'👟',desc:'+15% fuite.',fx:{escapeMod:.15}},
+    {id:'s8',name:'CAPE DES OMBRES',  type:'armor', rarity:'common',icon:'🌑',desc:'Boss <50% : +15% fuite.',fx:{escapeModIfBossLow:.15}},
+    {id:'s9',name:'TALISMAN',         type:'armor', rarity:'common',icon:'🔮',desc:'+10% fuite.',fx:{escapeMod:.10}},
+    {id:'s10',name:'BOUCLIER BRISÉ',  type:'armor', rarity:'common',icon:'🛡️',desc:'+12% fuite.',fx:{escapeMod:.12}},
+  ],
+  utility:[
+    {id:'s3', name:'MANUEL USÉ',      type:'ring',  rarity:'common',icon:'📖',desc:'+20% XP des pas.',fx:{xpStepBonus:.20}},
+    {id:'s11',name:'ANNEAU DU PÈLERIN',type:'ring', rarity:'common',icon:'🚶',desc:'Chaque niveau : +3% dégâts.',fx:{dmgPerLevel:.03}},
+    {id:'s12',name:'RANCUNE',         type:'ring',  rarity:'common',icon:'😤',desc:'+30% dégâts si le boss a survécu hier.',fx:{daysBonusMult:.30}},
+    {id:'s13',name:'MÉMOIRE DU SANG', type:'ring',  rarity:'common',icon:'📿',desc:'+15% dégâts par jour contre ce boss.',fx:{daysBonusMult:.15,stackPerDay:true}},
+  ],
+};
+function pickStarterItems(isFirstRun){
+  if(isFirstRun) return [...STARTER_POOLS.first];
+  const pick=pool=>pool[Math.floor(Math.random()*pool.length)];
+  const off=pick(STARTER_POOLS.offensive);
+  let def;do{def=pick(STARTER_POOLS.defensive);}while(def.id===off.id);
+  let uti;do{uti=pick(STARTER_POOLS.utility);}while(uti.id===off.id||uti.id===def.id);
+  return[off,def,uti];
+}
+
+function findItem(id){return ALL_ITEMS.find(i=>i.id===id)||STARTER_POOLS.offensive.concat(STARTER_POOLS.defensive,STARTER_POOLS.utility,STARTER_POOLS.first).find(i=>i.id===id);}
 function getEquippedItems(){
   return[G.equipped_weapon,G.equipped_armor,G.equipped_ring]
     .filter(Boolean).map(s=>findItem(s.id)).filter(Boolean);
@@ -875,6 +1171,8 @@ function getRunUpgradeEffects(){
   return e;
 }
 
+// SKINS, SKILL_NODES, ITEM_SPRS moved below parseSpr (they depend on it)
+
 // ─── PIXEL ART SPRITES ───────────────────────────────────────────────
 // K = dark outline, chunky fills
 // Palette calquée sur style ref — warm outlines, saturated fills
@@ -907,6 +1205,67 @@ const PX={
   'G':'#1c7830','g':'#38b040',
 };
 function parseSpr(lines){return lines.map(r=>[...r].map(c=>PX[c]||null));}
+
+// ─── SKINS ───────────────────────────────────────────────────────────
+const SKINS=[
+  {id:'crimson', name:'CRAMOISI', desc:'Cape rouge sang.',    palette:null},
+  {id:'azure',   name:'AZUR',     desc:'Armure de glace.',   palette:{A:'#1060c0',a:'#0c4080',C:'#3090e0',B:'#80b0d8',b:'#5080a0',S:'#b0d0f0',W:'#d8eeff'}},
+  {id:'emerald', name:'ÉMERAUDE', desc:'Manteau des bois.',  palette:{A:'#1a7030',a:'#0e4020',C:'#30a048',B:'#5030a0',b:'#382070',S:'#8060c0',W:'#b090e0'}},
+  {id:'gold',    name:'DORÉ',     desc:'Armure royale.',     palette:{A:'#b88010',a:'#7a5008',C:'#e0a020',B:'#3a1a08',b:'#281008',S:'#7a4820',W:'#c09060'}},
+];
+
+// ─── SKILL TREE ───────────────────────────────────────────────────────
+const SKILL_NODES=[
+  {id:'sf1',branch:'force', row:0,name:'TREMPE',      icon:'⚔️',cost:3, desc:'+10% ATK',              fx:{sk_atk:.10},           req:null},
+  {id:'sf2',branch:'force', row:1,name:'RAGE',        icon:'💥',cost:6, desc:'+20% ATK',              fx:{sk_atk:.20},           req:'sf1'},
+  {id:'sf3',branch:'force', row:2,name:'FUREUR',      icon:'🔥',cost:12,desc:'+35% ATK · exéc.<8%',   fx:{sk_atk:.35,sk_execute:.08},req:'sf2'},
+  {id:'sd1',branch:'destin',row:0,name:'INSTINCT',    icon:'🏃',cost:3, desc:'+8% fuite',             fx:{sk_esc:.08},           req:null},
+  {id:'sd2',branch:'destin',row:1,name:'TÉNACITÉ',    icon:'🛡️',cost:6, desc:'+16% fuite',            fx:{sk_esc:.16},           req:'sd1'},
+  {id:'sd3',branch:'destin',row:2,name:'OMBRE',       icon:'🌑',cost:12,desc:'+26% fuite',             fx:{sk_esc:.26},           req:'sd2'},
+  {id:'ss1',branch:'savoir',row:0,name:'CURIOSITÉ',   icon:'📚',cost:3, desc:'+15% XP pas',           fx:{sk_xp:.15},            req:null},
+  {id:'ss2',branch:'savoir',row:1,name:'ARCHIVISTE',  icon:'📓',cost:6, desc:'+25% XP boss',          fx:{sk_xpb:.25},           req:'ss1'},
+  {id:'ss3',branch:'savoir',row:2,name:'OMNISCIENCE', icon:'✨',cost:12,desc:'+40% tout XP',           fx:{sk_xp:.40,sk_xpb:.40}, req:'ss2'},
+];
+function getSkillEffects(){
+  const owned=G&&G.skill_tree||[];
+  const e={sk_atk:0,sk_execute:0,sk_esc:0,sk_xp:0,sk_xpb:0};
+  owned.forEach(id=>{const n=SKILL_NODES.find(x=>x.id===id);if(n&&n.fx)Object.entries(n.fx).forEach(([k,v])=>{e[k]=(e[k]||0)+v;});});
+  return e;
+}
+
+// ─── ITEM PIXEL ART SPRITES ───────────────────────────────────────────
+const ITEM_SPRS={
+  sword:parseSpr(['......kk','.....kqk','....kqk.','...kqk..','..kqk...','.kqkKK..','kkKK....','.KK.....']),
+  dagger:parseSpr(['....kNk.','...kNNk.','..kNNk..','.kNNk...','kNkKK...','kKKJ....','.KjK....','..KK....']),
+  hammer:parseSpr(['.kQQQk..','kQqqqQk.','kQqqqQk.','.kQQQk..','..kQk...','..kQk...','..kQk...','..kKk...']),
+  scythe:parseSpr(['...kNNk.','..kNnNk.','.kNnk...','kNk.....','knk.....', '.knk....','..kNk...','...kKk..']),
+  boot:parseSpr(['........','..kBBk..','.kBbbBk.','.kBbbBk.','.kBbbBk.','.kBBBBkk','kBbbbbBk','kKKKKKKk']),
+  cape:parseSpr(['..kNNk..','.kNnnNk.','kNnnnnNk','kNnnnnNk','.kNnnNk.','..kNNk..','.kN..Nk.','kK....Kk']),
+  shield:parseSpr(['.kBBBBk.','kBbbbbBk','kBbSSbBk','kBbSSbBk','kBbbbbBk','.kBbbBk.','..kBbk..','...kKk..']),
+  talisman:parseSpr(['..kvvk..','.kvMMvk.','kvMvvMvk','kvMvvMvk','.kvMMvk.','..kvvk..','..kFFk..','...kKk..']),
+  ring:parseSpr(['..kKKk..','.kqqqQk.','kqKKKqk.','kqK.Kqk.','kqKKKqk.','.kqqqQk.','..kKKk..','........']),
+  eye:parseSpr(['........','.kQQQQk.','kQkPPkQk','kQkPPkQk','.kQkkQk.','..kQQk..','........','........']),
+  bell:parseSpr(['..kjJk..','.kjjjJk.','kjjjjjJk','kjjjjjJk','kjjjjjJk','.kJJJJk.','..kKKk..','..kjJk..']),
+  skull:parseSpr(['..kHHk..','.kHxHxk.','kHHxHxHk','kHHHHHHk','.kHHHHk.','..kKKk..','.kKkKkk.','........']),
+  book:parseSpr(['kBBBBBBk','kBbbbbBk','kBbFFbBk','kBbFFbBk','kBbbbbBk','kBbFFbBk','kBbbbbBk','kKKKKKKk']),
+  crown:parseSpr(['kK.k.kKk','kJkJkJJk','kJJJJjJk','kjJJJjJk','.kJJJJjk','..kKKKkk','........','........']),
+  chain:parseSpr(['.kk.kk..','kbBkbBk.','kBbkBbk.','.kk.kk..','..kk.kk.','.kbBkbBk','.kBbkBbk','..kk.kk.']),
+  die:parseSpr(['kKKKKKKk','kZkk.Zkk','kZ.kk.Zk','kZkk.kZk','kZ.kk.Zk','kZ.kk.Zk','kZZ...Zk','kKKKKKKk']),
+};
+function getItemSprKey(item){
+  if(!item)return 'ring';
+  const m={w1:'sword',w2:'dagger',w3:'hammer',w4:'dagger',w5:'sword',w6:'scythe',w7:'dagger',w8:'sword',w9:'sword',w10:'sword',w11:'die',w12:'dagger',w13:'book',s1:'sword',s4:'eye',s5:'hammer',s6:'bell',s7:'dagger',a1:'cape',a2:'boot',a3:'shield',a4:'talisman',a5:'crown',a6:'boot',s2:'boot',s8:'cape',s9:'talisman',s10:'shield',r1:'skull',r2:'eye',r3:'bell',r4:'ring',r5:'ring',r6:'chain',r7:'skull',r8:'die',r9:'skull',r10:'book',r11:'book',s3:'book',s11:'ring',s12:'ring',s13:'skull'};
+  return m[item.id]||(item.type==='weapon'?'sword':item.type==='armor'?'boot':'ring');
+}
+function drawItemIconToCanvas(canvas,item){
+  if(!canvas||!item)return;
+  const spr=ITEM_SPRS[getItemSprKey(item)]||ITEM_SPRS.ring;
+  const sc=Math.floor(canvas.width/spr[0].length);
+  canvas.height=spr.length*sc;canvas.style.height=canvas.height+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  drawPx(ctx,spr,0,0,sc,null);
+}
 
 // ─────────────────────────────────────────────────────────────────────
 // HÉROS — vue de dos, 16×22 px
@@ -1152,6 +1511,26 @@ const BOSS_SPRS={
     '..KqqNk...KNqqk.',
   ]),
 };
+
+// Inverse PX map : hex → char (for skin palette swap)
+const PX_INV={};
+Object.entries(PX).forEach(([k,v])=>{if(v&&!PX_INV[v])PX_INV[v]=k;});
+
+// Draw hero with skin palette
+function drawPxSkin(ctx,spr,ox,oy,sc,skinPal){
+  spr.forEach((row,ry)=>row.forEach((col,rx)=>{
+    if(!col)return;
+    const ch=PX_INV[col];
+    ctx.fillStyle=(ch&&skinPal[ch])||col;
+    ctx.fillRect(Math.round(ox+rx*sc),Math.round(oy+ry*sc),sc,sc);
+  }));
+}
+
+function getSkinPal(){
+  const sid=G&&G.skin_id||'crimson';
+  const sk=SKINS.find(s=>s.id===sid)||SKINS[0];
+  return sk.palette?{...PX,...sk.palette}:PX;
+}
 
 function getBossSprite(boss){
   if(boss.type==='major'){const z=Math.min(Math.floor((G.floor-1)/10),4);return BOSS_SPRS['major'+z]||BOSS_SPRS.major0;}
@@ -1418,7 +1797,7 @@ function drawBattle(ts=0){
   const hX=Math.round(W*.5-hSprW*.5+shX);
   const hBreath=Math.round(Math.sin(ts*.0018)*2);
   const hY=Math.round(heroFeetY-hSprH)+hBreath;
-  drawPx(ctx,HERO_SPR,hX,hY,hSC,null);
+  drawPxSkin(ctx,HERO_SPR,hX,hY,hSC,getSkinPal());
 
   if(G.defending){
     ctx.save();ctx.strokeStyle='#40c4ffaa';ctx.lineWidth=4;
@@ -1490,6 +1869,9 @@ function calcAttack(eq,rups){
   eq=eq||getEquipEffects();
   rups=rups||getRunUpgradeEffects();
   let atk=C.BASE_ATK;
+  // Skill tree FORCE bonus
+  const sk=getSkillEffects();
+  atk*=1+(sk.sk_atk||0);
   // Prestige FORCE
   atk*=1+(G.prestige_atk||0)*.05;
   // Multiplicateur items
@@ -1549,6 +1931,9 @@ function calcEscapeChance(bossHpPct,eq,rups){
   else if(bossHpPct<=.50)base=.45;
   else if(bossHpPct<=.75)base=.20;
   else base=.05;
+  // Skill tree DESTIN bonus
+  const sk2=getSkillEffects();
+  base+=sk2.sk_esc||0;
   // Modificateurs items
   base+=eq.escapeMod||0;
   if(eq.escapeModIfBossLow&&bossHpPct<=.50)base+=eq.escapeModIfBossLow;
@@ -1605,8 +1990,10 @@ async function doAction(action){
   let newBossHp=Math.max(0,G.boss_hp-totalDmg);
   const newBossPct=newBossHp/G.boss_max_hp;
 
-  // Exécution
-  if(eq.executeThreshold&&newBossPct>0&&newBossPct<=eq.executeThreshold){
+  // Exécution (items + skill tree)
+  const skEx=getSkillEffects();
+  const execThresh=Math.max(eq.executeThreshold||0,skEx.sk_execute||0);
+  if(execThresh&&newBossPct>0&&newBossPct<=execThresh){
     newBossHp=0;
     showToast('⚡ EXÉCUTION !','kill');
   }
@@ -1652,12 +2039,13 @@ async function onBossKilled(){
   addLog(`★ ${boss.name} VAINCU ! +${souls} 💀`,'kill');
   showToast(`★ ${boss.name} VAINCU !`,'kill');
   await saveG({boss_hp:0,boss_killed_today:true,bosses_killed:G.bosses_killed+1,souls:G.souls+souls});
+  addRunLogEntry({outcome:'kill',steps:stepsToday,xp:null});
   // XP boss
   const bossXpBase=XP_CFG.BOSS_BASE_XP+(G.floor-1)*XP_CFG.BOSS_XP_STEP;
   const bossXpMult=1+(eq.xpBossBonus||0)+(G.prestige_savoir||0)*.04;
   const bossXp=Math.round(bossXpBase*bossXpMult);
   await grantXp(bossXp,'boss');
-  await delay(800);showLootScreen();
+  await delay(600);showBossKilledScreen(boss);
 }
 
 // ─── XP SYSTEM ──────────────────────────────────────────────────────
@@ -1677,8 +2065,11 @@ async function grantXp(amount,source){
   const eq=getEquipEffects();
   const rups=getRunUpgradeEffects();
   let mult=1;
+  const skXp=getSkillEffects();
   if(source==='steps'){
-    mult+=eq.xpStepBonus+(rups.xpStepBonus||0)+(G.prestige_savoir||0)*.05;
+    mult+=eq.xpStepBonus+(rups.xpStepBonus||0)+(G.prestige_savoir||0)*.05+(skXp.sk_xp||0);
+  } else if(source==='boss'){
+    mult+=(skXp.sk_xpb||0);
   }
   const gained=Math.max(0,Math.round(amount*mult));
   if(gained<=0)return;
@@ -1745,13 +2136,23 @@ async function chooseLevelUp(upgradeId,level){
 
 // ─── LOOT ───────────────────────────────────────────────────────────
 function getRandomLoot(){const pick=a=>a[Math.floor(Math.random()*a.length)];return[pick(ALL_ITEMS.filter(i=>i.type==='weapon')),pick(ALL_ITEMS.filter(i=>i.type==='armor')),pick(ALL_ITEMS.filter(i=>i.type==='ring'))];}
+function makeItemCanvas(item,size=28){
+  const cvs=document.createElement('canvas');
+  cvs.className='item-canvas';
+  cvs.width=size;cvs.height=size;
+  cvs.style.width=size+'px';cvs.style.height=size+'px';
+  requestAnimationFrame(()=>drawItemIconToCanvas(cvs,item));
+  return cvs;
+}
+
 function showLootScreen(){
   lootChoices=getRandomLoot();
   const c=document.getElementById('loot-items');c.innerHTML='';
   lootChoices.forEach((item,idx)=>{
     const cur=G['equipped_'+item.type]?findItem(G['equipped_'+item.type].id):null;
     const el=document.createElement('div');el.className='litem';
-    el.innerHTML=`<div class="lico">${item.icon}</div><div class="lbody"><div class="ltype">${item.type==='weapon'?'ARME':item.type==='armor'?'ARMURE':'ANNEAU'}</div><div class="lname">${item.name}</div><div class="ldesc">${item.desc}</div><div class="lcur">${cur?'Actuel : '+cur.name:'Aucun équipé'}</div></div><button class="lbtn" onclick="chooseLoot(${idx})">ÉQUIPER</button>`;
+    el.innerHTML=`<div class="lbody"><div class="ltype">${item.type==='weapon'?'ARME':item.type==='armor'?'ARMURE':'ANNEAU'}</div><div class="lname">${item.name}</div><div class="ldesc">${item.desc}</div><div class="lcur">${cur?'Actuel : '+cur.name:'Aucun équipé'}</div></div><button class="lbtn" onclick="chooseLoot(${idx})">ÉQUIPER</button>`;
+    el.insertBefore(makeItemCanvas(item,30),el.firstChild);
     c.appendChild(el);
   });
   show('screen-loot');
@@ -1826,6 +2227,7 @@ async function resolveSentenceRoll(escapes){
   const eq=getEquipEffects();
   const newSentences=(G.run_sentences_survived||0)+1;
   await saveG({run_sentences_survived:newSentences,sentence_survived:(G.sentence_survived||0)+1});
+  addRunLogEntry({outcome:'fled',steps:stepsToday});
   showToast('✓ FUITE RÉUSSIE','heal');
   render();
 }
@@ -1913,8 +2315,9 @@ function render(){
   // Âmes (fantôme) + streak top-right
   const sc=document.getElementById('souls-count');if(sc)sc.textContent=G.souls;
   const stk=document.getElementById('streak-count');if(stk)stk.textContent=G.flame_streak||0;
+  const stkBar=document.getElementById('streak-count-bar');if(stkBar)stkBar.textContent=G.flame_streak||0;
   // Pas en gros + barre boss + hint
-  const sb=document.getElementById('steps-big');if(sb)sb.innerHTML=stepsToday.toLocaleString('fr-FR')+'<span style="font-size:9px;color:#fff;margin-left:8px;letter-spacing:.12em;vertical-align:middle">PAS</span>';
+  const sb=document.getElementById('steps-big');if(sb)sb.textContent=stepsToday.toLocaleString('fr-FR');
   const bossBarFill=document.getElementById('steps-boss-bar-fill');
   const bossHint=document.getElementById('steps-boss-hint');
   const atksEl=document.getElementById('steps-attacks-avail');
@@ -1926,7 +2329,7 @@ function render(){
   if(chargeRval){
     if(G.boss_killed_today)chargeRval.textContent='✓';
     else if(charged)chargeRval.textContent='10 000 ✓';
-    else chargeRval.textContent=stepsToday.toLocaleString('fr-FR')+' / 10 000';
+    else chargeRval.textContent=stepsToday.toLocaleString('fr-FR')+'/10 000 PAS';
   }
   if(atksEl){
     if(G.boss_killed_today){atksEl.textContent='';atksEl.className='zero';}
@@ -1940,13 +2343,22 @@ function render(){
     else{atksEl.textContent='';atksEl.className='zero';}
   }
 
-  // Boss label
-  document.getElementById('boss-name-txt').textContent=G.boss_killed_today?'★ VAINCU':boss.name;
-  document.getElementById('boss-name-txt').style.color=G.boss_killed_today?zone.color:'rgba(255,255,255,.85)';
+  // Boss bar hud
+  const bossNameEl=document.getElementById('boss-name-txt');
+  if(bossNameEl){
+    bossNameEl.textContent=G.boss_killed_today?'★ VAINCU':boss.name;
+    bossNameEl.style.color=G.boss_killed_today?zone.color:'rgba(255,255,255,.9)';
+  }
   const bFill=document.getElementById('boss-bar-fill');
   const bPct=Math.max(0,G.boss_hp/G.boss_max_hp*100);
-  bFill.style.width=bPct+'%';
-  bFill.style.background=bPct>50?'#00e676':bPct>25?'#ffd600':'#ff2255';
+  if(bFill){
+    bFill.style.width=bPct+'%';
+    if(bPct>50)bFill.style.background='linear-gradient(90deg,#006633,#00e676)';
+    else if(bPct>20)bFill.style.background='linear-gradient(90deg,#885500,#ffaa00)';
+    else bFill.style.background='linear-gradient(90deg,#880000,#ff2255)';
+  }
+  const bHpLbl=document.getElementById('hud-boss-hp-lbl');
+  if(bHpLbl)bHpLbl.textContent=G.boss_killed_today?'—':Math.round(bPct)+'%';
 
   // XP bar
   const runLvl=G.run_level||1;
@@ -1997,7 +2409,11 @@ function openEquip(){
   slots.forEach(s=>{
     const item=G[s.key]?findItem(G[s.key].id):null;
     const el=document.createElement('div');el.className='eq-row';
-    el.innerHTML=`<div class="eq-icon">${item?item.icon:s.icon}</div><div class="eq-body"><div class="eq-slot">${s.label}</div>${item?`<div class="eq-name">${item.name}</div><div class="eq-desc">${item.desc}</div>`:'<div class="eq-empty">— aucun équipé</div>'}</div>`;
+    if(item){const cvs=makeItemCanvas(item,24);cvs.style.flexShrink='0';el.appendChild(cvs);}
+    else{const ico=document.createElement('div');ico.className='eq-icon';ico.textContent=s.icon;el.appendChild(ico);}
+    const body=document.createElement('div');body.className='eq-body';
+    body.innerHTML=`<div class="eq-slot">${s.label}</div>${item?`<div class="eq-name">${item.name}</div><div class="eq-desc">${item.desc}</div>`:'<div class="eq-empty">— aucun équipé</div>'}`;
+    el.appendChild(body);
     list.appendChild(el);
   });
   const eq2=getEquipEffects();
@@ -2021,6 +2437,305 @@ function openSetup(){document.getElementById('modal-bg').classList.add('open');}
 function closeSetup(){document.getElementById('modal-bg').classList.remove('open');}
 document.getElementById('modal-bg').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSetup();});
 
+// ─── STARTER ITEM ────────────────────────────────────────────────────
+function showStarterScreen(){
+  const isFirst=(G.runs_total||0)<=1;
+  const items=pickStarterItems(isFirst);
+  const lbl=document.getElementById('starter-run-lbl');
+  if(lbl)lbl.textContent=isFirst?'PREMIÈRE VIE':'VIE #'+(G.runs_total||1);
+  const container=document.getElementById('starter-items');
+  container.innerHTML='';
+  const cats=['offensive','defensive','utility'];
+  const catLabels={offensive:'OFFENSIF',defensive:'DÉFENSIF / FUITE',utility:'UTILITAIRE / XP'};
+  items.forEach((item,i)=>{
+    const cat=isFirst?['offensive','defensive','utility'][i]:(item.fx.escapeMod||item.fx.escapeModIfBossLow?'defensive':item.fx.xpStepBonus||item.fx.dmgPerLevel||item.fx.daysBonusMult?'utility':'offensive');
+    const el=document.createElement('div');
+    el.className='item-card '+cat;
+    const icoCvs=makeItemCanvas(item,32);icoCvs.className='item-canvas';icoCvs.style.flexShrink='0';
+    const body=document.createElement('div');body.className='ic-body';
+    body.innerHTML=`<div class="ic-tag">${catLabels[cat]||''}</div><div class="ic-name">${item.name}</div><div class="ic-desc">${item.desc}</div>`;
+    el.appendChild(icoCvs);el.appendChild(body);
+    el.onclick=()=>chooseStarterItem(item);
+    container.appendChild(el);
+  });
+  show('screen-starter');
+}
+async function chooseStarterItem(item){
+  hide('screen-starter');
+  // Équiper dans le bon slot
+  const slot='equipped_'+(item.type==='weapon'?'weapon':item.type==='armor'?'armor':'ring');
+  await saveG({starter_chosen:true,[slot]:{id:item.id}});
+  showToast(`★ ${item.name} emporté`,'kill');
+  render();
+}
+
+// ─── JOURNAL ─────────────────────────────────────────────────────────
+function openJournal(){
+  const log=G.run_log||[];
+  const container=document.getElementById('journal-list');
+  container.innerHTML='';
+  if(log.length===0){
+    container.innerHTML='<div style="font-family:var(--px);font-size:7px;color:rgba(255,255,255,.3);text-align:center;padding:20px">AUCUNE ENTRÉE POUR CETTE VIE.</div>';
+  } else {
+    [...log].reverse().forEach(entry=>{
+      const isCurrent=!entry.outcome;
+      const node=document.createElement('div');node.className='jnode';
+      const dot=document.createElement('div');
+      dot.className='jnode-dot '+(isCurrent?'current':entry.outcome||'');
+      const body=document.createElement('div');body.className='jnode-body';
+      const zname=getZone(entry.floor||1).name;
+      const badge=isCurrent?'EN COURS':entry.outcome==='kill'?'✓ VAINCU':entry.outcome==='fled'?'↗ FUITE':'✗ MORT';
+      const badgeCls=isCurrent?'current':entry.outcome||'';
+      body.innerHTML=`<div class="jnode-day">JOUR ${entry.day} — ${zname} — ÉT.${entry.floor}</div><div class="jnode-boss">${entry.boss_name||'—'}</div><div class="jnode-detail">${entry.steps?entry.steps.toLocaleString('fr-FR')+' pas':''} ${entry.xp?'· +'+entry.xp+' XP':''} ${entry.loot?'· '+entry.loot:''}</div><div class="jnode-badge ${badgeCls}">${badge}</div>`;
+      node.appendChild(dot);node.appendChild(body);
+      container.appendChild(node);
+    });
+  }
+  // Ajouter entrée du jour actuel si pas encore dans le log
+  show('screen-journal');
+}
+function addRunLogEntry(entry){
+  const log=[...(G.run_log||[])];
+  const day=(G.boss_days_survived||0)+(G.bosses_killed||0)+1;
+  log.push({day,floor:G.floor,boss_name:getBoss(G.floor).name,...entry,date:today()});
+  saveG({run_log:log});
+}
+
+// ─── BOSS KILLED SCREEN ──────────────────────────────────────────────
+function showBossKilledScreen(boss){
+  const nameEl=document.getElementById('bkill-name');
+  const floorEl=document.getElementById('bkill-floor');
+  if(nameEl)nameEl.textContent=(boss.name||'VEILLEUR')+' VAINCU !';
+  if(floorEl)floorEl.textContent='ÉTAGE '+G.floor+(boss.type==='major'?' — BOSS MAJEUR':'');
+  show('screen-boss-killed');
+}
+function closeBossKilled(){
+  hide('screen-boss-killed');
+  delay(200).then(()=>showLootScreen());
+}
+
+// ─── DUNGEON MAP ─────────────────────────────────────────────────────
+function openDungeonMap(){
+  // Streak display
+  const streakEl=document.getElementById('dmap-streak');
+  if(streakEl)streakEl.textContent='🔥 '+(G.flame_streak||0)+' JOURS CONSÉCUTIFS';
+
+  const container=document.getElementById('dmap-content');
+  if(!container)return;
+  container.innerHTML='';
+
+  const log=G.run_log||[];
+  const maxFloor=Math.min(G.floor+2,50);
+  let lastZoneId=0;
+
+  for(let f=1;f<=maxFloor;f++){
+    const zone=getZone(f);
+    const boss=getBoss(f);
+    const logEntry=log.find(e=>e.floor===f);
+    let state=f<G.floor?(logEntry?logEntry.outcome:'fled'):f===G.floor?'current':'locked';
+    if(f===G.floor&&G.boss_killed_today)state='killed';
+
+    // Zone banner
+    if(zone.id!==lastZoneId){
+      lastZoneId=zone.id;
+      const zb=document.createElement('div');
+      zb.className='dmap-zone-banner';
+      zb.style.cssText=`color:${zone.color};background:${zone.color}18;border:1px solid ${zone.color}28;`;
+      zb.textContent=zone.name;
+      container.appendChild(zb);
+    }
+
+    const row=document.createElement('div');
+    row.className='dmap-floor-row';
+
+    // Dot + vertical line
+    const dotCol=document.createElement('div');
+    dotCol.className='dmap-dot-col';
+    const dot=document.createElement('div');
+    const isMajor=boss.type==='major';
+    dot.className='dmap-dot '+(state==='current'&&isMajor?'major':state);
+    dotCol.appendChild(dot);
+    if(f<maxFloor){
+      const line=document.createElement('div');
+      line.className='dmap-line';
+      dotCol.appendChild(line);
+    }
+
+    // Room block
+    const room=document.createElement('div');
+    room.className='dmap-room '+(
+      isMajor&&state==='current'?'major current':
+      isMajor&&state!=='locked'?'major':
+      state
+    );
+
+    // Mini boss sprite (only for current and major floors — others: just dot color)
+    const inner=document.createElement('div');
+    inner.className='dmap-room-inner';
+
+    if(state==='current'||isMajor){
+      const bspr=getBossSprite(boss);
+      const bsc=Math.max(1,Math.floor(22/bspr[0].length));
+      const bcw=bspr[0].length*bsc,bch=bspr.length*bsc;
+      const bc=document.createElement('canvas');
+      bc.className='dmap-boss-canvas';
+      bc.width=bcw;bc.height=bch;
+      bc.style.cssText=`width:${bcw}px;height:${bch}px;opacity:${state==='locked'?.2:.85};`;
+      drawPx(bc.getContext('2d'),bspr,0,0,bsc,state==='locked'?'#333':null);
+      inner.appendChild(bc);
+    }
+
+    const info=document.createElement('div');
+    info.className='dmap-room-info';
+
+    const flNum=document.createElement('div');
+    flNum.className='dmap-floor-num';
+    flNum.textContent='ÉT. '+f+(isMajor?' · MAJEUR':'');
+
+    const bname=document.createElement('div');
+    bname.className='dmap-boss-name';
+    bname.style.color=state==='locked'?'rgba(255,255,255,.25)':isMajor?'#ffd600':zone.color;
+    bname.textContent=boss.name;
+
+    const outRow=document.createElement('div');
+    outRow.className='dmap-outcome';
+
+    const badge=document.createElement('div');
+    badge.className='dmap-badge '+(state==='current'&&isMajor?'major':state);
+    badge.textContent=state==='killed'?'✓ VAINCU':state==='fled'?'↗ FUITE':state==='died'?'✗ MORT':state==='current'?'EN COURS':'???';
+    outRow.appendChild(badge);
+
+    // HP bar on current floor
+    if(state==='current'&&G.boss_hp>0&&G.boss_max_hp>0){
+      const pct=G.boss_hp/G.boss_max_hp;
+      const hpCol=pct>0.5?'linear-gradient(90deg,#006633,#00e676)':pct>0.2?'linear-gradient(90deg,#885500,#ffaa00)':'linear-gradient(90deg,#880000,#ff2255)';
+      const hpBar=document.createElement('div');
+      hpBar.className='dmap-hp-bar';
+      const hpFill=document.createElement('div');
+      hpFill.className='dmap-hp-fill';
+      hpFill.style.cssText=`width:${Math.round(pct*100)}%;background:${hpCol};`;
+      hpBar.appendChild(hpFill);
+      info.appendChild(flNum);info.appendChild(bname);info.appendChild(outRow);info.appendChild(hpBar);
+    } else {
+      info.appendChild(flNum);info.appendChild(bname);info.appendChild(outRow);
+    }
+
+    inner.appendChild(info);
+    room.appendChild(inner);
+    row.appendChild(dotCol);
+    row.appendChild(room);
+    container.appendChild(row);
+  }
+
+  show('screen-dungeon');
+}
+
+// ─── SKILL TREE ───────────────────────────────────────────────────────
+function openSkillTree(){
+  renderSkillTree();
+  show('screen-skills');
+}
+
+function renderSkillTree(){
+  const container=document.getElementById('stree-container');
+  if(!container)return;
+  container.innerHTML='';
+
+  const soulsEl=document.getElementById('skill-souls-lbl');
+  if(soulsEl)soulsEl.textContent='💀 '+(G.souls||0)+' ÂMES DISPONIBLES';
+
+  const owned=G.skill_tree||[];
+  const branches=['force','destin','savoir'];
+  const branchLabels={force:'FORCE',destin:'DESTIN',savoir:'SAVOIR'};
+
+  const wrap=document.createElement('div');
+  wrap.className='stree-branches';
+
+  branches.forEach(branch=>{
+    const nodes=SKILL_NODES.filter(n=>n.branch===branch).sort((a,b)=>a.row-b.row);
+    const col=document.createElement('div');
+    col.className='stree-branch';
+
+    const title=document.createElement('div');
+    title.className='stree-branch-title '+branch;
+    title.textContent=branchLabels[branch];
+    col.appendChild(title);
+
+    nodes.forEach((node,ni)=>{
+      const isOwned=owned.includes(node.id);
+      const reqMet=!node.req||owned.includes(node.req);
+      const canAfford=G.souls>=node.cost;
+      const state=isOwned?'owned':reqMet?'available':'locked';
+
+      if(ni>0){const conn=document.createElement('div');conn.className='stree-connector';col.appendChild(conn);}
+
+      const el=document.createElement('div');
+      el.className='stree-node '+state+(!isOwned&&reqMet?' '+branch:'');
+      el.innerHTML=`<div class="stree-node-icon">${node.icon}</div><div class="stree-node-name">${node.name}</div><div class="stree-node-desc">${node.desc}</div><div class="stree-node-cost ${isOwned?'owned':canAfford&&reqMet?'can':'cant'}">${isOwned?'✓ ACQUIS':node.cost+' 💀'}</div>`;
+      if(!isOwned&&reqMet)el.onclick=()=>buySkillNode(node.id);
+      col.appendChild(el);
+    });
+
+    wrap.appendChild(col);
+  });
+  container.appendChild(wrap);
+}
+
+async function buySkillNode(nodeId){
+  const node=SKILL_NODES.find(n=>n.id===nodeId);
+  if(!node||!G)return;
+  const owned=G.skill_tree||[];
+  if(owned.includes(nodeId))return;
+  if(!(!node.req||owned.includes(node.req)))return;
+  if(G.souls<node.cost){showToast('💀 Pas assez d\'âmes','sent');return;}
+  const newTree=[...owned,nodeId];
+  await saveG({skill_tree:newTree,souls:G.souls-node.cost});
+  showToast('⭐ '+node.name+' acquis !','kill');
+  renderSkillTree();
+}
+
+// ─── SKIN SCREEN ─────────────────────────────────────────────────────
+function openSkinScreen(){
+  const grid=document.getElementById('skin-grid');
+  if(!grid)return;
+  grid.innerHTML='';
+  const curSkin=G&&G.skin_id||'crimson';
+  SKINS.forEach(skin=>{
+    const card=document.createElement('div');
+    card.className='skin-card'+(skin.id===curSkin?' active':'');
+
+    // Preview canvas — draw hero with skin palette
+    const sc=3;
+    const sw=HERO_SPR[0].length*sc,sh=HERO_SPR.length*sc;
+    const cvs=document.createElement('canvas');
+    cvs.className='skin-canvas';
+    cvs.width=sw;cvs.height=sh;
+    cvs.style.width=Math.round(sw/2)+'px';
+    cvs.style.height=Math.round(sh/2)+'px';
+    const pal=skin.palette?{...PX,...skin.palette}:PX;
+    drawPxSkin(cvs.getContext('2d'),HERO_SPR,0,0,sc,pal);
+
+    const name=document.createElement('div');name.className='skin-name';name.textContent=skin.name;
+    const desc=document.createElement('div');desc.className='skin-desc';desc.textContent=skin.desc;
+    card.appendChild(cvs);card.appendChild(name);card.appendChild(desc);
+
+    if(skin.id===curSkin){
+      const badge=document.createElement('div');badge.className='skin-badge';badge.textContent='ACTIF';
+      card.appendChild(badge);
+    } else {
+      card.onclick=()=>chooseSkin(skin.id);
+    }
+    grid.appendChild(card);
+  });
+  show('screen-skin');
+}
+
+async function chooseSkin(skinId){
+  await saveG({skin_id:skinId});
+  showToast('✓ APPARENCE CHANGÉE','heal');
+  hide('screen-skin');
+}
+
 // ─── FETCH ──────────────────────────────────────────────────────────
 async function fetchAll(){
   const t=today();
@@ -2036,6 +2751,10 @@ async function fetchAll(){
     const r=await db.from('game_state').select('*').eq('user_id','simon').maybeSingle();G=r.data;
   }
   stepsToday=stRes.data?.steps||0;
+  // Colonnes optionnelles — défaut si absentes
+  if(!G.skill_tree)G.skill_tree=[];
+  if(!G.skin_id)G.skin_id='crimson';
+  if(!G.run_log)G.run_log=[];
   // Restaurer le flag en mémoire
   xpBankedToday=!!(G.xp_banked_today);
   // player_hp = 1 par défaut (run level marqueur), mort = run terminée = screen-dead
@@ -2048,6 +2767,8 @@ async function fetchAll(){
     await saveG({last_sentence_date:t,pa_spent_today:0,attack_used_today:false,xp_banked_today:false});
     xpBankedToday=false;
   }
+  // Écran choix item de départ si pas encore fait cette run
+  if(!G.starter_chosen){showStarterScreen();return;}
   await maybeXpTrigger();
   render();
 }
@@ -2081,13 +2802,15 @@ async function devResetAll(){
     boss_killed_today:false,attack_used_today:false,
     boss_days_survived:0,bosses_killed:0,
     pa_spent_today:0,dot_poison:0,
-    souls:0,
+    souls:0,flame_streak:0,
     prestige_atk:0,prestige_crit:0,prestige_escape:0,prestige_souls:0,prestige_march:0,prestige_savoir:0,
     equipped_weapon:null,equipped_armor:null,equipped_ring:null,
     last_sentence_date:today(),
     run_id:(G.run_id||1)+1,runs_total:(G.runs_total||0)+1,
     run_sentences_survived:0,sentence_survived:0,
     run_xp:0,run_level:1,run_xp_to_next:XP_CFG.TO_NEXT[0],run_upgrades:[],xp_banked_today:false,
+    starter_chosen:false,run_log:[],
+    skill_tree:G.skill_tree||[],skin_id:G.skin_id||'crimson',
     combat_log:[{text:'▶ Reset total.',type:'kill'}],
     phoenix_revived:false,camp_available:false,current_event:null,
   };
