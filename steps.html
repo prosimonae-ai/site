@@ -57,7 +57,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 /* ── BOTTOM OVERLAY ── */
 #bottom-ui{
   position:fixed;bottom:0;left:0;right:0;z-index:20;
-  padding:20px 12px calc(var(--safe-bot) + 12px);
+  padding:16px 16px calc(var(--safe-bot) + 10px);
   background:linear-gradient(to top,rgba(0,0,0,.96) 0%,rgba(0,0,0,.8) 60%,transparent 100%);
   display:flex;flex-direction:column;gap:0;
 }
@@ -104,42 +104,48 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 .a-icon{font-size:30px;line-height:1}
 .a-name{font-family:var(--px);font-size:13px;color:rgba(255,255,255,.95);letter-spacing:.08em}
 
-/* COMPTEUR DE PAS — élément principal */
+/* ── ZONE PAS + BARRES ── */
 #steps-display{
-  text-align:center;padding:14px 0 8px;
+  padding:10px 0 6px;
 }
 #steps-big{
-  font-family:var(--px);font-size:52px;color:#fff;letter-spacing:.03em;line-height:1;
-  text-shadow:0 0 40px rgba(255,255,255,.25);
+  font-family:var(--px);font-size:48px;color:#fff;letter-spacing:.03em;line-height:1;
+  text-align:center;
+  text-shadow:0 0 36px rgba(255,255,255,.22);
 }
-#steps-label{
-  font-family:var(--px);font-size:7px;color:rgba(255,255,255,.35);letter-spacing:.18em;margin-top:6px;
+/* label PAS AUJOURD'HUI supprimé — le grand nombre parle de lui-même */
+#steps-label{display:none}
+
+/* BARRE CHARGE — rangée flex avec fraction à droite */
+#charge-bar-row{
+  display:flex;align-items:center;gap:8px;margin:10px 0 0;
 }
-/* barre de progression pas → boss */
 #steps-boss-bar-wrap{
-  margin:12px 0 6px;
-  height:18px;border-radius:10px;
+  flex:1;height:12px;border-radius:7px;
   background:rgba(255,255,255,.07);
-  overflow:hidden;position:relative;
+  overflow:hidden;
 }
 #steps-boss-bar-fill{
-  height:100%;border-radius:10px;
+  height:100%;border-radius:7px;
   background:linear-gradient(90deg,#cc2200,#ff6600,#ffaa00);
   transition:width .6s cubic-bezier(.4,0,.2,1);
-  box-shadow:0 0 16px rgba(255,100,0,.55);
+  box-shadow:0 0 10px rgba(255,100,0,.45);
 }
 #steps-boss-hint{
   font-family:var(--px);font-size:6px;
-  color:rgba(255,255,255,.38);letter-spacing:.12em;
-  text-align:center;margin-bottom:2px;
+  color:rgba(255,255,255,.32);letter-spacing:.06em;
+  white-space:nowrap;flex-shrink:0;min-width:42px;text-align:right;
 }
+
+/* STATUT ATTAQUE */
 #steps-attacks-avail{
-  font-family:var(--px);font-size:9px;letter-spacing:.08em;
-  text-align:center;margin-top:5px;
+  font-family:var(--px);font-size:8px;letter-spacing:.08em;
+  text-align:center;margin-top:7px;
   color:rgba(255,140,60,.95);
+  min-height:14px;
   transition:color .2s;
 }
-#steps-attacks-avail.zero{color:rgba(255,255,255,.22);font-size:8px}
+#steps-attacks-avail.zero{color:rgba(255,255,255,.2);font-size:7px}
 .a-cost{display:none}
 .abtn{display:none}
 
@@ -351,13 +357,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 .devbtn.wide{grid-column:span 3}
 .devbtn.close{color:rgba(255,255,255,.3);border-color:rgba(255,255,255,.08)}
 
-/* XP BAR */
+/* XP BAR — même layout que charge-bar-row */
 #xp-display{
-  display:flex;align-items:center;gap:8px;margin:6px 0 2px;
+  display:flex;align-items:center;gap:8px;margin:6px 0 0;
 }
 #xp-level-lbl{
-  font-family:var(--px);font-size:7px;color:#c060ff;
-  white-space:nowrap;min-width:48px;
+  font-family:var(--px);font-size:6px;color:#c060ff;
+  white-space:nowrap;min-width:40px;opacity:.85;
 }
 #xp-bar-wrap{
   flex:1;height:5px;background:rgba(255,255,255,.07);
@@ -365,12 +371,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 }
 #xp-bar-fill{
   height:100%;border-radius:4px;
-  background:linear-gradient(90deg,#7030c0,#c060ff);
+  background:linear-gradient(90deg,#5820a0,#c060ff);
   transition:width .6s cubic-bezier(.4,0,.2,1);
 }
 #xp-val-lbl{
-  font-family:var(--px);font-size:6px;color:rgba(192,96,255,.55);
-  white-space:nowrap;min-width:58px;text-align:right;
+  font-family:var(--px);font-size:6px;color:rgba(192,96,255,.45);
+  white-space:nowrap;min-width:52px;text-align:right;
 }
 
 /* LEVEL-UP OVERLAY */
@@ -442,15 +448,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
   <!-- pas en grand -->
   <div id="steps-display">
     <div id="steps-big">0</div>
-    <div id="steps-label">PAS AUJOURD'HUI</div>
-    <div id="steps-boss-bar-wrap"><div id="steps-boss-bar-fill" style="width:0%"></div></div>
-    <div id="steps-boss-hint">0 / 10 000 PAS — BOSS</div>
-    <div id="steps-attacks-avail" class="zero">0 COUP DISPONIBLE</div>
+    <div id="steps-label" style="display:none">PAS AUJOURD'HUI</div>
+    <!-- barre charge + fraction -->
+    <div id="charge-bar-row">
+      <div id="steps-boss-bar-wrap"><div id="steps-boss-bar-fill" style="width:0%"></div></div>
+      <span id="steps-boss-hint">0/10K</span>
+    </div>
+    <!-- XP compact -->
     <div id="xp-display">
       <span id="xp-level-lbl">NIV. 1</span>
       <div id="xp-bar-wrap"><div id="xp-bar-fill" style="width:0%"></div></div>
       <span id="xp-val-lbl">0/100 XP</span>
     </div>
+    <!-- statut unique -->
+    <div id="steps-attacks-avail" class="zero">—</div>
   </div>
   <!-- bento : streak · HP · inventaire -->
   <div id="meta-row">
@@ -1855,22 +1866,22 @@ function render(){
   const charged=stepsToday>=C.CHARGE;
   const stepsPct=Math.min(100,stepsToday/C.CHARGE*100);
   if(bossBarFill)bossBarFill.style.width=(charged?100:stepsPct)+'%';
+  // Fraction courte dans la barre : "7.4K/10K" ou "✓" si chargé
   if(bossHint){
-    if(G.boss_killed_today)bossHint.textContent='';
-    else if(G.attack_used_today)bossHint.textContent='ATTAQUE UTILISÉE — SURVIE À LA NUIT';
-    else bossHint.textContent=stepsToday.toLocaleString('fr-FR')+' / 10 000 PAS';
+    if(G.boss_killed_today)bossHint.textContent='✓';
+    else if(charged)bossHint.textContent='10K ✓';
+    else bossHint.textContent=+(stepsToday/1000).toFixed(1)+'K/10K';
   }
   if(atksEl){
     if(G.boss_killed_today){atksEl.textContent='';atksEl.className='zero';}
     else if(levelUpPending){atksEl.textContent='⭐ NIVEAU SUPÉRIEUR — CHOISIR';atksEl.className='';}
     else if(G.attack_used_today){
-      const eq=getEquipEffects();
       const esc=Math.round(calcEscapeChance(G.boss_hp/G.boss_max_hp,eq)*100);
-      atksEl.textContent=`FUITE ${esc}% — BOSS À ${Math.round(G.boss_hp/G.boss_max_hp*100)}%`;
+      atksEl.textContent=`FUITE ${esc}% — BOSS ${Math.round(G.boss_hp/G.boss_max_hp*100)}%`;
       atksEl.className='';
     }
     else if(charged){atksEl.textContent='⚡ CHARGE COMPLÈTE — ATTAQUE !';atksEl.className='';}
-    else{const reste=C.CHARGE-stepsToday;atksEl.textContent=reste.toLocaleString('fr-FR')+' PAS RESTANTS';atksEl.className='zero';}
+    else{const reste=C.CHARGE-stepsToday;atksEl.textContent='-'+reste.toLocaleString('fr-FR')+' PAS';atksEl.className='zero';}
   }
 
   // Boss label
