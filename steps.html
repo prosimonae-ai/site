@@ -114,45 +114,66 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 }
 
 /* BLOC BARRE générique */
-.bar-block{margin-top:12px;}
-.bar-header{
-  display:flex;justify-content:space-between;align-items:baseline;
-  margin-bottom:5px;
+.bar-block{margin-top:10px;}
+.bar-header{display:none}/* headers supprimés — texte dans la barre */
+
+/* Barre avec texte interne */
+.bar-wrap-inner{
+  position:relative;border-radius:10px;
+  background:rgba(255,255,255,.07);overflow:hidden;
 }
-.bar-lbl{
-  font-family:var(--px);font-size:6px;
-  color:rgba(255,255,255,.3);letter-spacing:.14em;
+.bar-fill-bg{
+  position:absolute;inset:0;border-radius:10px;
+  transition:width .6s cubic-bezier(.4,0,.2,1);
 }
-.bar-rval{
-  font-family:var(--px);font-size:6px;
-  color:rgba(255,255,255,.5);letter-spacing:.06em;
+.bar-txt{
+  position:relative;z-index:1;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 10px;height:100%;
+  font-family:var(--px);font-size:6px;letter-spacing:.1em;
+  color:rgba(255,255,255,.75);
 }
 
 /* BARRE CHARGE */
-#charge-bar-row{display:none}/* ancien wrapper supprimé */
+#charge-bar-row{display:none}
 #steps-boss-bar-wrap{
-  width:100%;height:20px;border-radius:10px;
+  width:100%;height:22px;border-radius:10px;
   background:rgba(255,255,255,.07);overflow:hidden;
+  position:relative;
 }
 #steps-boss-bar-fill{
-  height:100%;border-radius:8px;
+  position:absolute;inset:0;height:100%;border-radius:10px;
   background:linear-gradient(90deg,#cc2200,#ff6600,#ffaa00);
   transition:width .6s cubic-bezier(.4,0,.2,1);
-  box-shadow:0 0 12px rgba(255,100,0,.45);
+  box-shadow:0 0 12px rgba(255,100,0,.35);
 }
-#steps-boss-hint{display:none}/* valeur déplacée dans .bar-rval */
+.charge-txt{
+  position:absolute;inset:0;z-index:1;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 10px;
+  font-family:var(--px);font-size:6px;letter-spacing:.1em;
+  color:rgba(255,255,255,.8);
+}
+#steps-boss-hint{display:none}
 
 /* BARRE XP */
 #xp-bar-wrap{
-  width:100%;height:12px;border-radius:7px;
+  width:100%;height:18px;border-radius:10px;
   background:rgba(255,255,255,.07);overflow:hidden;
+  position:relative;
 }
 #xp-bar-fill{
-  height:100%;border-radius:4px;
+  position:absolute;inset:0;height:100%;border-radius:10px;
   background:linear-gradient(90deg,#5820a0,#c060ff);
   transition:width .6s cubic-bezier(.4,0,.2,1);
 }
-/* anciens wrappers masqués */
+.xp-txt{
+  position:absolute;inset:0;z-index:1;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 10px;
+  font-family:var(--px);font-size:6px;letter-spacing:.1em;
+  color:rgba(255,255,255,.8);
+}
 #xp-display{display:none}
 
 /* STATUT ATTAQUE */
@@ -469,20 +490,24 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
 
     <!-- BARRE CHARGE -->
     <div class="bar-block">
-      <div class="bar-header">
-        <span class="bar-lbl">CHARGE</span>
-        <span class="bar-rval" id="charge-rval">0 / 10 000</span>
+      <div id="steps-boss-bar-wrap">
+        <div id="steps-boss-bar-fill" style="width:0%"></div>
+        <div class="charge-txt">
+          <span>CHARGE</span>
+          <span id="charge-rval">0 / 10 000</span>
+        </div>
       </div>
-      <div id="steps-boss-bar-wrap"><div id="steps-boss-bar-fill" style="width:0%"></div></div>
     </div>
 
     <!-- BARRE XP -->
     <div class="bar-block">
-      <div class="bar-header">
-        <span class="bar-lbl" id="xp-level-lbl">NIV. 1</span>
-        <span class="bar-rval" id="xp-val-lbl">0 / 100 XP</span>
+      <div id="xp-bar-wrap">
+        <div id="xp-bar-fill" style="width:0%"></div>
+        <div class="xp-txt">
+          <span id="xp-level-lbl">NIV. 1</span>
+          <span id="xp-val-lbl">0 / 100 XP</span>
+        </div>
       </div>
-      <div id="xp-bar-wrap"><div id="xp-bar-fill" style="width:0%"></div></div>
     </div>
 
     <!-- statut unique -->
