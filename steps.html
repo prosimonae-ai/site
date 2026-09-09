@@ -478,7 +478,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:
   <!-- bouton attaque -->
   <div class="action-row">
     <div id="btn-attack" onclick="doAction('attack')">
-      <span class="a-icon">⚔️</span>
+      <span class="a-icon">⚔️</span><span class="a-name">ATTAQUE</span>
     </div>
   </div>
   <!-- IDs fantômes pour compatibilité JS -->
@@ -1881,7 +1881,7 @@ function render(){
       atksEl.className='';
     }
     else if(charged){atksEl.textContent='⚡ CHARGE COMPLÈTE — ATTAQUE !';atksEl.className='';}
-    else{const reste=C.CHARGE-stepsToday;atksEl.textContent=reste.toLocaleString('fr-FR')+' PAS AVANT D\'ATTAQUER';atksEl.className='zero';}
+    else{atksEl.textContent='';atksEl.className='zero';}
   }
 
   // Boss label
