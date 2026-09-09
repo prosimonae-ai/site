@@ -1881,7 +1881,7 @@ function render(){
       atksEl.className='';
     }
     else if(charged){atksEl.textContent='⚡ CHARGE COMPLÈTE — ATTAQUE !';atksEl.className='';}
-    else{const reste=C.CHARGE-stepsToday;atksEl.textContent='-'+reste.toLocaleString('fr-FR')+' PAS';atksEl.className='zero';}
+    else{const reste=C.CHARGE-stepsToday;atksEl.textContent=reste.toLocaleString('fr-FR')+' PAS AVANT D\'ATTAQUER';atksEl.className='zero';}
   }
 
   // Boss label
