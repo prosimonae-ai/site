@@ -1,0 +1,24 @@
+ITEMS PALIER 1
+Format : PNG carré 256x256, fond transparent. Le style est à ajouter par toi.
+
+
+k_guard.png
+  Prompt : icône d'objet centrée, vue de face, fond transparent. Éléments : une vieille clé en fer forgé avec un anneau en forme de main. Pas de texte.
+
+r_seuil.png
+  Prompt : icône d'objet centrée, vue de face, fond transparent. Éléments : un éclat de pierre sombre qui luit faiblement de l'intérieur (relique). Pas de texte.
+
+p_clear.png
+  Prompt : icône d'objet centrée, vue de face, fond transparent. Éléments : une petite fiole de verre au liquide clair et lumineux. Pas de texte.
+
+p_dark.png
+  Prompt : icône d'objet centrée, vue de face, fond transparent. Éléments : une fiole trapue au liquide noir opaque, bouchon de liège. Pas de texte.
+
+p_red.png
+  Prompt : icône d'objet centrée, vue de face, fond transparent. Éléments : une fiole élégante au liquide rouge vif. Pas de texte.
+
+p_atk.png
+  Prompt : icône d'objet centrée, vue de face, fond transparent. Éléments : une seringue/fiole de sérum orange avec une aiguille. Pas de texte.
+
+p_fog.png
+  Prompt : icône d'objet centrée, vue de face, fond transparent. Éléments : une fiole ronde remplie d'une brume bleu-gris tourbillonnante. Pas de texte.

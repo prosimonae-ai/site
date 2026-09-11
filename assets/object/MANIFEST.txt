@@ -1,0 +1,383 @@
+OBJETS INTERACTIFS PALIER 1
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte.
+Chaque objet a plusieurs états : les états d'un même objet doivent être IDENTIQUES en cadrage, taille et position (seul l'état change) pour que la transition dans le jeu soit propre.
+Les fichiers actuels sont des placeholders 1x1 : remplace-les par le vrai PNG avec le même nom.
+
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_CHEST_closed.png
+
+OBJET :
+Coffre standard du Seuil, posé au sol. Taille : environ la moitié de la hauteur du héros.
+
+ÉTAT :
+closed
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Un coffre de bois cerclé de fer, fermé, avec une serrure ; sans fond, isolé.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_CHEST_open.png
+
+OBJET :
+Coffre standard du Seuil, posé au sol. Taille : environ la moitié de la hauteur du héros.
+
+ÉTAT :
+open
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Le même coffre, couvercle ouvert vers l'arrière, intérieur visible vide et sombre.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_CURSED_CHEST_closed.png
+
+OBJET :
+Coffre maudit. Même échelle que le coffre standard.
+
+ÉTAT :
+closed
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Un coffre de pierre noire couvert de symboles gravés (dont un cercle incomplet), fermé, une fine lueur rouge dans les jointures.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_CURSED_CHEST_open.png
+
+OBJET :
+Coffre maudit. Même échelle que le coffre standard.
+
+ÉTAT :
+open
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Le même coffre ouvert, l'intérieur est noir absolu, les symboles se sont éteints.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_TREASURE_PILE_intact.png
+
+OBJET :
+Tas de trésor de cache secrète, posé au sol.
+
+ÉTAT :
+intact
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Un petit tas de trésor : pièces, une fiole, un petit sac, un objet brillant.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_TREASURE_PILE_looted.png
+
+OBJET :
+Tas de trésor de cache secrète, posé au sol.
+
+ÉTAT :
+looted
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Le même tas fouillé : sac ouvert, pièces éparpillées, il ne reste rien de valeur.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_STATUE_SLEEPING_sleeping.png
+
+OBJET :
+Statue endormie. Taille : environ 1,5 fois la hauteur du héros (assise).
+
+ÉTAT :
+sleeping
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Une statue de pierre assise en tailleur, mains sur les genoux, tête baissée, yeux fermés, un petit coffre fermé posé à ses pieds.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_STATUE_SLEEPING_awake.png
+
+OBJET :
+Statue endormie. Taille : environ 1,5 fois la hauteur du héros (assise).
+
+ÉTAT :
+awake
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. La même statue, tête relevée, yeux ouverts et lumineux (lueur blanche), fissures qui luisent sur le corps, le coffre à ses pieds est ouvert.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_STATUE_GUARDIAN_idle.png
+
+OBJET :
+Statue gardienne. Taille : environ 2 fois la hauteur du héros.
+
+ÉTAT :
+idle
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Une statue de gardien en armure de pierre, debout, une masse tenue verticalement, yeux fermés.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_STATUE_GUARDIAN_awake.png
+
+OBJET :
+Statue gardienne. Taille : environ 2 fois la hauteur du héros.
+
+ÉTAT :
+awake
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. La même statue avec les yeux ouverts et lumineux, un pied avancé, la masse levée à moitié, poussière qui tombe des articulations.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_ALTAR_idle.png
+
+OBJET :
+Autel du Seuil. Largeur : environ la hauteur du héros.
+
+ÉTAT :
+idle
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Un autel de pierre bas et large, surface tachée de sang séché, deux bougies éteintes.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_ALTAR_active.png
+
+OBJET :
+Autel du Seuil. Largeur : environ la hauteur du héros.
+
+ÉTAT :
+active
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Le même autel, les bougies allumées, des runes qui luisent en rouge sur les côtés, le sang frais.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_ALTAR_inactive.png
+
+OBJET :
+Autel du Seuil. Largeur : environ la hauteur du héros.
+
+ÉTAT :
+inactive
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Le même autel, froid, bougies fondues, runes ternes, une fine couche de givre.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_ALTAR_CURSED_idle.png
+
+OBJET :
+Autel maudit. Même échelle que l'autel.
+
+ÉTAT :
+idle
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Un autel noirci et fendu, avec des chaînes, une lueur verte très faible dans les fissures.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_ALTAR_CURSED_touched.png
+
+OBJET :
+Autel maudit. Même échelle que l'autel.
+
+ÉTAT :
+touched
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Le même autel, les fissures ouvertes et lumineuses, les chaînes rompues.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_LOCKED_DOOR_locked.png
+
+OBJET :
+Battant de porte verrouillée, à poser dans un encadrement de porte du fond. Hauteur : environ 2 fois le héros.
+
+ÉTAT :
+locked
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Un battant de porte lourd en bois noir et fer, fermé, avec une grosse serrure et deux chaînes croisées cadenassées, vu de face.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_LOCKED_DOOR_open.png
+
+OBJET :
+Battant de porte verrouillée, à poser dans un encadrement de porte du fond. Hauteur : environ 2 fois le héros.
+
+ÉTAT :
+open
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Le même battant ouvert vers l'intérieur (on voit sa tranche et l'obscurité derrière), chaînes tombées.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_CRACKED_WALL_cracked.png
+
+OBJET :
+Section de mur fissuré, à poser sur le mur du fond d'une impasse. Hauteur : environ 2 fois le héros.
+
+ÉTAT :
+cracked
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Une section de mur maçonné avec une grande fissure en zigzag d'où sort un léger courant d'air (poussière).
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_CRACKED_WALL_open.png
+
+OBJET :
+Section de mur fissuré, à poser sur le mur du fond d'une impasse. Hauteur : environ 2 fois le héros.
+
+ÉTAT :
+open
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. La même section effondrée : un trou irrégulier béant avec des pierres tombées au sol et un passage sombre derrière.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_MERCHANT_present.png
+
+OBJET :
+Marchand du Seuil. Taille : légèrement plus petit que le héros (assis).
+
+ÉTAT :
+present
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Un marchand assis en tailleur, encapuchonné, visage invisible, devant un tissu étalé avec des fioles colorées, une balance.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_MERCHANT_gone.png
+
+OBJET :
+Marchand du Seuil. Taille : légèrement plus petit que le héros (assis).
+
+ÉTAT :
+gone
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Le même tissu au sol, vide, avec juste une fiole vide renversée et une pièce oubliée ; le marchand n'est plus là.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_TRAP_armed.png
+
+OBJET :
+Piège au sol. Vue de dessus légèrement en perspective (comme le sol du décor). Largeur : environ la hauteur du héros.
+
+ÉTAT :
+armed
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Une dalle de sol légèrement différente des autres, avec un fin contour, et des petits trous alignés sur ses bords ; presque invisible.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_TRAP_triggered.png
+
+OBJET :
+Piège au sol. Vue de dessus légèrement en perspective (comme le sol du décor). Largeur : environ la hauteur du héros.
+
+ÉTAT :
+triggered
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. La même dalle enfoncée, avec des pointes de fer sorties tout autour et une tache sombre.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_DEAD_EXPLORER_intact.png
+
+OBJET :
+Corps d'explorateur, à poser contre une banquette. Taille : celle du héros (assis).
+
+ÉTAT :
+intact
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Un explorateur mort assis contre un mur (le mur n'est pas dessiné), tête penchée, capuche, une sacoche fermée sur les genoux, une main serrée sur quelque chose.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_DEAD_EXPLORER_searched.png
+
+OBJET :
+Corps d'explorateur, à poser contre une banquette. Taille : celle du héros (assis).
+
+ÉTAT :
+searched
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Le même corps, sacoche ouverte et vide, la main ouverte.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_BOSS_DOOR_closed.png
+
+OBJET :
+Battants de la porte du Portier. Hauteur : environ 4 fois le héros.
+
+ÉTAT :
+closed
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Un double battant de porte monumentale en pierre noire et bronze, fermé, avec un cercle incomplet géant gravé à cheval sur les deux battants, une fine lueur chaude dans le joint central.
+
+──────────────────────────────
+
+NOM :
+P1_OBJ_BOSS_DOOR_open.png
+
+OBJET :
+Battants de la porte du Portier. Hauteur : environ 4 fois le héros.
+
+ÉTAT :
+open
+
+PROMPT :
+Sprite d'objet de jeu, PNG carré 512x512 à fond transparent, vue de face légèrement en plongée (même point de vue que les décors), objet isolé sans sol ni mur, ombre portée légère sous l'objet, pas de texte. Les mêmes battants grands ouverts vers l'intérieur, on voit leur tranche épaisse et une lumière chaude derrière.

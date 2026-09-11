@@ -1,0 +1,2845 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>万歩計</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+  --zone:#7070cc;
+  --px:'Press Start 2P',monospace;
+  --ui:'Inter',-apple-system,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;background:#07080f;font-family:var(--ui)}
+
+/* ── FULL-SCREEN CANVAS ── */
+#cvs{
+  position:fixed;inset:0;width:100%;height:100%;
+  image-rendering:pixelated;z-index:0;
+}
+
+/* ── TOP HUD ── */
+#hud-top{
+  position:fixed;top:0;left:0;right:0;z-index:20;
+  padding:calc(var(--safe-top) + 52px) 16px 12px;
+  display:flex;flex-direction:column;gap:5px;
+  background:linear-gradient(to bottom,rgba(0,0,0,.82) 0%,transparent 100%);
+}
+#hud-info-row{
+  display:flex;justify-content:center;align-items:center;gap:8px;
+}
+.hud-zone{font-family:var(--px);font-size:10px;color:var(--zone);letter-spacing:.07em;}
+.hud-floor{font-family:var(--px);font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.06em;}
+.hud-floor b{color:rgba(255,255,255,.75);}
+.hud-pills{display:none}
+.hpill,.hpill.souls,.hpill.flame{display:none}
+
+/* BARRE BOSS HUD */
+#hud-boss-bar-wrap{
+  width:100%;height:28px;border-radius:6px;
+  background:rgba(255,255,255,.07);
+  position:relative;overflow:hidden;
+}
+#boss-bar-fill{
+  position:absolute;top:0;left:0;bottom:0;
+  width:100%;border-radius:6px;
+  background:linear-gradient(90deg,#006633,#00e676);
+  transition:width .4s,background .4s;
+}
+#hud-boss-bar-txt{
+  position:absolute;inset:0;z-index:1;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 12px;
+  font-family:var(--px);font-size:9px;letter-spacing:.08em;
+  color:#fff;text-shadow:0 0 10px rgba(0,0,0,.8);
+}
+#hud-boss-hp-lbl{color:rgba(255,255,255,.6);font-size:8px;}
+
+/* fantôme boss-label (JS positionne) */
+#boss-label{position:fixed;z-index:20;text-align:center;pointer-events:none;transform:translate(-50%,-100%);}
+.boss-name-txt{font-family:var(--px);font-size:11px;color:rgba(255,255,255,.85);text-shadow:0 0 14px var(--zone);letter-spacing:.05em;}
+.boss-bar-wrap{display:none}
+
+/* ── BOTTOM OVERLAY ── */
+#bottom-ui{
+  position:fixed;bottom:0;left:0;right:0;z-index:20;
+  padding:16px 16px calc(var(--safe-bot) + 10px);
+  background:linear-gradient(to top,rgba(0,0,0,.96) 0%,rgba(0,0,0,.8) 60%,transparent 100%);
+  display:flex;flex-direction:column;gap:0;
+}
+
+/* HP / PA BARS */
+.stat-bars{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}
+.bar-row{display:flex;align-items:center;gap:10px}
+.bar-icon{font-size:16px;flex-shrink:0;width:20px;text-align:center}
+.bar-track{
+  flex:1;height:13px;
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:4px;overflow:hidden;
+}
+.bar-fill{height:100%;border-radius:4px;transition:width .5s ease}
+#hp-fill{background:linear-gradient(to right,#ff2255,#ff6688)}
+#hp-fill.med{background:linear-gradient(to right,#cc8800,#ffcc00)}
+#hp-fill.hi{background:linear-gradient(to right,#0088cc,#40c4ff)}
+#pa-fill{background:linear-gradient(to right,#007a40,#00e676)}
+.bar-val{font-family:var(--px);font-size:10px;color:rgba(255,255,255,.9);width:76px;text-align:right;flex-shrink:0}
+
+/* BENTO — streak · HP · inventaire */
+#meta-row{display:none}
+
+/* BOUTON ATTAQUE — 1/3 écran, pleine largeur, cliquable partout */
+.action-row{margin-bottom:0}
+.action-row.r2{display:none}
+#btn-attack{
+  width:100%;height:17vh;
+  display:flex;flex-direction:row;align-items:center;justify-content:center;
+  gap:12px;border-radius:14px;cursor:pointer;user-select:none;
+  background:rgba(255,50,50,.13);
+  border:2px solid rgba(255,80,80,.3);
+  backdrop-filter:blur(6px);
+  transition:transform .06s,background .1s,border-color .1s,opacity .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+#btn-attack:active:not(.off){
+  transform:scale(.98);
+  background:rgba(255,50,50,.3);
+  border-color:rgba(255,100,100,.7);
+}
+#btn-attack.off{opacity:.22;pointer-events:none}
+.a-icon{font-size:30px;line-height:1}
+.a-name{font-family:var(--px);font-size:13px;color:rgba(255,255,255,.95);letter-spacing:.08em}
+
+/* ── ZONE PAS + BARRES ── */
+#steps-display{padding:8px 0 8px;}
+#steps-label{display:none}
+#steps-big{
+  font-family:var(--px);font-size:42px;color:#fff;letter-spacing:.03em;line-height:1;
+}
+
+/* BLOC BARRE générique */
+.bar-block{margin-top:5px;}
+.bar-header{display:none}/* headers supprimés — texte dans la barre */
+
+/* Barre avec texte interne */
+.bar-wrap-inner{
+  position:relative;border-radius:10px;
+  background:rgba(255,255,255,.07);overflow:hidden;
+}
+.bar-fill-bg{
+  position:absolute;inset:0;border-radius:8px;
+  transition:width .6s cubic-bezier(.4,0,.2,1);
+}
+.bar-txt{
+  position:relative;z-index:1;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 10px;height:100%;
+  font-family:var(--px);font-size:6px;letter-spacing:.1em;
+  color:rgba(255,255,255,.75);
+}
+
+/* BARRE CHARGE */
+#charge-bar-row{display:none}
+#steps-boss-bar-wrap{
+  width:100%;height:44px;border-radius:6px;
+  background:rgba(255,255,255,.07);
+  position:relative;overflow:hidden;
+}
+#steps-boss-bar-fill{
+  position:absolute;top:0;left:0;bottom:0;
+  width:0%;border-radius:6px;
+  background:linear-gradient(90deg,#cc2200,#ff6600,#ffaa00);
+  transition:width .6s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 12px rgba(255,100,0,.35);
+}
+.charge-txt{
+  position:absolute;inset:0;z-index:1;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 14px;
+  font-family:var(--px);font-size:8px;letter-spacing:.1em;
+  color:rgba(255,255,255,.45);
+}
+#steps-boss-hint{display:none}
+
+/* BARRE XP */
+#xp-bar-wrap{
+  width:100%;height:22px;border-radius:6px;
+  background:rgba(255,255,255,.07);
+  position:relative;overflow:hidden;
+}
+#xp-bar-fill{
+  position:absolute;top:0;left:0;bottom:0;
+  width:0%;border-radius:6px;
+  background:linear-gradient(90deg,#5820a0,#c060ff);
+  transition:width .6s cubic-bezier(.4,0,.2,1);
+}
+.xp-txt{
+  position:absolute;inset:0;z-index:1;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 14px;
+  font-family:var(--px);font-size:8px;letter-spacing:.1em;
+  color:rgba(255,255,255,.85);
+}
+#xp-display{display:none}
+
+/* STATUT ATTAQUE */
+#steps-attacks-avail{
+  font-family:var(--px);font-size:8px;letter-spacing:.08em;
+  text-align:center;margin-top:2px;
+  color:rgba(255,140,60,.95);min-height:14px;
+  transition:color .2s;
+}
+#steps-attacks-avail.zero{color:rgba(255,255,255,.2);font-size:7px}
+.a-cost{display:none}
+.abtn{display:none}
+
+/* ── MILESTONES — cachés en combat, info non critique ── */
+#milestones{display:none}
+.ms-dot{display:none}
+
+/* ── INFO CHIPS — repliés, seul chip-event reste visible ── */
+#info-chips{
+  position:fixed;left:12px;bottom:calc(var(--safe-bot) + 190px);
+  z-index:20;display:flex;flex-direction:column;gap:6px;max-width:110px;
+  pointer-events:none;
+}
+.chip{
+  font-family:var(--px);font-size:8px;
+  background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.12);
+  padding:7px 9px;border-radius:8px;line-height:1.9;
+  backdrop-filter:blur(6px);color:rgba(255,255,255,.65);
+}
+.chip b{display:block;color:rgba(255,255,255,.92);margin-bottom:2px}
+#chip-arcane,#chip-risk{display:none}
+.chip.arcane b{color:#c060ff}
+.chip.event-good{border-color:rgba(0,230,118,.4)}
+.chip.event-good b{color:#00e676}
+.chip.event-bad{border-color:rgba(255,34,85,.4)}
+.chip.event-bad b{color:#ff2255}
+.chip.risk{border-color:rgba(255,200,0,.3)}
+.chip.risk b{color:#ffd600}
+.chip.risk.danger{border-color:rgba(255,34,85,.5)}
+.chip.risk.danger b{color:#ff2255;animation:blink .5s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* ── COMBAT TOAST ── */
+#toast{
+  position:fixed;left:50%;transform:translateX(-50%);
+  top:calc(var(--safe-top) + 70px);z-index:30;
+  pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:5px;
+}
+.toast-line{
+  font-family:var(--px);font-size:7px;
+  background:rgba(0,0,0,.8);border:1px solid rgba(255,255,255,.15);
+  padding:5px 10px;border-radius:20px;
+  white-space:normal;word-break:break-word;
+  max-width:calc(100vw - 40px);text-align:center;
+  backdrop-filter:blur(8px);
+  animation:toastIn .2s ease,toastOut .4s ease 1.8s forwards;
+}
+@keyframes toastIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+@keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateY(-6px)}}
+.toast-line.atk{color:#dde0ff}.toast-line.kill{color:#ffd600}
+.toast-line.crit{color:#ffd600;text-shadow:0 0 8px #aa7700}
+.toast-line.heal{color:#00e676}.toast-line.def{color:#40c4ff}
+.toast-line.sent{color:#ff6d00}.toast-line.death{color:#ff2255}
+.toast-line.event{color:#c060ff}
+
+/* ── TOP CORNERS ── */
+#streak-top{display:none!important}
+
+#xp-top-row{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:4px;
+}
+#xp-left-col{
+  display:flex;flex-direction:column;gap:3px;align-items:flex-start;
+}
+#xp-inv-btn,#xp-streak-btn{
+  font-family:var(--px);letter-spacing:.1em;
+  border-radius:6px;
+  display:inline-flex;align-items:center;line-height:1;
+  cursor:pointer;
+}
+#xp-inv-btn{font-size:7px;padding:4px 9px;}
+#xp-streak-btn{font-size:6px;padding:3px 7px;}
+#xp-inv-btn{
+  color:rgba(255,255,255,.55);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+}
+#xp-streak-btn{
+  color:rgba(255,149,0,.85);
+  background:rgba(0,0,0,.3);border:1px solid rgba(255,149,0,.2);
+}
+#souls-top{display:none}
+#dev-btn{
+  position:fixed;top:calc(var(--safe-top) + 10px);left:12px;z-index:30;
+  font-family:var(--px);font-size:7px;color:rgba(255,255,255,.25);
+  background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.06);
+  padding:5px 8px;border-radius:8px;cursor:pointer;
+}
+#inv-top{display:none!important}
+
+/* ── SLIDES / OVERLAYS (glass style) ── */
+.overlay{
+  position:fixed;inset:0;z-index:100;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;padding:24px 20px;overflow-y:auto;
+  background:rgba(4,4,16,.88);backdrop-filter:blur(12px);
+}
+.overlay.hidden,.hidden{display:none!important}
+
+/* ── GLASS PANEL ── */
+.gpanel{
+  width:100%;max-width:380px;
+  background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);
+  border-radius:12px;padding:16px;backdrop-filter:blur(6px);
+}
+.gpanel-title{font-family:var(--px);font-size:9px;color:#fff;margin-bottom:12px}
+
+/* EVENT */
+.evt-icon{font-size:56px;text-align:center;filter:drop-shadow(0 0 20px var(--zone))}
+.evt-name{font-family:var(--px);font-size:12px;text-align:center}
+.evt-name.good{color:#00e676;text-shadow:0 0 20px #00e676}
+.evt-name.bad{color:#ff2255;text-shadow:0 0 20px #ff2255}
+.evt-txt{font-size:13px;color:rgba(255,255,255,.55);text-align:center;line-height:1.6;max-width:300px}
+.evt-eff{font-family:var(--px);font-size:8px;text-align:center;padding:6px 12px;border-radius:8px}
+.evt-eff.good{color:#00e676;background:rgba(0,230,118,.1)}.evt-eff.bad{color:#ff2255;background:rgba(255,34,85,.1)}
+
+/* SENTENCE */
+.sent-title{font-family:var(--px);font-size:14px;color:#ff2255;text-align:center;text-shadow:0 0 20px #ff2255}
+.sent-boss{font-family:var(--px);font-size:9px;color:#ffd600;text-align:center}
+.sent-desc{font-size:12px;color:rgba(255,255,255,.45);text-align:center;line-height:1.7;white-space:pre-wrap}
+.sent-pct{font-family:var(--px);font-size:40px;text-align:center;padding:10px 0}
+.sent-pct.safe{color:#00e676;text-shadow:0 0 30px #00e676}
+.sent-pct.warn{color:#ffd600;text-shadow:0 0 30px #ffd600}
+.sent-pct.danger{color:#ff2255;text-shadow:0 0 30px #ff2255}
+.sent-res{font-family:var(--px);font-size:9px;text-align:center;padding:12px;min-height:54px;line-height:2;white-space:pre-wrap}
+.sent-res.ok{color:#00e676}.sent-res.die{color:#ff2255}
+
+/* BUTTONS */
+.gbtn{
+  font-family:var(--px);font-size:8px;padding:14px 20px;cursor:pointer;
+  width:100%;max-width:280px;border-radius:12px;border:none;
+  transition:opacity .15s,transform .08s;
+}
+.gbtn:active{transform:scale(.96)}
+.gbtn.red{background:#ff2255;color:#fff}
+.gbtn.grn{background:#00e676;color:#000}
+.gbtn.ppl{background:#7030c0;color:#fff}
+
+/* DEATH */
+.dead-title{font-family:var(--px);font-size:16px;color:#ff2255;text-shadow:0 0 30px #ff2255;text-align:center}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.07)}
+.stat-row:last-child{border:none}
+.sk{font-size:11px;color:rgba(255,255,255,.4)}.sv{font-family:var(--px);font-size:8px;color:#fff}
+.souls-earn{font-family:var(--px);font-size:11px;color:#c060ff;text-align:center;text-shadow:0 0 16px #c060ff}
+
+/* PRESTIGE */
+.pitem{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);margin-bottom:6px}
+.pico{font-size:20px;flex-shrink:0}.pbody{flex:1}
+.pname{font-family:var(--px);font-size:9px;color:#fff;margin-bottom:4px}
+.peff{font-size:12px;color:rgba(255,255,255,.4)}
+.plvl{font-family:var(--px);font-size:8px;color:#ffd600;margin-right:8px;flex-shrink:0}
+.pbtn{font-family:var(--px);font-size:8px;padding:9px 12px;background:#7030c0;color:#fff;border:none;border-radius:8px;cursor:pointer;flex-shrink:0}
+.pbtn:disabled{opacity:.3;pointer-events:none}
+.souls-left-lbl{font-family:var(--px);font-size:9px;color:rgba(255,255,255,.4);text-align:center;padding:8px}
+
+/* LOOT */
+.loot-title{font-family:var(--px);font-size:13px;color:#ffd600;text-shadow:0 0 16px #ffd600}
+.loot-sub{font-size:12px;color:rgba(255,255,255,.45)}
+.litem{display:flex;align-items:center;gap:12px;padding:14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);margin-bottom:8px;transition:border-color .2s}
+.litem:active{border-color:rgba(255,213,0,.4)}
+.lico{font-size:26px;flex-shrink:0}
+.lbody{flex:1}.ltype{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
+.lname{font-family:var(--px);font-size:9px;color:#fff;margin-bottom:5px}
+.ldesc{font-size:12px;color:#00e676}.lcur{font-size:11px;color:rgba(255,255,255,.3);margin-top:4px}
+.lbtn{font-family:var(--px);font-size:9px;padding:11px 13px;background:#ffd600;color:#000;border:none;border-radius:12px;cursor:pointer;flex-shrink:0}
+.skip-btn{font-family:var(--px);font-size:9px;padding:12px 20px;background:transparent;color:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.1);border-radius:12px;cursor:pointer;width:100%;max-width:380px;text-align:center}
+
+/* CAMP */
+.camp-title{font-family:var(--px);font-size:11px;color:#ff6d00;text-shadow:0 0 16px #ff6d00}
+.camp-xp{font-family:var(--px);font-size:8px;color:#40c4ff}
+.citem{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);margin-bottom:6px}
+.cico{font-size:18px;flex-shrink:0}.cbody{flex:1}
+.cname{font-family:var(--px);font-size:9px;color:#fff;margin-bottom:4px}
+.cdesc{font-size:12px;color:rgba(255,255,255,.4)}
+.cbtn{font-family:var(--px);font-size:8px;padding:10px 13px;background:#ff6d00;color:#000;border:none;border-radius:12px;cursor:pointer;flex-shrink:0}
+.cbtn:disabled{opacity:.3;pointer-events:none}
+
+/* SLIDE PANEL */
+.slide-panel{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:150;display:flex;flex-direction:column;justify-content:flex-end;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(6px)}
+.slide-panel.open{opacity:1;pointer-events:all}
+.slide-inner{background:rgba(14,12,24,.95);border-top:1.5px solid rgba(255,255,255,.12);max-height:72vh;overflow-y:auto;padding:18px 18px calc(18px + var(--safe-bot));border-radius:18px 18px 0 0;transform:translateY(20px);transition:transform .25s}
+.slide-panel.open .slide-inner{transform:none}
+.slide-title{font-family:var(--px);font-size:9px;color:#ffd600;margin-bottom:16px}
+.eq-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);margin-bottom:6px}
+.eq-icon{font-size:20px;flex-shrink:0}.eq-body{flex:1}
+.eq-slot{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px}
+.eq-name{font-family:var(--px);font-size:9px;color:#fff}.eq-desc{font-size:11px;color:#00e676;margin-top:3px}
+.eq-empty{font-family:var(--px);font-size:7px;color:rgba(255,255,255,.25)}
+.eq-crit{font-family:var(--px);font-size:8px;color:#ffd600;text-align:center;padding:8px}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(8px)}
+.modal-bg.open{opacity:1;pointer-events:all}
+.modal{width:100%;max-width:420px;margin:0 auto;background:rgba(14,12,28,.97);border:1.5px solid rgba(255,255,255,.12);border-bottom:none;padding:20px 20px calc(20px + var(--safe-bot));transform:translateY(20px);transition:transform .3s;max-height:80vh;overflow-y:auto;border-radius:18px 18px 0 0}
+.modal-bg.open .modal{transform:none}
+.mtitle{font-family:var(--px);font-size:9px;color:#ffd600;margin-bottom:14px}
+.mstep{display:flex;gap:10px;margin-bottom:12px}
+.mnum{width:18px;height:18px;background:#ffd600;color:#000;font-family:var(--px);font-size:6px;display:flex;align-items:center;justify-content:center;border-radius:4px;flex-shrink:0;margin-top:2px}
+.mstep-title{font-family:var(--px);font-size:7px;color:#fff;margin-bottom:4px}
+.mstep-desc{font-size:11px;color:rgba(255,255,255,.45);line-height:1.7}
+.code{background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px;margin-top:6px;font-family:monospace;font-size:10px;color:#00e676;line-height:1.7;word-break:break-all}
+.mclose{width:100%;margin-top:14px;padding:14px;background:#00e676;color:#000;border:none;border-radius:12px;font-family:var(--px);font-size:8px;cursor:pointer}
+
+/* DEV */
+.dev-panel{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:rgba(8,6,18,.97);border-top:1.5px solid rgba(255,109,0,.6);
+  padding:16px 14px calc(16px + var(--safe-bot));
+  transform:translateY(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+}
+.dev-panel.open{transform:none}
+.dev-title{font-family:var(--px);font-size:8px;color:#ff6d00;margin-bottom:12px;letter-spacing:.1em}
+.dev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.devbtn{
+  font-family:var(--px);font-size:8px;padding:11px 6px;
+  color:rgba(255,255,255,.75);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:8px;cursor:pointer;text-align:center;
+  transition:background .12s;
+}
+.devbtn:active{background:rgba(255,255,255,.18)}
+.devbtn.danger{color:#ff4444;border-color:rgba(255,68,68,.35)}
+.devbtn.danger:active{background:rgba(255,68,68,.2)}
+.devbtn.wide{grid-column:span 3}
+.devbtn.close{color:rgba(255,255,255,.3);border-color:rgba(255,255,255,.08)}
+
+/* XP BAR — même layout que charge-bar-row */
+#xp-display{display:none}
+#xp-level-lbl{white-space:nowrap;}
+#xp-val-lbl{white-space:nowrap;}
+
+/* ── CARTES ITEM (starter + loot) ── */
+.item-card{
+  display:flex;align-items:center;gap:14px;
+  padding:16px;border-radius:10px;
+  border:1.5px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.04);
+  margin-bottom:10px;cursor:pointer;
+  width:100%;max-width:380px;
+  transition:border-color .15s,background .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.item-card:active{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.1);}
+.item-card.offensive{border-color:rgba(255,80,80,.25);}
+.item-card.defensive{border-color:rgba(80,180,255,.25);}
+.item-card.utility{border-color:rgba(192,96,255,.25);}
+.item-card.offensive:active{border-color:rgba(255,80,80,.7);}
+.item-card.defensive:active{border-color:rgba(80,180,255,.7);}
+.item-card.utility:active{border-color:rgba(192,96,255,.7);}
+.ic-ico{font-size:28px;flex-shrink:0;width:36px;text-align:center;}
+.ic-body{flex:1;}
+.ic-tag{font-family:var(--px);font-size:5px;letter-spacing:.15em;color:rgba(255,255,255,.3);margin-bottom:4px;}
+.ic-name{font-family:var(--px);font-size:9px;color:#fff;letter-spacing:.06em;margin-bottom:5px;}
+.ic-desc{font-size:11px;color:rgba(255,255,255,.65);line-height:1.5;}
+.ic-rarity{font-family:var(--px);font-size:5px;letter-spacing:.12em;}
+.ic-rarity.common{color:#aaa;}.ic-rarity.rare{color:#5ab8ff;}.ic-rarity.epic{color:#c060ff;}.ic-rarity.cursed{color:#ff4444;}
+
+/* ── JOURNAL ── */
+.jnode{
+  display:flex;gap:12px;
+  padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06);
+  position:relative;
+}
+.jnode:last-child{border-bottom:none;}
+.jnode-dot{
+  width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px;
+  border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);
+}
+.jnode-dot.kill{background:#00e676;border-color:#00e676;}
+.jnode-dot.fled{background:#ffaa00;border-color:#ffaa00;}
+.jnode-dot.died{background:#ff2255;border-color:#ff2255;}
+.jnode-dot.current{background:#c060ff;border-color:#c060ff;box-shadow:0 0 8px #c060ff;}
+.jnode-body{flex:1;}
+.jnode-day{font-family:var(--px);font-size:6px;color:rgba(255,255,255,.35);letter-spacing:.12em;margin-bottom:3px;}
+.jnode-boss{font-family:var(--px);font-size:8px;color:#fff;letter-spacing:.05em;margin-bottom:3px;}
+.jnode-detail{font-size:10px;color:rgba(255,255,255,.45);line-height:1.6;}
+.jnode-badge{display:inline-block;font-family:var(--px);font-size:5px;padding:2px 6px;border-radius:4px;margin-top:4px;}
+.jnode-badge.kill{background:rgba(0,230,118,.15);color:#00e676;}
+.jnode-badge.fled{background:rgba(255,170,0,.15);color:#ffaa00;}
+.jnode-badge.died{background:rgba(255,34,85,.15);color:#ff2255;}
+.jnode-badge.current{background:rgba(192,96,255,.2);color:#c060ff;}
+
+/* LEVEL-UP OVERLAY */
+.levelup-title{
+  font-family:var(--px);font-size:15px;color:#c060ff;
+  text-align:center;text-shadow:0 0 30px #c060ff;
+}
+.levelup-sub{
+  font-family:var(--px);font-size:7px;color:rgba(255,255,255,.45);
+  text-align:center;letter-spacing:.14em;
+}
+.lu-choice{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;border-radius:10px;
+  border:1.5px solid rgba(192,96,255,.28);
+  background:rgba(112,48,192,.08);
+  margin-bottom:10px;cursor:pointer;
+  width:100%;max-width:380px;
+  transition:border-color .15s,background .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.lu-choice:active{border-color:rgba(192,96,255,.7);background:rgba(112,48,192,.2);}
+.lu-ico{font-size:28px;flex-shrink:0;}
+.lu-body{flex:1;}
+.lu-name{font-family:var(--px);font-size:10px;color:#fff;margin-bottom:5px;}
+.lu-desc{font-size:12px;color:#c060ff;line-height:1.5;}
+
+/* LOADING */
+#loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#07080f;font-family:var(--px);font-size:9px;color:rgba(255,255,255,.3);z-index:999}
+
+/* ── BOSS KILLED ── */
+#screen-boss-killed{gap:14px;}
+.bkill-star{font-family:var(--px);font-size:44px;color:#ffd600;text-shadow:0 0 40px #ffd600;animation:bkill-pop .4s cubic-bezier(.175,.885,.32,1.275) both;}
+.bkill-name{font-family:var(--px);font-size:12px;color:#fff;text-align:center;letter-spacing:.06em;}
+.bkill-floor{font-family:var(--px);font-size:7px;color:rgba(255,255,255,.4);text-align:center;letter-spacing:.12em;margin-top:-6px;}
+.bkill-msg{font-family:var(--px);font-size:7px;color:rgba(255,255,255,.45);text-align:center;letter-spacing:.1em;border:1px solid rgba(255,255,255,.12);padding:12px 20px;border-radius:8px;background:rgba(255,255,255,.04);line-height:2;}
+@keyframes bkill-pop{from{transform:scale(0)}to{transform:scale(1)}}
+
+/* ── DUNGEON MAP ── */
+#screen-dungeon{overflow-y:auto;padding:20px 0 32px;align-items:stretch;justify-content:flex-start;gap:0;}
+.dmap-header{font-family:var(--px);font-size:6px;color:rgba(255,255,255,.3);letter-spacing:.15em;text-align:center;padding:0 16px 3px;}
+.dmap-title{font-family:var(--px);font-size:11px;color:#fff;letter-spacing:.06em;text-align:center;padding:0 16px 6px;}
+.dmap-streak{font-family:var(--px);font-size:7px;color:rgba(255,149,0,.85);letter-spacing:.1em;text-align:center;padding:7px 14px;border:1px solid rgba(255,149,0,.2);border-radius:8px;background:rgba(0,0,0,.3);margin:0 16px 16px;}
+.dmap-inner{width:100%;max-width:400px;margin:0 auto;padding:0 14px;}
+.dmap-zone-banner{font-family:var(--px);font-size:6px;letter-spacing:.14em;padding:5px 10px;border-radius:4px;margin:10px 0 6px;text-align:center;}
+.dmap-floor-row{display:flex;gap:8px;position:relative;}
+.dmap-dot-col{display:flex;flex-direction:column;align-items:center;width:18px;flex-shrink:0;padding-top:12px;}
+.dmap-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
+.dmap-dot.killed{background:#00e676;}
+.dmap-dot.fled{background:#ffaa00;}
+.dmap-dot.died{background:#ff2255;}
+.dmap-dot.current{background:#c060ff;box-shadow:0 0 6px #c060ff;animation:dmap-glow 2s ease-in-out infinite;}
+.dmap-dot.locked{background:rgba(255,255,255,.12);}
+.dmap-dot.major{background:#ffd600;}
+.dmap-line{width:1px;flex:1;min-height:6px;background:rgba(255,255,255,.09);margin-top:3px;}
+@keyframes dmap-glow{0%,100%{box-shadow:0 0 6px #c060ff}50%{box-shadow:0 0 14px #c060ff}}
+.dmap-room{flex:1;padding:9px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025);margin-bottom:4px;position:relative;}
+.dmap-room.killed{border-color:rgba(0,230,118,.22);background:rgba(0,230,118,.05);}
+.dmap-room.fled{border-color:rgba(255,170,0,.18);}
+.dmap-room.died{border-color:rgba(255,34,85,.18);}
+.dmap-room.current{border-color:rgba(192,96,255,.4);background:rgba(112,48,192,.1);box-shadow:0 0 14px rgba(192,96,255,.12);}
+.dmap-room.major{border-color:rgba(255,213,0,.28);background:rgba(255,213,0,.04);}
+.dmap-room.locked{opacity:.28;}
+.dmap-room-inner{display:flex;align-items:center;gap:9px;}
+.dmap-boss-canvas{image-rendering:pixelated;flex-shrink:0;}
+.dmap-room-info{flex:1;min-width:0;}
+.dmap-floor-num{font-family:var(--px);font-size:5px;color:rgba(255,255,255,.3);letter-spacing:.1em;margin-bottom:2px;}
+.dmap-boss-name{font-family:var(--px);font-size:7px;color:#fff;letter-spacing:.04em;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dmap-outcome{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.dmap-badge{font-family:var(--px);font-size:5px;padding:2px 6px;border-radius:3px;letter-spacing:.08em;}
+.dmap-badge.killed{background:rgba(0,230,118,.15);color:#00e676;}
+.dmap-badge.fled{background:rgba(255,170,0,.15);color:#ffaa00;}
+.dmap-badge.died{background:rgba(255,34,85,.15);color:#ff2255;}
+.dmap-badge.current{background:rgba(192,96,255,.2);color:#c060ff;}
+.dmap-badge.locked{background:rgba(255,255,255,.06);color:rgba(255,255,255,.25);}
+.dmap-badge.major{background:rgba(255,213,0,.18);color:#ffd600;}
+.dmap-hp-bar{height:3px;background:rgba(255,255,255,.1);border-radius:2px;margin-top:5px;overflow:hidden;}
+.dmap-hp-fill{height:100%;border-radius:2px;}
+
+/* ── SKILL TREE ── */
+#screen-skills{overflow-y:auto;padding:20px 16px 32px;align-items:stretch;justify-content:flex-start;gap:0;}
+.stree-header{text-align:center;margin-bottom:4px;}
+.stree-title{font-family:var(--px);font-size:10px;color:#ffd600;letter-spacing:.06em;margin-bottom:4px;}
+.stree-souls{font-family:var(--px);font-size:7px;color:rgba(255,255,255,.4);letter-spacing:.1em;margin-bottom:14px;text-align:center;}
+.stree-branches{display:flex;gap:6px;width:100%;max-width:400px;margin:0 auto 14px;}
+.stree-branch{flex:1;display:flex;flex-direction:column;align-items:center;}
+.stree-branch-title{font-family:var(--px);font-size:6px;letter-spacing:.1em;padding:5px 4px;border-radius:4px;margin-bottom:8px;text-align:center;width:100%;}
+.stree-branch-title.force{color:#ff6644;background:rgba(255,100,68,.1);border:1px solid rgba(255,100,68,.2);}
+.stree-branch-title.destin{color:#00e676;background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.14);}
+.stree-branch-title.savoir{color:#c060ff;background:rgba(192,96,255,.07);border:1px solid rgba(192,96,255,.14);}
+.stree-node{width:100%;padding:7px 6px;border-radius:7px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04);margin-bottom:0;cursor:pointer;transition:border-color .15s,background .15s;}
+.stree-node.owned{border-color:rgba(255,213,0,.4);background:rgba(255,213,0,.07);}
+.stree-node.available.force{border-color:rgba(255,100,68,.3);}
+.stree-node.available.destin{border-color:rgba(0,230,118,.28);}
+.stree-node.available.savoir{border-color:rgba(192,96,255,.28);}
+.stree-node.locked{opacity:.3;pointer-events:none;}
+.stree-node-icon{font-size:14px;text-align:center;margin-bottom:3px;}
+.stree-node-name{font-family:var(--px);font-size:5px;color:#fff;text-align:center;margin-bottom:2px;letter-spacing:.05em;}
+.stree-node-desc{font-size:9px;color:rgba(255,255,255,.45);text-align:center;line-height:1.4;margin-bottom:3px;}
+.stree-node-cost{font-family:var(--px);font-size:5px;text-align:center;}
+.stree-node-cost.can{color:#ffd600;}.stree-node-cost.cant{color:rgba(255,255,255,.22);}.stree-node-cost.owned{color:#00e676;}
+.stree-connector{width:1px;height:7px;margin:0 auto;background:rgba(255,255,255,.12);}
+
+/* ── SKIN ── */
+#screen-skin{overflow-y:auto;padding:24px 16px 32px;gap:14px;}
+.skin-title{font-family:var(--px);font-size:10px;color:#fff;letter-spacing:.06em;text-align:center;}
+.skin-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:320px;}
+.skin-card{display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 10px;border-radius:10px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);cursor:pointer;transition:border-color .15s,background .15s;}
+.skin-card.active{border-color:rgba(255,213,0,.5);background:rgba(255,213,0,.07);}
+.skin-card:active{background:rgba(255,255,255,.1);}
+.skin-canvas{image-rendering:pixelated;}
+.skin-name{font-family:var(--px);font-size:7px;color:#fff;letter-spacing:.08em;}
+.skin-desc{font-size:10px;color:rgba(255,255,255,.38);text-align:center;line-height:1.4;}
+.skin-badge{font-family:var(--px);font-size:5px;color:#ffd600;letter-spacing:.1em;}
+
+/* ── PIXEL ART ICONS ── */
+.item-canvas{image-rendering:pixelated;flex-shrink:0;display:block;}
+canvas.lico{flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<div id="loading">CHARGEMENT...</div>
+<canvas id="cvs"></canvas>
+
+<!-- ── TOP HUD ── -->
+<div id="hud-top">
+  <!-- zone + étage en haut -->
+  <div id="hud-info-row">
+    <span class="hud-zone" id="hud-zone">ZONE I — LA CRYPTE</span>
+    <span class="hud-floor">ÉT. <b id="h-floor">1</b></span>
+  </div>
+  <!-- barre boss en dessous -->
+  <div id="hud-boss-bar-wrap">
+    <div id="boss-bar-fill" style="width:100%"></div>
+    <div id="hud-boss-bar-txt">
+      <span id="boss-name-txt">—</span>
+      <span id="hud-boss-hp-lbl">100%</span>
+    </div>
+  </div>
+  <!-- IDs fantômes -->
+  <span id="h-xp" style="display:none"></span>
+  <span id="h-souls" style="display:none">0</span>
+  <span id="h-flames" style="display:none">0</span>
+</div>
+
+<!-- ── BOSS LABEL (fantôme, JS positionne toujours) ── -->
+<div id="boss-label" style="display:none"></div>
+
+<!-- ── MILESTONES ── -->
+<div id="milestones"></div>
+
+<!-- ── INFO CHIPS ── -->
+<div id="info-chips">
+  <div class="chip arcane" id="chip-arcane"><b>ARCANE</b>—</div>
+  <div class="chip risk" id="chip-risk"><b>SENTENCE</b>—%</div>
+  <div class="chip" id="chip-event" style="display:none"></div>
+</div>
+
+<!-- IDs fantômes barres -->
+<span id="hp-fill" style="display:none"></span>
+<span id="pa-fill" style="display:none"></span>
+<span id="pa-val" style="display:none"></span>
+
+<!-- ── BOTTOM UI ── -->
+<div id="bottom-ui">
+  <div id="steps-display">
+    <div id="steps-label" style="display:none">PAS AUJOURD'HUI</div>
+
+    <!-- STREAK + INVENTAIRE à gauche, nombre de pas à droite -->
+    <div id="xp-top-row">
+      <div id="xp-left-col">
+        <div id="xp-streak-btn" onclick="openDungeonMap()">🔥 <span id="streak-count-bar">0</span></div>
+        <div id="xp-inv-btn" onclick="openEquip()">INVENTAIRE</div>
+      </div>
+      <div id="steps-big">0</div>
+    </div>
+
+    <!-- BARRE XP -->
+    <div class="bar-block">
+      <div id="xp-bar-wrap">
+        <div id="xp-bar-fill" style="width:0%"></div>
+        <div class="xp-txt">
+          <span id="xp-level-lbl">NIV. 1</span>
+          <span id="xp-val-lbl">0 / 100 XP</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BARRE CHARGE -->
+    <div class="bar-block">
+      <div id="steps-boss-bar-wrap">
+        <div id="steps-boss-bar-fill" style="width:0%"></div>
+        <div class="charge-txt">
+          <span>CHARGE</span>
+          <span id="charge-rval">0/10 000 PAS</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- statut unique -->
+    <!-- IDs fantômes conservés pour le JS -->
+    <div id="steps-attacks-avail" style="display:none"></div>
+    <span id="steps-boss-hint" style="display:none"></span>
+    <div id="charge-bar-row" style="display:none"></div>
+    <div id="xp-display" style="display:none"></div>
+  </div>
+  <!-- bento : streak · HP · inventaire -->
+  <div id="meta-row">
+    <div class="meta-chip streak">
+      <span class="chip-label">STREAK</span>
+      <span class="chip-val" id="streak-count">0</span>
+    </div>
+    <div class="meta-chip hp-chip" id="hp-chip">
+      <span class="chip-label">PV</span>
+      <span class="chip-val"><span id="hp-cur">100</span><span id="hp-max-txt" style="font-size:8px;opacity:.4;font-family:var(--px)">/100</span></span>
+    </div>
+    <div class="inv-btn" onclick="openEquip()">INVENTAIRE</div>
+  </div>
+  <!-- bouton attaque -->
+  <div class="action-row">
+    <div id="btn-attack" onclick="doAction('attack')">
+      <span class="a-icon">⚔️</span><span class="a-name">ATTAQUE</span>
+    </div>
+  </div>
+  <!-- IDs fantômes pour compatibilité JS -->
+  <span id="heavy-cost" style="display:none"></span>
+  <span id="btn-heavy" style="display:none"></span>
+  <span id="btn-magic" style="display:none"></span>
+  <span id="btn-defend" style="display:none"></span>
+  <span id="btn-potion" style="display:none"></span>
+</div>
+
+<!-- sync text fantôme pour compatibilité JS -->
+<span id="sync-txt" style="display:none"></span>
+<!-- streak top right -->
+<div id="streak-top">🔥 <span id="streak-count">0</span></div>
+<!-- âmes fantômes pour compatibilité JS -->
+<div id="souls-top" style="display:none">💀 <span id="souls-count">0</span></div>
+<!-- inventaire top left + DEV -->
+<div id="dev-btn" onclick="toggleDev()">DEV</div>
+<div id="inv-top" onclick="openEquip()">INV</div>
+
+<!-- ── TOAST ── -->
+<div id="toast"></div>
+
+<!-- ── DEV PANEL ── -->
+<div class="dev-panel" id="dev-panel">
+  <div class="dev-title">▶ DEV TOOLS</div>
+  <div class="dev-grid">
+    <button class="devbtn" onclick="devAddSteps(10000)">+10K PAS</button>
+    <button class="devbtn" onclick="devAddSteps(5000)">+5K PAS</button>
+    <button class="devbtn" onclick="devAddSouls(10)">+10 ÂMES</button>
+    <button class="devbtn" onclick="devResetBoss()">RESET BOSS</button>
+    <button class="devbtn" onclick="devKillBoss()">KILL BOSS</button>
+    <button class="devbtn" onclick="devAddSteps(1000)">+1K PAS</button>
+    <button class="devbtn" onclick="devNextFloor()">NEXT FLOOR</button>
+    <button class="devbtn" onclick="devShowLoot()">TEST LOOT</button>
+    <button class="devbtn" onclick="devTriggerNight()">SIMULER NUIT</button>
+    <button class="devbtn" onclick="devTestLevelUp()">TEST LEVELUP</button>
+    <button class="devbtn" onclick="devAddXp(100)">+100 XP</button>
+    <button class="devbtn" onclick="showStarterScreen()">TEST STARTER</button>
+    <button class="devbtn" onclick="openDungeonMap()">CARTE</button>
+    <button class="devbtn" onclick="openSkillTree()">ARBRE</button>
+    <button class="devbtn" onclick="openSkinScreen()">SKIN</button>
+    <button class="devbtn danger wide" onclick="devResetAll()">RESET ALL — TOUT EFFACER</button>
+    <button class="devbtn close wide" onclick="toggleDev()">FERMER</button>
+  </div>
+</div>
+
+<!-- ══ EQUIPMENT PANEL ══ -->
+<div class="slide-panel" id="equip-panel" onclick="closeEquip(event)">
+  <div class="slide-inner">
+    <div class="slide-title">▶ ÉQUIPEMENT</div>
+    <div id="eq-list"></div>
+    <div class="eq-crit" id="eq-crit">CRIT —%</div>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button class="gbtn ppl" style="flex:1;font-size:7px;padding:11px 8px" onclick="closeEquipDirect();openSkillTree()">⭐ ARBRE</button>
+      <button class="gbtn" style="flex:1;font-size:7px;padding:11px 8px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.15);" onclick="closeEquipDirect();openSkinScreen()">🎨 SKIN</button>
+    </div>
+    <button class="gbtn grn" style="margin-top:8px" onclick="closeEquipDirect()">FERMER</button>
+  </div>
+</div>
+
+<!-- ══ CHOIX ITEM DE DÉPART ══ -->
+<div id="screen-starter" class="overlay hidden" style="overflow-y:auto;padding:24px 16px 32px">
+  <div style="font-family:var(--px);font-size:7px;color:rgba(255,255,255,.4);letter-spacing:.15em;text-align:center;margin-bottom:6px" id="starter-run-lbl">NOUVELLE VIE</div>
+  <div style="font-family:var(--px);font-size:12px;color:#fff;letter-spacing:.06em;text-align:center;margin-bottom:4px">CHOISISSEZ CE QUE VOUS EMPORTEZ</div>
+  <div style="font-family:var(--px);font-size:6px;color:rgba(255,255,255,.3);letter-spacing:.1em;text-align:center;margin-bottom:20px">UN SEUL OBJET POUR COMMENCER</div>
+  <div id="starter-items" style="width:100%;max-width:380px"></div>
+</div>
+
+<!-- ══ JOURNAL DE RUN ══ -->
+<div id="screen-journal" class="overlay hidden" style="overflow-y:auto;padding:20px 16px 32px">
+  <div style="font-family:var(--px);font-size:7px;color:rgba(255,255,255,.35);letter-spacing:.15em;text-align:center;margin-bottom:6px">VIE ACTUELLE</div>
+  <div style="font-family:var(--px);font-size:11px;color:#fff;letter-spacing:.06em;text-align:center;margin-bottom:16px">JOURNAL DU DONJON</div>
+  <div id="journal-list" style="width:100%;max-width:380px"></div>
+  <button class="gbtn" style="margin-top:16px;background:transparent;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);font-size:7px" onclick="hide('screen-journal')">FERMER</button>
+</div>
+
+<!-- ══ EVENT OVERLAY ══ -->
+<div id="screen-event" class="overlay hidden">
+  <div class="evt-icon" id="evt-icon">—</div>
+  <div class="evt-name" id="evt-name">—</div>
+  <div class="evt-txt" id="evt-txt">—</div>
+  <div class="evt-eff" id="evt-eff">—</div>
+  <button class="gbtn grn" onclick="dismissEvent()">CONTINUER →</button>
+</div>
+
+<!-- ══ LOOT OVERLAY ══ -->
+<div id="screen-loot" class="overlay hidden" style="overflow-y:auto;padding-top:20px;padding-bottom:20px">
+  <div class="loot-title">★ BUTIN</div>
+  <div class="loot-sub">Choisis un objet</div>
+  <div style="width:100%;max-width:380px;margin-top:12px" id="loot-items"></div>
+  <button class="skip-btn" onclick="skipLoot()">PASSER →</button>
+</div>
+
+<!-- ══ CAMP OVERLAY ══ -->
+<div id="screen-camp" class="overlay hidden" style="overflow-y:auto;gap:10px;padding-top:20px">
+  <div class="camp-title">🏕️ CAMP</div>
+  <div class="camp-xp">XP dispo : <span id="camp-xp">0</span></div>
+  <div style="width:100%;max-width:380px;margin-top:6px" id="camp-list"></div>
+  <button class="gbtn grn" onclick="closeCamp()">CONTINUER →</button>
+</div>
+
+<!-- ══ SENTENCE OVERLAY ══ -->
+<div id="screen-sentence" class="overlay hidden">
+  <div class="sent-title">🌑 LA SENTENCE</div>
+  <div class="gpanel" style="text-align:center;gap:10px;display:flex;flex-direction:column">
+    <div class="sent-boss" id="sent-boss-name">—</div>
+    <div style="font-family:var(--px);font-size:7px;color:rgba(255,255,255,.4);letter-spacing:.1em">HP RESTANTS</div>
+    <div style="font-family:var(--px);font-size:22px;color:#ff4444" id="sent-boss-hp">—%</div>
+    <div style="height:1px;background:rgba(255,255,255,.1);margin:4px 0"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <div style="font-family:var(--px);font-size:6px;color:rgba(255,255,255,.35);letter-spacing:.1em">CHANCE DE FUITE</div>
+        <div style="font-family:var(--px);font-size:20px;color:#00e676" id="sent-escape-pct">—%</div>
+      </div>
+      <div>
+        <div style="font-family:var(--px);font-size:6px;color:rgba(255,255,255,.35);letter-spacing:.1em">CHANCE DE MORT</div>
+        <div style="font-family:var(--px);font-size:20px;color:#ff2255" id="sent-death-pct">—%</div>
+      </div>
+    </div>
+  </div>
+  <button class="gbtn red" id="sent-flee-btn">FUIR</button>
+  <!-- IDs fantômes pour compatibilité -->
+  <span id="sent-boss" style="display:none"></span>
+  <span id="sent-desc" style="display:none"></span>
+  <span id="sent-pct" style="display:none"></span>
+  <span id="sent-res" style="display:none"></span>
+  <span id="btn-resolve" style="display:none"></span>
+  <span id="btn-sent-cont" style="display:none"></span>
+</div>
+
+<!-- ══ DEATH SCREEN ══ -->
+<div id="screen-dead" class="overlay hidden" style="overflow-y:auto;gap:10px;padding-top:20px">
+  <div class="dead-title">💀 MORT</div>
+  <div class="gpanel" id="dead-stats"></div>
+  <div class="souls-earn" id="souls-earn"></div>
+  <div style="font-family:var(--px);font-size:8px;color:#c060ff;text-align:center">▶ PRESTIGE</div>
+  <div style="width:100%;max-width:380px" id="prestige-list"></div>
+  <div class="souls-left-lbl">💀 restantes : <span id="souls-left">0</span></div>
+  <button class="gbtn grn" onclick="startNewRun()">NOUVELLE RUN →</button>
+</div>
+
+<!-- ══ BOSS VAINCU ══ -->
+<div id="screen-boss-killed" class="overlay hidden">
+  <div class="bkill-star">★</div>
+  <div class="bkill-name" id="bkill-name">VEILLEUR VAINCU</div>
+  <div class="bkill-floor" id="bkill-floor">ÉTAGE 1</div>
+  <div class="bkill-msg">VICTOIRE DU JOUR<br>REVENEZ DEMAIN POUR AVANCER</div>
+  <button class="gbtn grn" style="max-width:260px" onclick="closeBossKilled()">RÉCUPÉRER LE BUTIN →</button>
+</div>
+
+<!-- ══ CARTE DU DONJON ══ -->
+<div id="screen-dungeon" class="overlay hidden">
+  <div class="dmap-header">RUN ACTUELLE</div>
+  <div class="dmap-title">CARTE DU DONJON</div>
+  <div class="dmap-streak" id="dmap-streak">🔥 0 JOURS CONSÉCUTIFS</div>
+  <div class="dmap-inner" id="dmap-content"></div>
+  <button class="gbtn" style="margin-top:12px;background:transparent;border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.45);font-size:7px;max-width:260px" onclick="hide('screen-dungeon')">FERMER</button>
+</div>
+
+<!-- ══ ARBRE DE COMPÉTENCES ══ -->
+<div id="screen-skills" class="overlay hidden">
+  <div class="stree-header">
+    <div class="stree-title">ARBRE DE COMPÉTENCES</div>
+  </div>
+  <div class="stree-souls" id="skill-souls-lbl">💀 0 ÂMES</div>
+  <div id="stree-container" style="width:100%;max-width:400px;margin:0 auto;"></div>
+  <button class="gbtn" style="margin-top:10px;background:transparent;border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.45);font-size:7px;max-width:260px" onclick="hide('screen-skills')">FERMER</button>
+</div>
+
+<!-- ══ APPARENCE (SKIN) ══ -->
+<div id="screen-skin" class="overlay hidden">
+  <div class="skin-title">APPARENCE</div>
+  <div class="skin-grid" id="skin-grid"></div>
+  <button class="gbtn" style="margin-top:4px;background:transparent;border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.45);font-size:7px;max-width:260px" onclick="hide('screen-skin')">FERMER</button>
+</div>
+
+<!-- ══ LEVEL-UP OVERLAY ══ -->
+<div id="screen-levelup" class="overlay hidden" style="gap:16px;padding:28px 20px">
+  <div class="levelup-title">NIVEAU <span id="lu-level">2</span></div>
+  <div class="levelup-sub">CHOISISSEZ UNE AMÉLIORATION</div>
+  <div id="lu-choices" style="width:100%;max-width:380px;margin-top:4px"></div>
+</div>
+
+<!-- ══ SETUP MODAL ══ -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <div class="mtitle">▶ CONFIG SUPABASE</div>
+    <div class="mstep">
+      <div class="mnum">1</div>
+      <div>
+        <div class="mstep-title">CRÉER game_state</div>
+        <div class="mstep-desc">SQL Editor → exécute :</div>
+        <div class="code">CREATE TABLE game_state (
+  user_id text PRIMARY KEY DEFAULT 'simon',
+  floor int DEFAULT 1, player_hp int DEFAULT 100,
+  player_max_hp int DEFAULT 100, xp int DEFAULT 0,
+  souls int DEFAULT 0, boss_hp bigint DEFAULT 1000,
+  boss_max_hp bigint DEFAULT 1000, boss_type_id int DEFAULT 1,
+  phoenix_revived bool DEFAULT false, boss_days_survived int DEFAULT 0,
+  sentence_survived int DEFAULT 0, flame_streak int DEFAULT 0,
+  run_id int DEFAULT 1, runs_total int DEFAULT 0,
+  bosses_killed int DEFAULT 0, last_sentence_date text DEFAULT '',
+  heavy_used_today bool DEFAULT false, defending bool DEFAULT false,
+  pa_spent_today int DEFAULT 0, combat_log jsonb DEFAULT '[]',
+  prestige_atk int DEFAULT 0, prestige_hp int DEFAULT 0,
+  prestige_pa int DEFAULT 0, prestige_sentence int DEFAULT 0,
+  boss_killed_today bool DEFAULT false,
+  equipped_weapon jsonb DEFAULT NULL, equipped_armor jsonb DEFAULT NULL,
+  equipped_ring jsonb DEFAULT NULL, base_crit int DEFAULT 5,
+  camp_available bool DEFAULT false, current_event jsonb DEFAULT NULL,
+  updated_at timestamptz DEFAULT now()
+);
+ALTER TABLE game_state DISABLE ROW LEVEL SECURITY;
+GRANT ALL ON TABLE game_state TO anon;
+INSERT INTO game_state (user_id) VALUES ('simon') ON CONFLICT DO NOTHING;</div>
+      </div>
+    </div>
+    <button class="mclose" onclick="closeSetup()">OK</button>
+  </div>
+</div>
+
+<script>
+// ─── SUPABASE ────────────────────────────────────────────────────────
+const SB_URL='https://vxzjfwjxgewdqvfdsxjm.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4empmd2p4Z2V3ZHF2ZmRzeGptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4MTM1MDcsImV4cCI6MjEwNDM4OTUwN30.IuIcPXXrVozPDDreB-hkY1didQoboV0pEuH8-8GaWLo';
+const db=supabase.createClient(SB_URL,SB_KEY);
+
+// ─── CONFIG ──────────────────────────────────────────────────────────
+const C={
+  CHARGE:10000,          // seuil sacré — immuable
+  BASE_ATK:1000,         // dégâts de base avant items/prestige
+  BASE_CRIT:0.05,        // 5% crit de base
+  CRIT_MULT:2,           // ×2 par défaut
+  BOSS_HP_BASE:1000,     // HP boss étage 1
+  BOSS_HP_GROW:1.22,     // facteur exponentiel par étage
+  LOG_MAX:20,
+};
+
+// ─── XP CONFIG ───────────────────────────────────────────────────────
+const XP_CFG={
+  PER_1000:10,           // XP pour 1 000 pas (cap 10K)
+  AFTER_RATE:0.25,       // rendement après 10K pas
+  STEPS_CAP:20000,       // plafond de pas pour XP
+  BOSS_BASE_XP:35,       // XP boss étage 1
+  BOSS_XP_STEP:3,        // +3 XP par étage
+  // XP nécessaire pour passer au niveau suivant (indice = niveau actuel - 1)
+  TO_NEXT:[100,130,170,220,290,380,500,650,850],
+};
+
+const ZONES=[
+  {id:1,name:'ZONE I — LA CRYPTE',     floors:[1,10], color:'#7070cc',sky:'#12102a',fog:'#1a1440'},
+  {id:2,name:'ZONE II — LA FORGE',     floors:[11,20],color:'#cc5500',sky:'#200800',fog:'#2a1000'},
+  {id:3,name:"ZONE III — L'ABÎME",    floors:[21,30],color:'#0088cc',sky:'#001228',fog:'#001830'},
+  {id:4,name:'ZONE IV — LE SANCTUAIRE',floors:[31,40],color:'#aa00cc',sky:'#180028',fog:'#200038'},
+  {id:5,name:"ZONE V — LE TRÔNE",     floors:[41,50],color:'#ccaa00',sky:'#181000',fog:'#201800'},
+];
+function getZone(f){return ZONES.find(z=>f>=z.floors[0]&&f<=z.floors[1])||{name:'ZONE ?',color:'#7070aa',sky:'#0a0b1e',fog:'#10121e'};}
+
+// ─── VEILLEURS ────────────────────────────────────────────────────────
+// hp_mult: multiplicateur sur bossMaxHp(f) — mechanic: clé mécanique
+const ALL_WATCHERS=[
+  // ZONE I — LA CRYPTE (étages 1-9)
+  {id:1, zone:1,name:'LE VEILLEUR CREUX', type:'standard',icon:'👁️',hp_mult:1.0, atk:18,sentBonus:0,   mechanic:null,      desc:'Gardien impassible. Aucune mécanique.'},
+  {id:2, zone:1,name:'LE BOURREAU',       type:'sentence', icon:'🪓',hp_mult:0.9, atk:18,sentBonus:20,  mechanic:'sent+',   desc:'Sentence +20% de mortalité.'},
+  {id:3, zone:1,name:'LE MOINILLON',      type:'glass',    icon:'🧎',hp_mult:0.5, atk:28,sentBonus:35,  mechanic:'glass',   desc:'Peu de HP — mais la fuite est très difficile.'},
+  {id:4, zone:1,name:'LA STATUE',         type:'armored',  icon:'🗿',hp_mult:2.2, atk:7, sentBonus:-15, mechanic:'daily_def',desc:'Chaque nuit passée contre lui : -15% DEF.'},
+  {id:5, zone:1,name:'LE DUELLISTE',      type:'duelist',  icon:'🤺',hp_mult:0.8, atk:20,sentBonus:20,  mechanic:'duelist', desc:'Si dégâts < 50% HP boss : Sentence +20%.'},
+  // ZONE II — LA FORGE (étages 11-19)
+  {id:6, zone:2,name:'LE CENDRÉ',         type:'ember',    icon:'🔥',hp_mult:1.0, atk:22,sentBonus:10,  mechanic:'ember',   desc:'Si il survit : dégâts reçus +10% le lendemain.'},
+  {id:7, zone:2,name:'LE COLOSSE',        type:'armored',  icon:'🏔️',hp_mult:2.6, atk:10,sentBonus:-20, mechanic:null,      desc:'HP colossaux — Sentence faible.'},
+  {id:8, zone:2,name:'LE BOUCHER',        type:'butcher',  icon:'🔪',hp_mult:1.2, atk:15,sentBonus:0,   mechanic:'butcher', desc:'Plus il a de HP restants, plus la Sentence est mortelle.'},
+  {id:9, zone:2,name:'LE SANGUIN',        type:'berserk',  icon:'🩸',hp_mult:1.0, atk:20,sentBonus:5,   mechanic:'berserk', desc:'Plus il perd de HP, plus il devient dangereux.'},
+  {id:10,zone:2,name:'LE PHÉNIX',         type:'phoenix',  icon:'🦅',hp_mult:1.1, atk:22,sentBonus:0,   mechanic:'phoenix', desc:'Renaît une fois à 25% HP quand il tombe.'},
+  // ZONE III — L'ABÎME (étages 21-29)
+  {id:11,zone:3,name:'LE FANTÔME',        type:'ghost',    icon:'👻',hp_mult:0.8, atk:18,sentBonus:0,   mechanic:'ghost',   desc:'25% de chances d\'esquiver le coup.'},
+  {id:12,zone:3,name:'LE DORMEUR',        type:'dormant',  icon:'😴',hp_mult:1.4, atk:10,sentBonus:-10, mechanic:'dormant', desc:'Gagne +40% HP et Sentence renforcée chaque nuit passée.'},
+  {id:13,zone:3,name:'LE MIROIR',         type:'mirror',   icon:'🪞',hp_mult:0.9, atk:20,sentBonus:5,   mechanic:'mirror',  desc:'Copie 25% de ton multiplicateur d\'ATK.'},
+  {id:14,zone:3,name:'LE PARASITE',       type:'regen',    icon:'🦠',hp_mult:1.0, atk:18,sentBonus:0,   mechanic:'regen',   desc:'Regagne 10% HP chaque nuit. Gagne +15% HP max.'},
+  {id:15,zone:3,name:"L'INÉVITABLE",      type:'inevitable',icon:'⚫',hp_mult:1.3, atk:25,sentBonus:15,  mechanic:'inevitable',desc:'La première attaque ne peut jamais le tuer. Force une Sentence.'},
+  // ZONE IV — LE SANCTUAIRE (étages 31-39)
+  {id:16,zone:4,name:'LE JUGE',           type:'judge',    icon:'⚖️',hp_mult:1.0, atk:20,sentBonus:0,   mechanic:'judge',   desc:'Réduit de 20% ta statistique de run la plus élevée.'},
+  {id:17,zone:4,name:"L'ORACLE",          type:'oracle',   icon:'🔮',hp_mult:0.9, atk:15,sentBonus:0,   mechanic:'oracle',  desc:'Révèle ton ATK exacte avant de frapper — mais -10% dégâts.'},
+  {id:18,zone:4,name:"L'AVEUGLE",         type:'blind',    icon:'🙈',hp_mult:1.0, atk:18,sentBonus:0,   mechanic:'blind',   desc:'Crit +10% — dégâts non-critiques -15%.'},
+  {id:19,zone:4,name:'LA VEUVE',          type:'widow',    icon:'🕷️',hp_mult:0.9, atk:20,sentBonus:5,   mechanic:'widow',   desc:'Chaque nuit qui passe : Âmes bonus augmentent, fuite diminue.'},
+  {id:20,zone:4,name:'LE PÈLERIN NOIR',   type:'pilgrim',  icon:'🧳',hp_mult:1.0, atk:18,sentBonus:0,   mechanic:'pilgrim', desc:'Ses HP augmentent avec ton niveau de run.'},
+  // ZONE V — LE TRÔNE (étages 41-49)
+  {id:21,zone:5,name:'LE GEÔLIER',        type:'jailer',   icon:'⛓️',hp_mult:1.3, atk:28,sentBonus:10,  mechanic:null,      desc:'Gardien des profondeurs.'},
+  {id:22,zone:5,name:'LE TRAQUEUR',       type:'hunter',   icon:'🎯',hp_mult:1.1, atk:25,sentBonus:0,   mechanic:null,      desc:'Implacable chasseur.'},
+  // BOSS MAJEURS (tous les 10 étages)
+  {id:99, zone:1,name:'GARDIEN DE LA CRYPTE', type:'major',icon:'🗝️',hp_mult:1.8, atk:30,sentBonus:5,  mechanic:'major', desc:'Premier sceau brisé.'},
+  {id:100,zone:2,name:'ROI DES RACINES',       type:'major',icon:'🌿',hp_mult:1.8, atk:35,sentBonus:10, mechanic:'major', desc:'Ses racines drainent la fuite.'},
+  {id:101,zone:3,name:"HORLOGER ENDORMI",      type:'major',icon:'⏰',hp_mult:1.8, atk:40,sentBonus:8,  mechanic:'major', desc:'Ralentit chaque run.'},
+  {id:102,zone:4,name:'SAINT SANS VISAGE',     type:'major',icon:'👤',hp_mult:1.8, atk:45,sentBonus:5,  mechanic:'major', desc:'Annule un bonus aléatoire.'},
+  {id:103,zone:5,name:'LE PREMIER MORT',       type:'major',icon:'💀',hp_mult:1.8, atk:55,sentBonus:20, mechanic:'major', desc:'Sentence toujours ≥50%.'},
+];
+// Sélection Veilleur par zone + étage — évite répétition immédiate
+function getBoss(f){
+  if(f%10===0){
+    const zi=Math.min(Math.floor((f-1)/10),4);
+    const major=ALL_WATCHERS.find(w=>w.type==='major'&&w.zone===zi+1)||ALL_WATCHERS.find(w=>w.id===99);
+    return major;
+  }
+  const zone=getZone(f);
+  const zid=zone.id||1;
+  const pool=ALL_WATCHERS.filter(w=>w.zone===zid&&w.type!=='major');
+  // Déterministe par étage pour cohérence
+  return pool[((f-1)%10)%pool.length]||ALL_WATCHERS[0];
+}
+function bossMaxHp(f){
+  const h=Math.floor(C.BOSS_HP_BASE*Math.pow(C.BOSS_HP_GROW,f-1));
+  const boss=getBoss(f);
+  return Math.round(h*(boss.hp_mult||1.0));
+}
+
+// Arcanes/events/milestones/flames supprimés — simplifié sur le core walk→attack
+
+// ─── ITEMS DATA-DRIVEN ───────────────────────────────────────────────
+// Chaque item = {id, name, type, rarity, icon, desc, fx:{}}
+// fx keys: dmgMult, critChance, critMult, escapeMod, soulMult, soulAdd,
+//          repeatChance, executeThreshold, firstBlood, daysBonusMult,
+//          sentenceBonusDmg, dotPoison, strictEscape, lootSlots
+const RARITY={common:'COMMUN',rare:'RARE',epic:'ÉPIQUE',cursed:'MAUDIT',relic:'RELIQUE',forbidden:'INTERDIT'};
+const ALL_ITEMS=[
+  // ── ARMES COMMUNES ──
+  {id:'w1',name:'ÉPÉE DE FER',    type:'weapon',rarity:'common',  icon:'⚔️', desc:'Attaque +30%',                    fx:{dmgMult:1.3}},
+  {id:'w2',name:'LAME ACÉRÉE',    type:'weapon',rarity:'rare',    icon:'🗡️', desc:'Attaque +60%',                    fx:{dmgMult:1.6}},
+  {id:'w3',name:'MARTEAU',        type:'weapon',rarity:'common',  icon:'🔨', desc:'Attaque ×1.8 — crit chance -10%', fx:{dmgMult:1.8,critChance:-.10}},
+  {id:'w4',name:'AIGUILLE',       type:'weapon',rarity:'rare',    icon:'🪡', desc:'-25% dégâts — crit +30%',         fx:{dmgMult:0.75,critChance:.30}},
+  {id:'w5',name:'ÉPÉE DE VERRE',  type:'weapon',rarity:'cursed',  icon:'🔷', desc:'×2.5 dégâts — fuite -25%',        fx:{dmgMult:2.5,escapeMod:-.25}},
+  {id:'w6',name:'FAUX DES ÂMES', type:'weapon',rarity:'rare',    icon:'⚰️', desc:'+4 Âmes par boss',                fx:{soulAdd:4}},
+  {id:'w7',name:'LAME EXÉCUTRICE',type:'weapon',rarity:'epic',    icon:'⚡', desc:'Boss <10% → exécution',           fx:{executeThreshold:.10}},
+  {id:'w8',name:'SABRE DU PÈLERIN',type:'weapon',rarity:'rare',  icon:'🚶', desc:'+5% dégâts / 2 500 pas (max +20%)',fx:{pilgrimBonus:.05}},
+  {id:'w9',name:'LAME DES JUMEAUX',type:'weapon',rarity:'epic',  icon:'⚔️', desc:'Frappe 2 fois (70% + 40%)',       fx:{multiHit:[.70,.40]}},
+  // ── ARMES RARES/ÉPIQUES ──
+  {id:'w10',name:'CŒUR ROUGE',    type:'weapon',rarity:'cursed',  icon:'❤️', desc:'+80% dégâts — Sentence mort +20%', fx:{dmgMult:1.8,sentenceBonusDeath:.20}},
+  {id:'w11',name:'TOUT OU RIEN',  type:'weapon',rarity:'forbidden',icon:'🎲',desc:'×4 dégâts — si boss survit : fuite max 10%', fx:{dmgMult:4.0,escapeCapIfBossAlive:.10}},
+  {id:'w12',name:'PREMIER SANG',  type:'weapon',rarity:'rare',    icon:'🩸', desc:'+50% sur 1ère attaque d\'un boss', fx:{firstBlood:.50}},
+  // ── ARMURES ──
+  {id:'a1',name:'CAPE DES OMBRES',type:'armor', rarity:'rare',    icon:'🌑', desc:'Boss <50% : +20% fuite',          fx:{escapeModIfBossLow:.20}},
+  {id:'a2',name:'BOTTES DU FUYARD',type:'armor',rarity:'common',  icon:'👟', desc:'+15% fuite',                      fx:{escapeMod:.15}},
+  {id:'a3',name:'ARMURE DE PLAQUE',type:'armor',rarity:'rare',    icon:'🛡️', desc:'+25% fuite — attaque -10%',       fx:{escapeMod:.25,dmgMult:.90}},
+  {id:'a4',name:'TALISMAN',       type:'armor', rarity:'common',  icon:'🔮', desc:'+10% fuite',                      fx:{escapeMod:.10}},
+  {id:'a5',name:'COURONNE DU CONDAMNÉ',type:'armor',rarity:'cursed',icon:'👑',desc:'×2 dégâts — fuite -30%',         fx:{dmgMult:2.0,escapeMod:-.30}},
+  {id:'a6',name:'ANNEAU DU LÂCHE',type:'armor', rarity:'rare',    icon:'🏃', desc:'+30% fuite — dégâts -20%',        fx:{escapeMod:.30,dmgMult:.80}},
+  // ── RELIQUES / ANNEAUX ──
+  {id:'r1',name:'ANNEAU DES ÂMES',type:'ring',  rarity:'common',  icon:'💀', desc:'Âmes ×2',                        fx:{soulMult:2}},
+  {id:'r2',name:'ŒIL DU CHASSEUR',type:'ring',  rarity:'rare',    icon:'👁️', desc:'+15% crit — boss <50% : +15%',   fx:{critChance:.15,critBonusIfBossLow:.15}},
+  {id:'r3',name:'RÉSONANCE',      type:'ring',  rarity:'epic',    icon:'🔔', desc:'Si -50%HP boss : 20% chance 2e attaque (×0.5)', fx:{resonanceChance:.20}},
+  {id:'r4',name:'ACHARNEMENT',    type:'ring',  rarity:'rare',    icon:'🔥', desc:'Boss <10% restants : 50% coup final', fx:{finisherChance:.50,finisherThreshold:.10}},
+  {id:'r5',name:'RANCUNE',        type:'ring',  rarity:'epic',    icon:'😤', desc:'+50% si boss a survécu hier',     fx:{daysBonusMult:.50}},
+  {id:'r6',name:'ANNEAU DU CONDAMNÉ',type:'ring',rarity:'epic',   icon:'⛓️', desc:'Chaque fuite réussie : +10% dégâts run', fx:{sentenceSurvivalBonus:.10}},
+  {id:'r7',name:'LAME ROUILLÉE', type:'ring',   rarity:'rare',    icon:'🦠', desc:'Poison : boss perd 2% HP au prochain jour', fx:{dotPoison:.02}},
+  {id:'r8',name:'DÉ PARFAIT',    type:'ring',   rarity:'cursed',  icon:'🎯', desc:'Crit ×3 — crit chance -10%',      fx:{critMult:3,critChance:-.10}},
+  {id:'r9',name:'MÉMOIRE DU SANG',type:'ring',  rarity:'epic',    icon:'📿', desc:'+20% dégâts par jour contre ce boss', fx:{daysBonusMult:.20,stackPerDay:true}},
+  // ── ITEMS XP ──
+  {id:'r10',name:'ANNEAU DU SAVANT', type:'ring',  rarity:'rare',  icon:'📚', desc:'+25% XP des pas',                     fx:{xpStepBonus:.25}},
+  {id:'r11',name:'JOURNAL DU PÈLERIN',type:'ring', rarity:'epic',  icon:'📓', desc:'+40% XP des boss',                    fx:{xpBossBonus:.40}},
+  {id:'w13',name:"LAME DE L'ÉTUDIANT",type:'weapon',rarity:'rare', icon:'📖', desc:'+8% dégâts par niveau de run',         fx:{dmgPerLevel:.08}},
+  {id:'a7', name:'GRIMOIRE DÉFENSIF', type:'armor', rarity:'rare',  icon:'🔖', desc:'+10% fuite — +15% XP pas',            fx:{escapeMod:.10,xpStepBonus:.15}},
+];
+// ─── ITEMS DE DÉPART (garantis diversifiés) ──────────────────────────
+// Pools séparées: 1 offensif, 1 défensif, 1 utilitaire
+const STARTER_POOLS={
+  first:[ // Première run : items simples et clairs
+    {id:'s1',name:'LAME ÉBRÉCHÉE',    type:'weapon',rarity:'common',icon:'⚔️',desc:'+25% dégâts. Simple et fiable.',fx:{dmgMult:1.25}},
+    {id:'s2',name:'BOTTES DU FUYARD', type:'armor', rarity:'common',icon:'👟',desc:'+20% fuite. Plus safe.',fx:{escapeMod:.20}},
+    {id:'s3',name:'MANUEL USÉ',       type:'ring',  rarity:'common',icon:'📖',desc:'+25% XP des pas.',fx:{xpStepBonus:.25}},
+  ],
+  offensive:[
+    {id:'s1',name:'LAME ÉBRÉCHÉE',    type:'weapon',rarity:'common',icon:'⚔️',desc:'+20% dégâts.',fx:{dmgMult:1.20}},
+    {id:'s4',name:"ŒIL FISSURÉ",      type:'ring',  rarity:'common',icon:'👁️',desc:'+10% crit.',fx:{critChance:.10}},
+    {id:'s5',name:'MARTEAU LOURD',    type:'weapon',rarity:'common',icon:'🔨',desc:'+35% dégâts — crit -8%.',fx:{dmgMult:1.35,critChance:-.08}},
+    {id:'s6',name:'ÉCHO FÊLÉ',        type:'ring',  rarity:'common',icon:'🔔',desc:'8% de chance de répéter l\'attaque à 50%.',fx:{repeatChance:.08}},
+    {id:'s7',name:'PREMIER SANG',     type:'weapon',rarity:'common',icon:'🩸',desc:'+40% sur la 1ère attaque d\'un boss.',fx:{firstBlood:.40}},
+  ],
+  defensive:[
+    {id:'s2',name:'BOTTES DU FUYARD', type:'armor', rarity:'common',icon:'👟',desc:'+15% fuite.',fx:{escapeMod:.15}},
+    {id:'s8',name:'CAPE DES OMBRES',  type:'armor', rarity:'common',icon:'🌑',desc:'Boss <50% : +15% fuite.',fx:{escapeModIfBossLow:.15}},
+    {id:'s9',name:'TALISMAN',         type:'armor', rarity:'common',icon:'🔮',desc:'+10% fuite.',fx:{escapeMod:.10}},
+    {id:'s10',name:'BOUCLIER BRISÉ',  type:'armor', rarity:'common',icon:'🛡️',desc:'+12% fuite.',fx:{escapeMod:.12}},
+  ],
+  utility:[
+    {id:'s3', name:'MANUEL USÉ',      type:'ring',  rarity:'common',icon:'📖',desc:'+20% XP des pas.',fx:{xpStepBonus:.20}},
+    {id:'s11',name:'ANNEAU DU PÈLERIN',type:'ring', rarity:'common',icon:'🚶',desc:'Chaque niveau : +3% dégâts.',fx:{dmgPerLevel:.03}},
+    {id:'s12',name:'RANCUNE',         type:'ring',  rarity:'common',icon:'😤',desc:'+30% dégâts si le boss a survécu hier.',fx:{daysBonusMult:.30}},
+    {id:'s13',name:'MÉMOIRE DU SANG', type:'ring',  rarity:'common',icon:'📿',desc:'+15% dégâts par jour contre ce boss.',fx:{daysBonusMult:.15,stackPerDay:true}},
+  ],
+};
+function pickStarterItems(isFirstRun){
+  if(isFirstRun) return [...STARTER_POOLS.first];
+  const pick=pool=>pool[Math.floor(Math.random()*pool.length)];
+  const off=pick(STARTER_POOLS.offensive);
+  let def;do{def=pick(STARTER_POOLS.defensive);}while(def.id===off.id);
+  let uti;do{uti=pick(STARTER_POOLS.utility);}while(uti.id===off.id||uti.id===def.id);
+  return[off,def,uti];
+}
+
+function findItem(id){return ALL_ITEMS.find(i=>i.id===id)||STARTER_POOLS.offensive.concat(STARTER_POOLS.defensive,STARTER_POOLS.utility,STARTER_POOLS.first).find(i=>i.id===id);}
+function getEquippedItems(){
+  return[G.equipped_weapon,G.equipped_armor,G.equipped_ring]
+    .filter(Boolean).map(s=>findItem(s.id)).filter(Boolean);
+}
+// Calcule les effets bruts des items équipés (hors contexte)
+function getEquipEffects(){
+  const e={dmgMult:1,critChance:0,critMult:0,escapeMod:0,soulAdd:0,soulMult:1,
+    executeThreshold:0,repeatChance:0,firstBlood:0,dotPoison:0,pilgrimBonus:0,
+    sentenceSurvivalBonus:0,daysBonusMult:0,stackPerDay:false,
+    resonanceChance:0,finisherChance:0,finisherThreshold:0,
+    escapeCapIfBossAlive:null,escapeModIfBossLow:0,critBonusIfBossLow:0,
+    sentenceBonusDeath:0,multiHit:null,lootSlots:3,
+    xpStepBonus:0,xpBossBonus:0,dmgPerLevel:0};
+  getEquippedItems().forEach(def=>{
+    const f=def.fx;
+    if(f.dmgMult!=null)e.dmgMult*=f.dmgMult;
+    if(f.critChance)e.critChance+=f.critChance;
+    if(f.critMult)e.critMult+=f.critMult;
+    if(f.escapeMod)e.escapeMod+=f.escapeMod;
+    if(f.soulAdd)e.soulAdd+=f.soulAdd;
+    if(f.soulMult)e.soulMult*=f.soulMult;
+    if(f.executeThreshold)e.executeThreshold=Math.max(e.executeThreshold,f.executeThreshold);
+    if(f.repeatChance)e.repeatChance+=f.repeatChance;
+    if(f.firstBlood)e.firstBlood+=f.firstBlood;
+    if(f.dotPoison)e.dotPoison+=f.dotPoison;
+    if(f.pilgrimBonus)e.pilgrimBonus+=f.pilgrimBonus;
+    if(f.sentenceSurvivalBonus)e.sentenceSurvivalBonus+=f.sentenceSurvivalBonus;
+    if(f.daysBonusMult)e.daysBonusMult+=f.daysBonusMult;
+    if(f.stackPerDay)e.stackPerDay=true;
+    if(f.resonanceChance)e.resonanceChance+=f.resonanceChance;
+    if(f.finisherChance)e.finisherChance+=f.finisherChance;
+    if(f.finisherThreshold)e.finisherThreshold=Math.max(e.finisherThreshold,f.finisherThreshold);
+    if(f.escapeCapIfBossAlive!=null)e.escapeCapIfBossAlive=f.escapeCapIfBossAlive;
+    if(f.escapeModIfBossLow)e.escapeModIfBossLow+=f.escapeModIfBossLow;
+    if(f.critBonusIfBossLow)e.critBonusIfBossLow+=f.critBonusIfBossLow;
+    if(f.sentenceBonusDeath)e.sentenceBonusDeath+=f.sentenceBonusDeath;
+    if(f.multiHit)e.multiHit=f.multiHit;
+    if(f.lootSlots)e.lootSlots=Math.max(e.lootSlots,f.lootSlots);
+    if(f.xpStepBonus)e.xpStepBonus+=f.xpStepBonus;
+    if(f.xpBossBonus)e.xpBossBonus+=f.xpBossBonus;
+    if(f.dmgPerLevel)e.dmgPerLevel+=f.dmgPerLevel;
+  });
+  return e;
+}
+
+// ─── RUN UPGRADES (temporaires, se réinitialisent à chaque run) ──────
+const RUN_UPGRADES=[
+  {id:'ru1', name:'DISCIPLINE',   icon:'💪', desc:'+20% dégâts ce run',         fx:{dmgMult:1.20}},
+  {id:'ru2', name:'RÉFLEXES',     icon:'⚡', desc:'+8% crit',                    fx:{critChance:.08}},
+  {id:'ru3', name:'ENDURANCE',    icon:'🦵', desc:'+15% fuite',                  fx:{escapeMod:.15}},
+  {id:'ru4', name:'INSTINCT',     icon:'👁️', desc:'Crit ×2.5 (au lieu de ×2)', fx:{critMult:.50}},
+  {id:'ru5', name:'BRUTALITÉ',    icon:'🔥', desc:'+30% dégâts — crit -5%',     fx:{dmgMult:1.30,critChance:-.05}},
+  {id:'ru6', name:'ACUITÉ',       icon:'🎯', desc:'+12% crit',                   fx:{critChance:.12}},
+  {id:'ru7', name:'FUITE VITALE', icon:'🏃', desc:'+20% fuite',                 fx:{escapeMod:.20}},
+  {id:'ru8', name:'ARSENAL',      icon:'⚔️', desc:'+40% dégâts',                fx:{dmgMult:1.40}},
+  {id:'ru9', name:'VIGILANCE',    icon:'🛡️', desc:'+10% fuite — +10% dégâts',  fx:{escapeMod:.10,dmgMult:1.10}},
+  {id:'ru10',name:'SAVOIR',       icon:'✨', desc:'+30% XP des pas',             fx:{xpStepBonus:.30}},
+  {id:'ru11',name:'TRAQUEUR',     icon:'🔍', desc:'Boss <50% : +20% dégâts',    fx:{dmgBonusIfBossLow:.20}},
+  {id:'ru12',name:'SANG-FROID',   icon:'🧊', desc:'+25% dégâts — +10% fuite',  fx:{dmgMult:1.25,escapeMod:.10}},
+];
+function getRunUpgradeEffects(){
+  const ups=(G.run_upgrades||[]).map(id=>RUN_UPGRADES.find(u=>u.id===id)).filter(Boolean);
+  const e={dmgMult:1,critChance:0,critMult:0,escapeMod:0,xpStepBonus:0,dmgBonusIfBossLow:0};
+  ups.forEach(u=>{const f=u.fx;
+    if(f.dmgMult)e.dmgMult*=f.dmgMult;
+    if(f.critChance)e.critChance+=f.critChance;
+    if(f.critMult)e.critMult+=f.critMult;
+    if(f.escapeMod)e.escapeMod+=f.escapeMod;
+    if(f.xpStepBonus)e.xpStepBonus+=f.xpStepBonus;
+    if(f.dmgBonusIfBossLow)e.dmgBonusIfBossLow+=f.dmgBonusIfBossLow;
+  });
+  return e;
+}
+
+// SKINS, SKILL_NODES, ITEM_SPRS moved below parseSpr (they depend on it)
+
+// ─── PIXEL ART SPRITES ───────────────────────────────────────────────
+// K = dark outline, chunky fills
+// Palette calquée sur style ref — warm outlines, saturated fills
+const PX={
+  '.':null,
+  'K':'#1a1020','k':'#1a1020',   // outline dark warm
+  // SKIN
+  'H':'#f4c870','X':'#c89040','x':'#8a5028',
+  // HAIR — dark warm brown
+  'R':'#52280e','r':'#7c3c1c','O':'#aa5c2c',
+  // HERO MAGENTA/CRIMSON top + scarf
+  'A':'#cc2858','a':'#8c1c3c','C':'#e85880',
+  // TEAL pants
+  'B':'#1e8888','b':'#126060','S':'#44b8a8','W':'#8adcd0',
+  // LEATHER brown
+  'T':'#7c3610','U':'#aa5420','u':'#d87840',
+  // DARK PURPLE — Veilleur
+  'D':'#18082c','V':'#4c0e9c','v':'#7028c0','M':'#a050e0',
+  // RED — Bourreau/enemies
+  'Q':'#aa1c1c','q':'#cc3434','E':'#f05050',
+  // FIRE orange/yellow
+  'F':'#f0e040','f':'#e09000','y':'#fff480',
+  // GOLD — Juge
+  'J':'#c89410','j':'#f0c030','Y':'#fff8a0',
+  // BLUE — Abîme
+  'L':'#1460b0','l':'#3090e0','P':'#88c8f8',
+  // GREY — Dormeur
+  'N':'#767886','n':'#4e5060','Z':'#d8dce8',
+  // GREEN accent
+  'G':'#1c7830','g':'#38b040',
+};
+function parseSpr(lines){return lines.map(r=>[...r].map(c=>PX[c]||null));}
+
+// ─── SKINS ───────────────────────────────────────────────────────────
+const SKINS=[
+  {id:'crimson', name:'CRAMOISI', desc:'Cape rouge sang.',    palette:null},
+  {id:'azure',   name:'AZUR',     desc:'Armure de glace.',   palette:{A:'#1060c0',a:'#0c4080',C:'#3090e0',B:'#80b0d8',b:'#5080a0',S:'#b0d0f0',W:'#d8eeff'}},
+  {id:'emerald', name:'ÉMERAUDE', desc:'Manteau des bois.',  palette:{A:'#1a7030',a:'#0e4020',C:'#30a048',B:'#5030a0',b:'#382070',S:'#8060c0',W:'#b090e0'}},
+  {id:'gold',    name:'DORÉ',     desc:'Armure royale.',     palette:{A:'#b88010',a:'#7a5008',C:'#e0a020',B:'#3a1a08',b:'#281008',S:'#7a4820',W:'#c09060'}},
+];
+
+// ─── SKILL TREE ───────────────────────────────────────────────────────
+const SKILL_NODES=[
+  {id:'sf1',branch:'force', row:0,name:'TREMPE',      icon:'⚔️',cost:3, desc:'+10% ATK',              fx:{sk_atk:.10},           req:null},
+  {id:'sf2',branch:'force', row:1,name:'RAGE',        icon:'💥',cost:6, desc:'+20% ATK',              fx:{sk_atk:.20},           req:'sf1'},
+  {id:'sf3',branch:'force', row:2,name:'FUREUR',      icon:'🔥',cost:12,desc:'+35% ATK · exéc.<8%',   fx:{sk_atk:.35,sk_execute:.08},req:'sf2'},
+  {id:'sd1',branch:'destin',row:0,name:'INSTINCT',    icon:'🏃',cost:3, desc:'+8% fuite',             fx:{sk_esc:.08},           req:null},
+  {id:'sd2',branch:'destin',row:1,name:'TÉNACITÉ',    icon:'🛡️',cost:6, desc:'+16% fuite',            fx:{sk_esc:.16},           req:'sd1'},
+  {id:'sd3',branch:'destin',row:2,name:'OMBRE',       icon:'🌑',cost:12,desc:'+26% fuite',             fx:{sk_esc:.26},           req:'sd2'},
+  {id:'ss1',branch:'savoir',row:0,name:'CURIOSITÉ',   icon:'📚',cost:3, desc:'+15% XP pas',           fx:{sk_xp:.15},            req:null},
+  {id:'ss2',branch:'savoir',row:1,name:'ARCHIVISTE',  icon:'📓',cost:6, desc:'+25% XP boss',          fx:{sk_xpb:.25},           req:'ss1'},
+  {id:'ss3',branch:'savoir',row:2,name:'OMNISCIENCE', icon:'✨',cost:12,desc:'+40% tout XP',           fx:{sk_xp:.40,sk_xpb:.40}, req:'ss2'},
+];
+function getSkillEffects(){
+  const owned=G&&G.skill_tree||[];
+  const e={sk_atk:0,sk_execute:0,sk_esc:0,sk_xp:0,sk_xpb:0};
+  owned.forEach(id=>{const n=SKILL_NODES.find(x=>x.id===id);if(n&&n.fx)Object.entries(n.fx).forEach(([k,v])=>{e[k]=(e[k]||0)+v;});});
+  return e;
+}
+
+// ─── ITEM PIXEL ART SPRITES ───────────────────────────────────────────
+const ITEM_SPRS={
+  sword:parseSpr(['......kk','.....kqk','....kqk.','...kqk..','..kqk...','.kqkKK..','kkKK....','.KK.....']),
+  dagger:parseSpr(['....kNk.','...kNNk.','..kNNk..','.kNNk...','kNkKK...','kKKJ....','.KjK....','..KK....']),
+  hammer:parseSpr(['.kQQQk..','kQqqqQk.','kQqqqQk.','.kQQQk..','..kQk...','..kQk...','..kQk...','..kKk...']),
+  scythe:parseSpr(['...kNNk.','..kNnNk.','.kNnk...','kNk.....','knk.....', '.knk....','..kNk...','...kKk..']),
+  boot:parseSpr(['........','..kBBk..','.kBbbBk.','.kBbbBk.','.kBbbBk.','.kBBBBkk','kBbbbbBk','kKKKKKKk']),
+  cape:parseSpr(['..kNNk..','.kNnnNk.','kNnnnnNk','kNnnnnNk','.kNnnNk.','..kNNk..','.kN..Nk.','kK....Kk']),
+  shield:parseSpr(['.kBBBBk.','kBbbbbBk','kBbSSbBk','kBbSSbBk','kBbbbbBk','.kBbbBk.','..kBbk..','...kKk..']),
+  talisman:parseSpr(['..kvvk..','.kvMMvk.','kvMvvMvk','kvMvvMvk','.kvMMvk.','..kvvk..','..kFFk..','...kKk..']),
+  ring:parseSpr(['..kKKk..','.kqqqQk.','kqKKKqk.','kqK.Kqk.','kqKKKqk.','.kqqqQk.','..kKKk..','........']),
+  eye:parseSpr(['........','.kQQQQk.','kQkPPkQk','kQkPPkQk','.kQkkQk.','..kQQk..','........','........']),
+  bell:parseSpr(['..kjJk..','.kjjjJk.','kjjjjjJk','kjjjjjJk','kjjjjjJk','.kJJJJk.','..kKKk..','..kjJk..']),
+  skull:parseSpr(['..kHHk..','.kHxHxk.','kHHxHxHk','kHHHHHHk','.kHHHHk.','..kKKk..','.kKkKkk.','........']),
+  book:parseSpr(['kBBBBBBk','kBbbbbBk','kBbFFbBk','kBbFFbBk','kBbbbbBk','kBbFFbBk','kBbbbbBk','kKKKKKKk']),
+  crown:parseSpr(['kK.k.kKk','kJkJkJJk','kJJJJjJk','kjJJJjJk','.kJJJJjk','..kKKKkk','........','........']),
+  chain:parseSpr(['.kk.kk..','kbBkbBk.','kBbkBbk.','.kk.kk..','..kk.kk.','.kbBkbBk','.kBbkBbk','..kk.kk.']),
+  die:parseSpr(['kKKKKKKk','kZkk.Zkk','kZ.kk.Zk','kZkk.kZk','kZ.kk.Zk','kZ.kk.Zk','kZZ...Zk','kKKKKKKk']),
+};
+function getItemSprKey(item){
+  if(!item)return 'ring';
+  const m={w1:'sword',w2:'dagger',w3:'hammer',w4:'dagger',w5:'sword',w6:'scythe',w7:'dagger',w8:'sword',w9:'sword',w10:'sword',w11:'die',w12:'dagger',w13:'book',s1:'sword',s4:'eye',s5:'hammer',s6:'bell',s7:'dagger',a1:'cape',a2:'boot',a3:'shield',a4:'talisman',a5:'crown',a6:'boot',s2:'boot',s8:'cape',s9:'talisman',s10:'shield',r1:'skull',r2:'eye',r3:'bell',r4:'ring',r5:'ring',r6:'chain',r7:'skull',r8:'die',r9:'skull',r10:'book',r11:'book',s3:'book',s11:'ring',s12:'ring',s13:'skull'};
+  return m[item.id]||(item.type==='weapon'?'sword':item.type==='armor'?'boot':'ring');
+}
+function drawItemIconToCanvas(canvas,item){
+  if(!canvas||!item)return;
+  const spr=ITEM_SPRS[getItemSprKey(item)]||ITEM_SPRS.ring;
+  const sc=Math.floor(canvas.width/spr[0].length);
+  canvas.height=spr.length*sc;canvas.style.height=canvas.height+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  drawPx(ctx,spr,0,0,sc,null);
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// HÉROS — vue de dos, 16×22 px
+// Style: cheveux bruns dressés, écharpe cramoisie, sac cuir, pantalon teal
+// ─────────────────────────────────────────────────────────────────────
+const HERO_SPR=parseSpr([
+  '......knnNNnk.......',   //  0 sommet casque
+  '.....kNZZZZZNk......',   //  1 casque haut
+  '....kNZnnnnnZNk.....',   //  2 casque milieu
+  '....kNZnnnnnZNk.....',   //  3
+  '....kNZZZZZZZNk.....',   //  4 casque bas
+  '.....kNNNNNNNk......',   //  5 gorge/nuque
+  '...kNNkJJJJkNNk.....',   //  6 épaulières + liseré or
+  '...kNNkJjjjkNNk.....',   //  7 épaulières
+  '....kAAAAAAAAk......',   //  8 torse — cape cramoisie
+  '....kAAAAAAAAk......',   //  9
+  '....kAAAAAAAAk......',   // 10
+  '....kAAAAAAAAk......',   // 11
+  '....kAAAAAAAAk......',   // 12
+  '....kAAAAAAAAk......',   // 13
+  '....kAAAAAAAAk......',   // 14
+  '....kAAAAAAAAk......',   // 15
+  '....kAAAAAAAAk......',   // 16
+  '.....kNNkAAkNNk.....',   // 17 jambes + cape
+  '.....kNZkAAkNZk.....',   // 18
+  '.....kNZk..kNZk.....',   // 19 jambes séparées
+  '.....kNZk..kNZk.....',   // 20
+  '.....kNnk..kNnk.....',   // 21
+  '.....kNnk..kNnk.....',   // 22
+  '....kNNNk..kNNNk....',   // 23 solerets (larges)
+  '....kNZNk..kNZNk....',   // 24
+  '...kNNNNk..kNNNNk...',   // 25 solerets max
+  '...knnnnk..knnnnk...',   // 26 semelle sombre
+  '....kkkkk..kkkkk....',   // 27 ombre sol
+]);
+
+// ─────────────────────────────────────────────────────────────────────
+// BOSS SPRITES — 16×16 px, style chunky outlined
+// ─────────────────────────────────────────────────────────────────────
+const BOSS_SPRS={
+
+  // LE VEILLEUR — silhouette encapuchonnée, œil unique lumineux
+  standard:parseSpr([
+    '..kn............nk..',   //  0 pointes cornes
+    '..knk..........knk..',   //  1 cornes hautes
+    '...knk........knk...',   //  2 cornes convergent
+    '....knk......knk....',   //  3
+    '....kDnkDDDDknDk....',   //  4 cornes rejoignent tête
+    '...kDDVVVVVVVDDk....',   //  5 tête haut
+    '...kDVVVkEEkVVVDk...',   //  6 yeux rouges
+    '...kDVVVVVVVVVDk....',   //  7 sous les yeux
+    '...kDVVkqqqkVVDk....',   //  8 grimace
+    '....kDDVVVVVDDk.....',   //  9 mâchoire
+    '...kQQDVVVVVDQQk....',   // 10 cou
+    '..kQqQDVVVVVDQqQk...',   // 11 épaules larges
+    '..kQqVVVVVVVVVqQk...',   // 12 poitrine
+    '..kQqVVVvvVVVVqQk...',   // 13 reflet centre
+    '..kQqVVVvvVVVVqQk...',   // 14
+    '..kQqVVkVvVkVVqQk...',   // 15 sceau démoniaque
+    '..kQqVVVVVVVVVqQk...',   // 16 corps
+    '..kQqVVVVVVVVVqQk...',   // 17
+    '...kQqVVVVVVVqQk....',   // 18 rétrécit
+    '...kQqVVVVVVVqQk....',   // 19
+    '....kQqVVVVVqQk.....',   // 20
+    '....kQqVVVVVqQk.....',   // 21
+    '....kQDk...kDQk.....',   // 22 jambes
+    '....kQDk...kDQk.....',   // 23
+    '....kQDk...kDQk.....',   // 24
+    '....kqDk...kDqk.....',   // 25 griffes
+    '...kqqDk...kDqqk....',   // 26 pieds larges
+    '...kqqqk...kqqqk....',   // 27 ombre sol
+  ]),
+
+  // LE BOURREAU — exécuteur blindé rouge-noir, hache en main
+  sentence:parseSpr([
+    '..KQQQQQQQQk....',   // heaume carré
+    '.KQqqqqqqqQQk...',
+    '.KQqEEEEEqQKfff.',   // yeux rouges + hache feu
+    '.KQqqqqqqqQKfff.',
+    '..KQQQQQQQQk....',
+    '.KQQQqqqqQQQk...',   // épaules larges
+    'KQQQQQqqQQQQQk..',   // très large
+    'KQqqqqqqqqqqqk..',   // torse
+    'KQqQQqQqQQqqQk..',   // détails armure
+    'KQqqqqqqqqqqqk..',
+    '.KQQQQqqQQQQk...',
+    '..KQQqqqQQQk....',
+    '..KQQk..KQQk....',   // jambes
+    '..KQQk..KQQk....',
+    '..KnQk..KQnk....',
+    '..KnnK..KnnK....',
+  ]),
+
+  // LE PHÉNIX — oiseau de feu, ailes ouvertes
+  phoenix:parseSpr([
+    'KfF..........FfK',   // pointes d'ailes
+    'KfFFO......OFFFk',
+    'KfFOO..ff..OOFfk',
+    '.KfORkFFFkROFk..',
+    '..KfOkFffFkOfk..',
+    '..KfkFFFFFkFfk..',
+    '...KfkFYFYFkfk..',   // corps lumineux
+    '...KFkfFFFkFk...',
+    '....KFkFFFkFk...',
+    '....KFOfFfOfk...',
+    '.....KfOOOfk....',
+    '.....KOO.OOk....',
+    '....KfF...Ffk...',   // queue
+    '....KFF...FFk...',
+    '.....KfF.Ffk....',
+    '......KfFfk.....',
+  ]),
+
+  // LE JUGE — magistrat en armure dorée, visage sévère
+  judge:parseSpr([
+    '..KjJJjJJjJjk...',   // couronne dentelée
+    '..KJJJJJJJJJk...',
+    '..KJHHHHHHHJk...',   // visage
+    '..KJHxHHHxHJk...',   // yeux sévères
+    '..KJHHXXXHHJk...',   // bouche serrée
+    '..KJJJJJJJJJk...',
+    '..KJJjjjjjjJk...',
+    '.KJJJjJJJJjJJk..',   // armure large
+    '.KJJjJjjjJjJJk..',
+    '.KJJjJJJJJjJJk..',
+    '..KJJjjjjjJJJk..',
+    '..KJJJjjjJJJJk..',
+    '..KJJk...KJJk...',
+    '..KJJk...KJJk...',
+    '..KjJk...KJjk...',
+    '..KjJk...KJjk...',
+  ]),
+
+  // LE DORMEUR — géant allongé, armure bleue-grise
+  dormant:parseSpr([
+    'KNNNNNNNNNNNNNnk',   // silhouette géante
+    'KNHHHHHHHHHHHNnk',
+    'KNHHHxxxxxHHHNnk',   // yeux fermés
+    'KNHHxZZZZZxHHNnk',   // paupières
+    'KNHHHxxxxxHHHNnk',
+    'KNBBBBBBBBBBBNnk',   // armure bleue
+    'KNBbbbbbbbbbBNnk',
+    '.KNNNBbbbBNNNk..',   // pieds qui dépassent
+  ]),
+
+  // GARDIEN DE LA CRYPTE — gardien squelettique cornu
+  major0:parseSpr([
+    '....KDDDDDDDk...',
+    '...KDMMMMMMDkM..',   // corne gauche
+    '...KDMMMMMMDkM..',
+    '...KDMvMvMvDk...',   // yeux multiples
+    '...KDMMMMMMDk...',
+    '....KDDDDDDk....',
+    '..KDDVVVVVVDDk..',
+    '..KDVVVVVVVVDk..',
+    '..KDVvVVVVvVDk..',   // robe squelette
+    '..KDVVvvvvVVDk..',
+    '..KDDVVVVVVDDk..',
+    '...KDDVVVVDDk...',
+    '....KDvKKvDk....',
+    '....KDvkkvDk....',
+    '...nKDkkkKDkn...',
+    '..nnKDkKKkDknn..',
+  ]),
+
+  // MAÎTRE DE LA FORGE — colosse de feu et métal
+  major1:parseSpr([
+    '...KQQQQQQQk.ff.',   // heaume + flammes
+    '..KQqqqqqqqQkff.',
+    '..KQqEEEEEqQk...',
+    '..KQqqqqqqqQk...',
+    '..KQQQQQQQQk.ff.',
+    '.KQQQQqqqQQQQk..',   // épaules massives
+    'KQQQQqqqqqQQQQk.',   // bras larges
+    'KQqqqqFfFqqqqQk.',   // forge au torse
+    'KQqqqFfffFqqqQk.',
+    'KQqqqqFfFqqqqQk.',
+    '.KQQQQqqqQQQQk..',
+    '..KQQQqqqQQQk...',
+    '..KQQk...KQQk...',
+    '..KQQk...KQQk...',
+    '.KqQQk...KQQqk..',
+    '.KnnQk...KQnnk..',
+  ]),
+
+  // ROI DE L'ABÎME — roi des eaux, couronne de glace
+  major2:parseSpr([
+    '..KlLLLlLLLlLk..',   // couronne brisée
+    '..KLLlllllLLLk..',
+    '..KLPPPPPPPLLk..',   // visage pâle
+    '..KLPPHHHHPLLk..',
+    '..KLPPHxxHPLLk..',   // yeux de glace
+    '..KLPPPPPPPLLk..',
+    '..KLLLLLLLLLLk..',
+    '.KlLLLlllLLLLlk.',   // armure eau
+    '.KlLLlbbbblLLlk.',
+    '.KlLlbLLLLblLlk.',
+    '.KlLLlbbbblLLlk.',
+    '..KlLLLLLLLLlk..',
+    '..KLlk...KlLk...',
+    '..KLlk...KlLk...',
+    '..Kllk...Kllk...',
+    '..KLlk...KlLk...',
+  ]),
+
+  // ORACLE DU SANCTUAIRE — entité mystique aux multiples bras
+  major3:parseSpr([
+    'MK..KvVVVVvK..KM',   // bras tendus
+    '.MK.KvVVVVvK.KM.',
+    '..KMKvMMMMvKMk..',
+    '..KvKMPxPxMKvk..',   // troisième œil
+    '..KvKMPFPPMKvk..',   // lueur centrale
+    '..KvKvMMMMvKvk..',
+    '..KvVVVVVVVVvk..',
+    '.KvVVvvvvvvVVvk.',
+    '.KvVVVVVVVVVVvk.',
+    '..KvVMvvvvMVvk..',
+    '...KvVVVVVVvk...',
+    '...KvVk..KVvk...',
+    '....Kvk..Kvk....',
+    '....Kvk..Kvk....',
+    '...KVvk..KvVk...',
+    '..KVVvk..KvVVk..',
+  ]),
+
+  // LE ROI DÉCHU — souverain déchu, armure brisée
+  major4:parseSpr([
+    '.KJjkJkJkJkJjk..',   // couronne brisée dorée
+    '..KjJJJJJJJjk...',
+    '..KJHHHHHHHHJk..',   // visage royal
+    '..KJHxHHHHxHJk..',   // yeux
+    '..KJHHHQHHHHJk..',   // cicatrice rouge
+    '...KjJJJJJJjk...',
+    '..KEEEEEEEEEEk..',   // armure cramoisie
+    '.KEEEqqqqqqEEEk.',   // large
+    '.KEqqEEEEEEqqEk.',   // détail armure
+    '.KEEEqqqqqqEEEk.',
+    '..KEEEqqqqEEEEk..',
+    '..KEEEEEEEEEEk..',
+    '...KEEk...KEEk...',
+    '...KEEk...KEEk...',
+    '..KqEEk...KEEqk.',
+    '..KqqNk...KNqqk.',
+  ]),
+};
+
+// Inverse PX map : hex → char (for skin palette swap)
+const PX_INV={};
+Object.entries(PX).forEach(([k,v])=>{if(v&&!PX_INV[v])PX_INV[v]=k;});
+
+// Draw hero with skin palette
+function drawPxSkin(ctx,spr,ox,oy,sc,skinPal){
+  spr.forEach((row,ry)=>row.forEach((col,rx)=>{
+    if(!col)return;
+    const ch=PX_INV[col];
+    ctx.fillStyle=(ch&&skinPal[ch])||col;
+    ctx.fillRect(Math.round(ox+rx*sc),Math.round(oy+ry*sc),sc,sc);
+  }));
+}
+
+function getSkinPal(){
+  const sid=G&&G.skin_id||'crimson';
+  const sk=SKINS.find(s=>s.id===sid)||SKINS[0];
+  return sk.palette?{...PX,...sk.palette}:PX;
+}
+
+function getBossSprite(boss){
+  if(boss.type==='major'){const z=Math.min(Math.floor((G.floor-1)/10),4);return BOSS_SPRS['major'+z]||BOSS_SPRS.major0;}
+  return BOSS_SPRS[boss.type]||BOSS_SPRS.standard;
+}
+
+// ─── CANVAS RENDERING ────────────────────────────────────────────────
+let anim={bossFlash:0,heroShake:0,critBurst:0,heroBreath:0};
+let torchPhase=0,rafId=null;
+
+function drawPx(ctx,spr,ox,oy,sc,tint){
+  spr.forEach((row,ry)=>row.forEach((col,rx)=>{
+    if(!col)return;
+    ctx.fillStyle=tint||col;
+    ctx.fillRect(Math.round(ox+rx*sc),Math.round(oy+ry*sc),sc,sc);
+  }));
+}
+
+function drawBattle(ts=0){
+  rafId=requestAnimationFrame(drawBattle);
+  const cvs=document.getElementById('cvs');
+  if(!cvs||!G)return;
+  const ctx=cvs.getContext('2d');
+  const W=cvs.width,H=cvs.height;
+  const zone=getZone(G.floor);
+  const boss=getBoss(G.floor);
+  const bspr=getBossSprite(boss);
+  torchPhase=ts*.003;
+  ctx.clearRect(0,0,W,H);
+
+  // ── PERSPECTIVE LAYOUT ──────────────────────────────────────────────
+  const vpx=W*.5;
+  const vpy=Math.round(H*.25);          // horizon / vanishing point
+  const heroFeetY=Math.round(H*.64);    // héros : position
+  const bossFootY=Math.round(vpy+(heroFeetY-vpy)*.48); // boss : même profondeur relative
+  const lwTop=Math.round(W*.16);        // mur gauche (intérieur) au vpy
+  const rwTop=Math.round(W*.84);        // mur droit  (intérieur) au vpy
+  const lwBot=0;                        // mur gauche s'évase hors-écran bas
+  const rwBot=W;                        // mur droit idem
+
+  function wEdge(side,y){              // interpolation bord intérieur mur à y
+    const t=Math.max(0,Math.min(1,(y-vpy)/(H-vpy)));
+    return side==='L'?Math.round(lwTop+(lwBot-lwTop)*t):Math.round(rwTop+(rwBot-rwTop)*t);
+  }
+
+  // ── ARRIÈRE-PLAN GLOBAL ──────────────────────────────────────────────
+  const bgG=ctx.createLinearGradient(0,0,0,H);
+  bgG.addColorStop(0,'#04030a');bgG.addColorStop(.3,'#0e0a1e');bgG.addColorStop(1,'#07060e');
+  ctx.fillStyle=bgG;ctx.fillRect(0,0,W,H);
+
+  // ── VOÛTE / PLAFOND ─────────────────────────────────────────────────
+  ctx.fillStyle='#06040e';
+  ctx.beginPath();
+  ctx.moveTo(0,0);ctx.lineTo(lwTop,vpy);ctx.lineTo(rwTop,vpy);ctx.lineTo(W,0);
+  ctx.closePath();ctx.fill();
+  // Nervures de voûte
+  ctx.strokeStyle='rgba(110,80,180,.16)';ctx.lineWidth=1.5;
+  [W*.2,W*.5,W*.8].forEach(ox=>{
+    ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(lwTop,vpy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(rwTop,vpy);ctx.stroke();
+  });
+  const ceilG=ctx.createLinearGradient(0,0,0,vpy);
+  ceilG.addColorStop(0,'rgba(0,0,0,.7)');ceilG.addColorStop(1,'transparent');
+  ctx.fillStyle=ceilG;ctx.fillRect(0,0,W,vpy);
+
+  // ── MUR GAUCHE ──────────────────────────────────────────────────────
+  {const lwGrad=ctx.createLinearGradient(0,0,lwTop,0);
+  lwGrad.addColorStop(0,'#04030a');lwGrad.addColorStop(1,'#15112c');
+  ctx.fillStyle=lwGrad;
+  ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(lwTop,vpy);ctx.lineTo(lwBot,H);ctx.lineTo(0,H);ctx.closePath();ctx.fill();
+  const bkH=16;
+  for(let r=0;r*bkH<H;r++){
+    const y=r*bkH,re=wEdge('L',y);if(re<=0)break;
+    const off=(r%2)*26,bw=Math.max(12,re*.38);
+    for(let bx=off-bw;bx<re;bx+=bw){
+      const tn=(r*11+Math.round(bx/bw)*7)%100;
+      ctx.fillStyle=`rgba(255,255,255,${tn<35?.009:.016})`;
+      ctx.fillRect(Math.max(0,bx+1),y+1,Math.min(bw-2,re-Math.max(0,bx)-1),bkH-2);
+      ctx.strokeStyle='rgba(0,0,0,.28)';ctx.lineWidth=.5;
+      ctx.strokeRect(Math.max(0,bx),y,Math.min(bw,re-Math.max(0,bx)),bkH);
+      if(tn<11){ctx.strokeStyle='rgba(0,0,0,.15)';ctx.beginPath();ctx.moveTo(Math.max(0,bx+bw*.25),y+bkH*.2);ctx.lineTo(Math.max(0,bx+bw*.65),y+bkH*.8);ctx.stroke();}
+    }
+  }
+  const lsh=ctx.createLinearGradient(lwTop,0,lwTop-28,0);
+  lsh.addColorStop(0,'rgba(0,0,0,.55)');lsh.addColorStop(1,'transparent');
+  ctx.fillStyle=lsh;
+  ctx.beginPath();ctx.moveTo(lwTop,vpy);ctx.lineTo(lwTop-28,vpy);ctx.lineTo(0,H);ctx.lineTo(0,H);ctx.closePath();ctx.fill();}
+
+  // ── MUR DROIT ───────────────────────────────────────────────────────
+  {const rwGrad=ctx.createLinearGradient(rwTop,0,W,0);
+  rwGrad.addColorStop(0,'#15112c');rwGrad.addColorStop(1,'#04030a');
+  ctx.fillStyle=rwGrad;
+  ctx.beginPath();ctx.moveTo(W,0);ctx.lineTo(rwTop,vpy);ctx.lineTo(rwBot,H);ctx.lineTo(W,H);ctx.closePath();ctx.fill();
+  const bkH=16;
+  for(let r=0;r*bkH<H;r++){
+    const y=r*bkH,le=wEdge('R',y);if(le>=W)break;
+    const off=(r%2)*26,bw=Math.max(12,(W-le)*.38);
+    for(let bx=le+off;bx<W;bx+=bw){
+      const tn=(r*13+Math.round((bx-le)/bw)*11)%100;
+      ctx.fillStyle=`rgba(255,255,255,${tn<35?.009:.016})`;
+      ctx.fillRect(bx+1,y+1,Math.min(bw-2,W-bx-1),bkH-2);
+      ctx.strokeStyle='rgba(0,0,0,.28)';ctx.lineWidth=.5;
+      ctx.strokeRect(bx,y,Math.min(bw,W-bx),bkH);
+      if(tn<11){ctx.strokeStyle='rgba(0,0,0,.15)';ctx.beginPath();ctx.moveTo(bx+bw*.25,y+bkH*.2);ctx.lineTo(bx+bw*.65,y+bkH*.8);ctx.stroke();}
+    }
+  }
+  const rsh=ctx.createLinearGradient(rwTop,0,rwTop+28,0);
+  rsh.addColorStop(0,'rgba(0,0,0,.55)');rsh.addColorStop(1,'transparent');
+  ctx.fillStyle=rsh;
+  ctx.beginPath();ctx.moveTo(rwTop,vpy);ctx.lineTo(rwTop+28,vpy);ctx.lineTo(W,H);ctx.lineTo(W,H);ctx.closePath();ctx.fill();}
+
+  // ── IMMENSE PORTE DU DONJON ──────────────────────────────────────────
+  const doorW=Math.round(W*.44);
+  const doorX=Math.round(vpx-doorW*.5);
+  const archCY=Math.round(vpy+H*.02);   // centre de l'arc
+  const archR=Math.round(doorW*.52);
+  const doorBotY=Math.round(bossFootY+H*.06);
+
+  // Encadrement pierre
+  ctx.fillStyle='#1c1830';
+  ctx.beginPath();
+  ctx.arc(vpx,archCY,archR+16,Math.PI,0);
+  ctx.lineTo(doorX+doorW+16,doorBotY);ctx.lineTo(doorX-16,doorBotY);
+  ctx.closePath();ctx.fill();
+  // Blocs de pierre sur les piliers
+  {const fbh=14;
+  for(let fy=archCY;fy<doorBotY;fy+=fbh){
+    const fr=Math.floor((fy-archCY)/fbh);
+    const off=(fr%2)*7;
+    [-16,doorX+doorW].forEach(px=>{
+      for(let bx=px+off;bx<(px<0?doorX:doorX+doorW+16);bx+=14){
+        const tn=(fr*9+Math.floor((bx-px)/14)*5)%100;
+        ctx.fillStyle=`rgba(255,255,255,${tn<40?.013:.007})`;
+        ctx.fillRect(bx+1,fy+1,12,fbh-2);
+        ctx.strokeStyle='rgba(0,0,0,.4)';ctx.lineWidth=.5;ctx.strokeRect(bx,fy,14,fbh);
+      }
+    });
+  }}
+  // Intérieur de la porte
+  const dIntG=ctx.createLinearGradient(doorX,0,doorX+doorW,0);
+  dIntG.addColorStop(0,'#0c0a1c');dIntG.addColorStop(.4,'#18143a');dIntG.addColorStop(.6,'#18143a');dIntG.addColorStop(1,'#0c0a1c');
+  ctx.fillStyle=dIntG;
+  ctx.beginPath();
+  ctx.arc(vpx,archCY,archR,Math.PI,0);
+  ctx.lineTo(doorX+doorW,doorBotY);ctx.lineTo(doorX,doorBotY);
+  ctx.closePath();ctx.fill();
+  // Sceau pulsant
+  const sp=Math.sin(ts*.002)*.5+.5;
+  const sealY=Math.round(archCY+(doorBotY-archCY)*.42);
+  const sealR=Math.round(doorW*.21);
+  const saHex=n=>Math.round(n*255).toString(16).padStart(2,'0');
+  {const sg=ctx.createRadialGradient(vpx,sealY,4,vpx,sealY,sealR);
+  sg.addColorStop(0,zone.color+saHex(.18+sp*.24));
+  sg.addColorStop(.55,zone.color+saHex(.08+sp*.1));
+  sg.addColorStop(1,'transparent');
+  ctx.fillStyle=sg;ctx.fillRect(vpx-sealR-12,sealY-sealR-12,sealR*2+24,sealR*2+24);}
+  // Cercle de runes
+  ctx.strokeStyle=zone.color+saHex(.22+sp*.3);ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.arc(vpx,sealY,sealR*.78,0,Math.PI*2);ctx.stroke();
+  ctx.lineWidth=1;
+  for(let i=0;i<8;i++){
+    const a=i*Math.PI/4+ts*.00018;
+    ctx.beginPath();
+    ctx.moveTo(vpx+Math.cos(a)*sealR*.36,sealY+Math.sin(a)*sealR*.36);
+    ctx.lineTo(vpx+Math.cos(a)*sealR*.78,sealY+Math.sin(a)*sealR*.78);
+    ctx.stroke();
+  }
+  ctx.lineWidth=2;ctx.strokeStyle=zone.color+saHex(.32+sp*.32);
+  const cr=sealR*.28;
+  ctx.beginPath();ctx.moveTo(vpx-cr,sealY);ctx.lineTo(vpx+cr,sealY);ctx.moveTo(vpx,sealY-cr);ctx.lineTo(vpx,sealY+cr);ctx.stroke();
+  // Halo porte sur le sol
+  {const dg=ctx.createRadialGradient(vpx,doorBotY,5,vpx,doorBotY,doorW*.7);
+  dg.addColorStop(0,zone.color+saHex(.1));dg.addColorStop(1,'transparent');
+  ctx.fillStyle=dg;ctx.fillRect(doorX-doorW*.3,doorBotY-15,doorW*1.6,60);}
+
+  // ── SOL PERSPECTIVE ─────────────────────────────────────────────────
+  const flG=ctx.createLinearGradient(0,vpy,0,H);
+  flG.addColorStop(0,'#13102a');flG.addColorStop(.3,'#100e1e');flG.addColorStop(1,'#06050d');
+  ctx.fillStyle=flG;
+  ctx.beginPath();
+  ctx.moveTo(lwTop,vpy);ctx.lineTo(rwTop,vpy);ctx.lineTo(rwBot,H);ctx.lineTo(lwBot,H);
+  ctx.closePath();ctx.fill();
+  // Lignes radiales (fuite vers VP)
+  ctx.lineWidth=.5;
+  for(let i=0;i<=18;i++){
+    const bx=i/18*W;
+    ctx.strokeStyle=`rgba(140,110,210,.038)`;
+    ctx.beginPath();ctx.moveTo(vpx+(bx-vpx)*.02,vpy);ctx.lineTo(bx,H);ctx.stroke();
+  }
+  // Lignes horizontales (espacement perspective exponentiel)
+  for(let r=1;r<=18;r++){
+    const t=Math.pow(r/18,.52);
+    const y=vpy+(H-vpy)*t;
+    const lx=wEdge('L',y),rx=wEdge('R',y);
+    ctx.strokeStyle=`rgba(120,100,190,${.018+t*.055})`;
+    ctx.lineWidth=.3+t*.85;
+    ctx.beginPath();ctx.moveTo(lx,y);ctx.lineTo(rx,y);ctx.stroke();
+    if(r%2===0){
+      const pt=Math.pow((r-1)/18,.52),py2=vpy+(H-vpy)*pt;
+      const plx=wEdge('L',py2),prx=wEdge('R',py2);
+      ctx.fillStyle=`rgba(255,255,255,${.005+t*.01})`;
+      ctx.beginPath();ctx.moveTo(plx,py2);ctx.lineTo(prx,py2);ctx.lineTo(rx,y);ctx.lineTo(lx,y);ctx.closePath();ctx.fill();
+    }
+  }
+  // Lueur à l'horizon
+  {const hzG=ctx.createLinearGradient(0,vpy-6,0,vpy+28);
+  hzG.addColorStop(0,'transparent');hzG.addColorStop(.5,zone.color+'12');hzG.addColorStop(1,'transparent');
+  ctx.fillStyle=hzG;ctx.fillRect(0,vpy-6,W,34);}
+  // Débris au sol
+  [[.30,.08],[.44,.04],[.56,.10],[.68,.06],[.38,.18],[.60,.15]].forEach(([fx,fy])=>{
+    const dx=Math.round(wEdge('L',vpy+(H-vpy)*fy)+(wEdge('R',vpy+(H-vpy)*fy)-wEdge('L',vpy+(H-vpy)*fy))*fx);
+    const dy=Math.round(vpy+(H-vpy)*fy);
+    ctx.fillStyle='rgba(0,0,0,.45)';ctx.fillRect(dx,dy,5,2);
+    ctx.fillStyle='rgba(255,255,255,.06)';ctx.fillRect(dx+1,dy,4,1);
+  });
+
+  // ── TORCHES ─────────────────────────────────────────────────────────
+  function torch(tx,ty){
+    const fl=Math.sin(torchPhase*2.5+tx*.007)*.35+.65;
+    ctx.fillStyle='#3a2010';ctx.fillRect(tx-3,ty,6,14);
+    ctx.fillStyle='#6a3818';ctx.fillRect(tx-2,ty+2,4,10);
+    [['#ff8800',14],['#ff5000',9],['#ffcc00',5]].forEach(([col,dy])=>{
+      const s=(3+dy*.16)*fl;
+      ctx.fillStyle=col+'cc';
+      ctx.beginPath();ctx.ellipse(tx,ty-dy*fl,s,s*1.7,0,0,Math.PI*2);ctx.fill();
+    });
+    const tg=ctx.createRadialGradient(tx,ty-8,2,tx,ty-8,90);
+    tg.addColorStop(0,`rgba(255,130,0,${.28*fl})`);tg.addColorStop(.4,`rgba(255,60,0,${.1*fl})`);tg.addColorStop(1,'transparent');
+    ctx.fillStyle=tg;ctx.fillRect(tx-90,ty-110,180,150);
+  }
+  const torchY=Math.round(vpy*.62);
+  torch(Math.round(lwTop*.65),torchY);
+  torch(Math.round(rwTop+(W-rwTop)*.35),torchY);
+
+  // ── BOSS / LE VEILLEUR ───────────────────────────────────────────────
+  const bSC=Math.floor(Math.min(W*.42/bspr[0].length, H*.30/bspr.length));
+  const bSprW=bspr[0].length*bSC,bSprH=bspr.length*bSC;
+  const bX=Math.round(W*.5-bSprW*.5);
+  const bIdleY=Math.round(Math.sin(ts*.0022)*4);
+  const bY=Math.round(bossFootY-bSprH)+bIdleY;
+  // Positionner le label HP au-dessus du boss
+
+  if(G.boss_killed_today){
+    ctx.globalAlpha=.1;drawPx(ctx,bspr,bX,bY,bSC,null);ctx.globalAlpha=1;
+    ctx.strokeStyle=zone.color+'70';ctx.lineWidth=2;
+    [[.2,.2,.8,.8],[.8,.2,.2,.8]].forEach(([x1,y1,x2,y2])=>{
+      ctx.beginPath();ctx.moveTo(bX+bSprW*x1,bY+bSprH*y1);ctx.lineTo(bX+bSprW*x2,bY+bSprH*y2);ctx.stroke();
+    });
+  } else {
+    if(anim.bossFlash>0){drawPx(ctx,bspr,bX,bY,bSC,'#ff3333');}
+    else{drawPx(ctx,bspr,bX,bY,bSC,null);}
+    const aA=(Math.sin(ts*.003)*.08+.16).toFixed(2);
+    const aG=ctx.createRadialGradient(W*.5,bY+bSprH*.7,5,W*.5,bY+bSprH*.7,bSprW*.9);
+    aG.addColorStop(0,zone.color+Math.round(aA*255).toString(16).padStart(2,'0'));aG.addColorStop(1,'transparent');
+    ctx.fillStyle=aG;ctx.fillRect(bX-30,bY,bSprW+60,bSprH);
+  }
+  ctx.fillStyle='rgba(0,0,0,.38)';
+  ctx.beginPath();ctx.ellipse(W*.5,bossFootY+3,bSprW*.38,4,0,0,Math.PI*2);ctx.fill();
+
+  // ── HÉROS — PREMIER PLAN ─────────────────────────────────────────────
+  const hSC=5;
+  const hSprW=HERO_SPR[0].length*hSC,hSprH=HERO_SPR.length*hSC;
+  const shX=anim.heroShake>0?(Math.random()>.5?5:-5):0;
+  const hX=Math.round(W*.5-hSprW*.5+shX);
+  const hBreath=Math.round(Math.sin(ts*.0018)*2);
+  const hY=Math.round(heroFeetY-hSprH)+hBreath;
+  drawPxSkin(ctx,HERO_SPR,hX,hY,hSC,getSkinPal());
+
+  if(G.defending){
+    ctx.save();ctx.strokeStyle='#40c4ffaa';ctx.lineWidth=4;
+    ctx.shadowColor='#40c4ff';ctx.shadowBlur=12;
+    ctx.strokeRect(hX-5,hY-5,hSprW+10,hSprH+10);ctx.restore();
+  }
+  // Ombre héros
+  ctx.fillStyle='rgba(0,0,0,.55)';
+  ctx.beginPath();ctx.ellipse(hX+hSprW*.5,heroFeetY+5,hSprW*.35,6,0,0,Math.PI*2);ctx.fill();
+
+  // Vignette premier plan
+  {const fgV=ctx.createLinearGradient(0,H*.80,0,H);
+  fgV.addColorStop(0,'transparent');fgV.addColorStop(1,'rgba(0,0,0,.28)');
+  ctx.fillStyle=fgV;ctx.fillRect(0,H*.80,W,H*.20);}
+
+  // ── CRIT TEXT ────────────────────────────────────────────────────────
+  if(anim.critBurst>0){
+    ctx.save();
+    ctx.globalAlpha=Math.min(1,anim.critBurst/8);
+    ctx.fillStyle='#ffd600';
+    ctx.font=`bold ${16+anim.critBurst}px monospace`;
+    ctx.textAlign='center';
+    ctx.shadowColor='#ffaa00';ctx.shadowBlur=16;
+    ctx.fillText('★ CRIT ★',W*.5,bY+bSprH*.5-(12-anim.critBurst)*4);
+    ctx.restore();
+    anim.critBurst--;
+  }
+
+  // tick counters
+  if(anim.bossFlash>0)anim.bossFlash--;
+  if(anim.heroShake>0)anim.heroShake--;
+
+}
+function startLoop(){if(!rafId)rafId=requestAnimationFrame(drawBattle);}
+function stopLoop(){if(rafId){cancelAnimationFrame(rafId);rafId=null;}}
+
+function triggerBossHit(isCrit){anim.bossFlash=5;if(isCrit)anim.critBurst=12;}
+function triggerHeroHit(){anim.heroShake=4;}
+
+function resizeCvs(){
+  const cvs=document.getElementById('cvs');
+  cvs.width=window.innerWidth;
+  cvs.height=window.innerHeight;
+}
+
+// ─── STATE ───────────────────────────────────────────────────────────
+let G=null,stepsToday=0,paAvailable=0,runSouls=0,lootChoices=[];
+
+function today(){const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function normDate(d){return d?String(d).trim().slice(0,10):'';}
+function fmtNum(n){if(!n&&n!==0)return'—';n=Math.round(n);if(n>=1e6)return(n/1e6).toFixed(1).replace('.0','')+'M';if(n>=1e3)return(n/1e3).toFixed(1).replace('.0','')+'K';return n.toLocaleString('fr-FR');}
+function effMaxHp(){return 100;}// HP supprimés — conservé pour compatibilité startNewRun
+function calcPa(){
+  const eq=getEquipEffects();
+  const kB=1+(eq.paPerK*Math.floor(stepsToday/1000));
+  return Math.max(0,Math.floor(stepsToday*(1+(G.prestige_pa||0)*.05)*kB)-G.pa_spent_today);
+}
+// dégâts d'attaque : 1 PA = 1 DMG, bonus prestige ATK
+function calcDamage(){
+  const eq=getEquipEffects();
+  const presM=1+(G.prestige_atk||0)*.1;
+  return Math.floor(C.DMG_ATK*presM*eq.atkM);
+}
+function soulsFromBoss(f,t){const b=Math.floor(f/5)+1;return t==='major'?b*3:b;}
+function prestigeCost(l){return Math.floor(2*Math.pow(2,l));}
+
+// ─── CALCUL DES DÉGÂTS ───────────────────────────────────────────────
+function calcAttack(eq,rups){
+  eq=eq||getEquipEffects();
+  rups=rups||getRunUpgradeEffects();
+  let atk=C.BASE_ATK;
+  // Skill tree FORCE bonus
+  const sk=getSkillEffects();
+  atk*=1+(sk.sk_atk||0);
+  // Prestige FORCE
+  atk*=1+(G.prestige_atk||0)*.05;
+  // Multiplicateur items
+  atk*=eq.dmgMult;
+  // Run upgrades
+  atk*=rups.dmgMult;
+  // LAME DE L'ÉTUDIANT : +X% par niveau de run
+  if(eq.dmgPerLevel&&(G.run_level||1)>1){
+    atk*=1+eq.dmgPerLevel*((G.run_level||1)-1);
+  }
+  // Premier sang (première attaque contre ce boss)
+  if(eq.firstBlood&&G.boss_days_survived===0&&!G.attack_used_today){
+    atk*=1+eq.firstBlood;
+  }
+  // Bonus par jour contre le même boss
+  if(eq.daysBonusMult&&G.boss_days_survived>0){
+    const days=eq.stackPerDay?G.boss_days_survived:1;
+    atk*=1+eq.daysBonusMult*days;
+  }
+  // Bonus sentences survécues (ANNEAU DU CONDAMNÉ)
+  if(eq.sentenceSurvivalBonus&&(G.run_sentences_survived||0)>0){
+    atk*=1+eq.sentenceSurvivalBonus*(G.run_sentences_survived);
+  }
+  // Bonus pèlerin (pas supplémentaires > 10K)
+  if(eq.pilgrimBonus&&stepsToday>C.CHARGE){
+    const extra=Math.floor((stepsToday-C.CHARGE)/2500);
+    atk*=1+Math.min(4,extra)*eq.pilgrimBonus;
+  }
+  // TRAQUEUR (run upgrade) : boss <50% HP
+  if(rups.dmgBonusIfBossLow&&G.boss_hp/G.boss_max_hp<=.50){
+    atk*=1+rups.dmgBonusIfBossLow;
+  }
+  return Math.round(atk);
+}
+
+// Résout un hit avec crit — renvoie {dmg, isCrit}
+function resolveHit(base,eq,bossPctBefore,rups){
+  eq=eq||getEquipEffects();
+  rups=rups||getRunUpgradeEffects();
+  let critChance=C.BASE_CRIT+(G.prestige_crit||0)*.03+eq.critChance+rups.critChance;
+  if(eq.critBonusIfBossLow&&bossPctBefore<=.50)critChance+=eq.critBonusIfBossLow;
+  critChance=Math.max(0,Math.min(.95,critChance));
+  const isCrit=Math.random()<critChance;
+  const mult=isCrit?(C.CRIT_MULT+(eq.critMult||0)+(rups.critMult||0)):1;
+  return{dmg:Math.round(base*mult),isCrit};
+}
+
+// ─── CHANCE DE FUITE (tiered) ────────────────────────────────────────
+function calcEscapeChance(bossHpPct,eq,rups){
+  eq=eq||getEquipEffects();
+  rups=rups||getRunUpgradeEffects();
+  // Table de base selon % HP boss restant
+  let base;
+  if(bossHpPct<=0)base=1;
+  else if(bossHpPct<=.10)base=.90;
+  else if(bossHpPct<=.25)base=.70;
+  else if(bossHpPct<=.50)base=.45;
+  else if(bossHpPct<=.75)base=.20;
+  else base=.05;
+  // Skill tree DESTIN bonus
+  const sk2=getSkillEffects();
+  base+=sk2.sk_esc||0;
+  // Modificateurs items
+  base+=eq.escapeMod||0;
+  if(eq.escapeModIfBossLow&&bossHpPct<=.50)base+=eq.escapeModIfBossLow;
+  // Run upgrades (ENDURANCE, FUITE VITALE, etc.)
+  base+=rups.escapeMod||0;
+  // Prestige DESTIN
+  base+=(G.prestige_escape||0)*.03;
+  // Sentence bonus death (CŒUR ROUGE etc.)
+  base-=eq.sentenceBonusDeath||0;
+  // Cap
+  if(eq.escapeCapIfBossAlive!=null&&bossHpPct>0)base=Math.min(base,eq.escapeCapIfBossAlive);
+  return Math.max(.02,Math.min(.98,base));
+}
+
+function addLog(text,type='atk'){
+  const log=Array.isArray(G.combat_log)?[...G.combat_log]:[];
+  log.unshift({text,type,ts:Date.now()});if(log.length>C.LOG_MAX)log.pop();
+  G.combat_log=log;
+}
+async function saveG(partial){Object.assign(G,partial||{});G.updated_at=new Date().toISOString();await db.from('game_state').upsert({...G},{onConflict:'user_id'});}
+
+// toast notifications
+let toastQ=[];let toastTimer=null;
+function showToast(text,type='atk'){
+  const t=document.getElementById('toast');
+  const el=document.createElement('div');
+  el.className=`toast-line ${type}`;el.textContent=text;
+  t.appendChild(el);
+  setTimeout(()=>el.remove(),2500);
+}
+
+// ─── ATTAQUE — 10K requis, une fois par jour, dégâts calculés ────────
+async function doAction(action){
+  if(!G||action!=='attack')return;
+  if(stepsToday<C.CHARGE||G.boss_killed_today||G.attack_used_today)return;
+
+  const eq=getEquipEffects();
+  const rups=getRunUpgradeEffects();
+  const base=calcAttack(eq,rups);
+  const bossPctBefore=G.boss_hp/G.boss_max_hp;
+
+  // Multi-hit ou hit unique
+  const hits=eq.multiHit||[1.0];
+  let totalDmg=0;
+  let anyCrit=false;
+  const hitResults=[];
+  for(const ratio of hits){
+    const h=resolveHit(Math.round(base*ratio),eq,bossPctBefore,rups);
+    totalDmg+=h.dmg;
+    if(h.isCrit)anyCrit=true;
+    hitResults.push(h);
+  }
+
+  let newBossHp=Math.max(0,G.boss_hp-totalDmg);
+  const newBossPct=newBossHp/G.boss_max_hp;
+
+  // Exécution (items + skill tree)
+  const skEx=getSkillEffects();
+  const execThresh=Math.max(eq.executeThreshold||0,skEx.sk_execute||0);
+  if(execThresh&&newBossPct>0&&newBossPct<=execThresh){
+    newBossHp=0;
+    showToast('⚡ EXÉCUTION !','kill');
+  }
+
+  // ACHARNEMENT finisher
+  if(eq.finisherChance&&newBossHp>0&&newBossPct<=eq.finisherThreshold&&Math.random()<eq.finisherChance){
+    newBossHp=0;
+    showToast('💥 COUP FATAL !','kill');
+  }
+
+  // RÉSONANCE — si le hit a retiré >50% HP max boss
+  let resonanceHit=false;
+  if(eq.resonanceChance&&totalDmg>G.boss_max_hp*.50&&newBossHp>0&&Math.random()<eq.resonanceChance){
+    const rDmg=Math.round(base*.50);
+    newBossHp=Math.max(0,newBossHp-rDmg);
+    resonanceHit=true;
+    showToast(`🔔 RÉSONANCE +${fmtNum(rDmg)}`,'kill');
+  }
+
+  triggerBossHit(anyCrit);
+
+  const dmgLabel=anyCrit?`💥 CRIT ${fmtNum(totalDmg)}`:fmtNum(totalDmg);
+  addLog(`⚔️ ${dmgLabel} — boss ${Math.round(newBossHp/G.boss_max_hp*100)}%`,'atk');
+  showToast(`⚔️ ${dmgLabel}`,'atk');
+
+  await saveG({boss_hp:newBossHp,attack_used_today:true});
+
+  if(newBossHp<=0){await onBossKilled();return;}
+
+  // Poison DOT
+  if(eq.dotPoison){
+    await saveG({dot_poison:Math.min(1,(G.dot_poison||0)+eq.dotPoison)});
+  }
+
+  render();
+}
+
+async function onBossKilled(){
+  const boss=getBoss(G.floor),eq=getEquipEffects();
+  const base=soulsFromBoss(G.floor,boss.type);
+  const souls=Math.floor(base*(eq.soulMult||1))+(eq.soulAdd||0);
+  runSouls+=souls;
+  addLog(`★ ${boss.name} VAINCU ! +${souls} 💀`,'kill');
+  showToast(`★ ${boss.name} VAINCU !`,'kill');
+  await saveG({boss_hp:0,boss_killed_today:true,bosses_killed:G.bosses_killed+1,souls:G.souls+souls});
+  addRunLogEntry({outcome:'kill',steps:stepsToday,xp:null});
+  // XP boss
+  const bossXpBase=XP_CFG.BOSS_BASE_XP+(G.floor-1)*XP_CFG.BOSS_XP_STEP;
+  const bossXpMult=1+(eq.xpBossBonus||0)+(G.prestige_savoir||0)*.04;
+  const bossXp=Math.round(bossXpBase*bossXpMult);
+  await grantXp(bossXp,'boss');
+  await delay(600);showBossKilledScreen(boss);
+}
+
+// ─── XP SYSTEM ──────────────────────────────────────────────────────
+let levelUpPending=false;
+let xpBankedToday=false;
+
+function calcXpFromSteps(steps){
+  const eff=Math.min(steps,XP_CFG.STEPS_CAP);
+  const base=Math.min(eff,C.CHARGE);
+  const over=Math.max(0,eff-C.CHARGE);
+  return Math.floor(base/1000*XP_CFG.PER_1000+over/1000*XP_CFG.PER_1000*XP_CFG.AFTER_RATE);
+}
+
+// Ajoute de l'XP + déclenche level-up si besoin
+async function grantXp(amount,source){
+  if(!G)return;
+  const eq=getEquipEffects();
+  const rups=getRunUpgradeEffects();
+  let mult=1;
+  const skXp=getSkillEffects();
+  if(source==='steps'){
+    mult+=eq.xpStepBonus+(rups.xpStepBonus||0)+(G.prestige_savoir||0)*.05+(skXp.sk_xp||0);
+  } else if(source==='boss'){
+    mult+=(skXp.sk_xpb||0);
+  }
+  const gained=Math.max(0,Math.round(amount*mult));
+  if(gained<=0)return;
+  if(source==='steps')showToast(`+${gained} XP`,'heal');
+  else if(source==='boss')showToast(`+${gained} XP BOSS`,'heal');
+
+  let xp=(G.run_xp||0)+gained;
+  let lvl=G.run_level||1;
+  const newLevels=[];
+  while(lvl<=XP_CFG.TO_NEXT.length){
+    const needed=XP_CFG.TO_NEXT[lvl-1];
+    if(!needed||xp<needed)break;
+    xp-=needed;lvl++;newLevels.push(lvl);
+  }
+  const toNext=XP_CFG.TO_NEXT[lvl-1]||9999;
+  await saveG({run_xp:xp,run_level:lvl,run_xp_to_next:toNext});
+  render();
+  if(newLevels.length>0)showLevelUpOverlay(lvl);
+}
+
+async function maybeXpTrigger(){
+  if(!G||G.boss_killed_today)return;
+  if(stepsToday>=C.CHARGE&&!(G.xp_banked_today)&&!xpBankedToday){
+    xpBankedToday=true;
+    await saveG({xp_banked_today:true});
+    const rawXp=calcXpFromSteps(stepsToday);
+    await grantXp(rawXp,'steps');
+  }
+}
+
+function showLevelUpOverlay(newLevel){
+  levelUpPending=true;
+  const owned=G.run_upgrades||[];
+  const pool=RUN_UPGRADES.filter(u=>!owned.includes(u.id));
+  // Piocher 3 upgrades aléatoires
+  const choices=[];
+  const tmp=[...pool];
+  for(let i=0;i<3&&tmp.length>0;i++){
+    const idx=Math.floor(Math.random()*tmp.length);
+    choices.push(tmp.splice(idx,1)[0]);
+  }
+  if(choices.length===0){levelUpPending=false;render();return;}
+  document.getElementById('lu-level').textContent=newLevel;
+  const c=document.getElementById('lu-choices');c.innerHTML='';
+  choices.forEach(up=>{
+    const el=document.createElement('div');el.className='lu-choice';
+    el.innerHTML=`<div class="lu-ico">${up.icon}</div><div class="lu-body"><div class="lu-name">${up.name}</div><div class="lu-desc">${up.desc}</div></div>`;
+    el.onclick=()=>chooseLevelUp(up.id,newLevel);
+    c.appendChild(el);
+  });
+  show('screen-levelup');
+  render();
+}
+
+async function chooseLevelUp(upgradeId,level){
+  const ups=[...(G.run_upgrades||[]),upgradeId];
+  await saveG({run_upgrades:ups});
+  levelUpPending=false;
+  hide('screen-levelup');
+  const up=RUN_UPGRADES.find(u=>u.id===upgradeId);
+  showToast(`⭐ NIV.${level} — ${up?up.name:''}`, 'kill');
+  render();
+}
+
+// ─── LOOT ───────────────────────────────────────────────────────────
+function getRandomLoot(){const pick=a=>a[Math.floor(Math.random()*a.length)];return[pick(ALL_ITEMS.filter(i=>i.type==='weapon')),pick(ALL_ITEMS.filter(i=>i.type==='armor')),pick(ALL_ITEMS.filter(i=>i.type==='ring'))];}
+function makeItemCanvas(item,size=28){
+  const cvs=document.createElement('canvas');
+  cvs.className='item-canvas';
+  cvs.width=size;cvs.height=size;
+  cvs.style.width=size+'px';cvs.style.height=size+'px';
+  requestAnimationFrame(()=>drawItemIconToCanvas(cvs,item));
+  return cvs;
+}
+
+function showLootScreen(){
+  lootChoices=getRandomLoot();
+  const c=document.getElementById('loot-items');c.innerHTML='';
+  lootChoices.forEach((item,idx)=>{
+    const cur=G['equipped_'+item.type]?findItem(G['equipped_'+item.type].id):null;
+    const el=document.createElement('div');el.className='litem';
+    el.innerHTML=`<div class="lbody"><div class="ltype">${item.type==='weapon'?'ARME':item.type==='armor'?'ARMURE':'ANNEAU'}</div><div class="lname">${item.name}</div><div class="ldesc">${item.desc}</div><div class="lcur">${cur?'Actuel : '+cur.name:'Aucun équipé'}</div></div><button class="lbtn" onclick="chooseLoot(${idx})">ÉQUIPER</button>`;
+    el.insertBefore(makeItemCanvas(item,30),el.firstChild);
+    c.appendChild(el);
+  });
+  show('screen-loot');
+}
+async function chooseLoot(idx){
+  const item=lootChoices[idx];await saveG({['equipped_'+item.type]:{id:item.id}});
+  showToast(`🎒 ${item.name} équipé.`,'heal');closeLootScreen();
+}
+function skipLoot(){closeLootScreen();}
+function closeLootScreen(){
+  hide('screen-loot');
+  render();
+}
+
+// ─── FIN DE NUIT : SENTENCE ──────────────────────────────────────────
+async function applyBossNight(){
+  const boss=getBoss(G.floor),eq=getEquipEffects();
+
+  // Poison DOT avant la nuit
+  let newBossHp=G.boss_hp;
+  if(G.dot_poison&&G.dot_poison>0){
+    const dotDmg=Math.round(G.boss_max_hp*G.dot_poison);
+    newBossHp=Math.max(0,newBossHp-dotDmg);
+    showToast(`🦠 Poison -${fmtNum(dotDmg)}`,'atk');
+    if(newBossHp<=0){await saveG({boss_hp:0,dot_poison:0});await onBossKilled();return;}
+  }
+
+  const bossHpPct=newBossHp/G.boss_max_hp;
+  const escapeChance=calcEscapeChance(bossHpPct,eq);
+  const deathChance=1-escapeChance;
+  const escapes=Math.random()<escapeChance;
+
+  addLog(`🌑 Sentence — ${boss.name} ${Math.round(bossHpPct*100)}% HP — fuite ${Math.round(escapeChance*100)}%`,'sent');
+  triggerHeroHit();
+
+  // Sauvegarder AVANT le roll pour que l'écran sentence soit cohérent
+  await saveG({
+    boss_hp:newBossHp,
+    dot_poison:G.dot_poison||0,
+    pa_spent_today:0,
+    attack_used_today:false,
+    boss_days_survived:G.boss_days_survived+1,
+    last_sentence_date:today(),
+  });
+
+  // Afficher l'écran de sentence
+  showSentenceScreen(boss,bossHpPct,escapeChance,escapes);
+}
+
+function showSentenceScreen(boss,bossHpPct,escapeChance,escapes){
+  const pctBoss=Math.round(bossHpPct*100);
+  const pctFuite=Math.round(escapeChance*100);
+  const pctMort=100-pctFuite;
+  const el=document.getElementById('screen-sentence');
+  if(!el){// pas d'écran sentence — résolution directe
+    if(!escapes){delay(1200).then(()=>showDeathScreen());return;}
+    finalizeSentence(true);return;
+  }
+  document.getElementById('sent-boss-name').textContent=boss.name;
+  document.getElementById('sent-boss-hp').textContent=pctBoss+'%';
+  document.getElementById('sent-escape-pct').textContent=pctFuite+'%';
+  document.getElementById('sent-death-pct').textContent=pctMort+'%';
+  const btn=document.getElementById('sent-flee-btn');
+  if(btn){btn.onclick=()=>resolveSentenceRoll(escapes);}
+  show('screen-sentence');
+}
+
+async function resolveSentenceRoll(escapes){
+  hide('screen-sentence');
+  if(!escapes){await delay(600);showDeathScreen();return;}
+  // Sentence survécue
+  const eq=getEquipEffects();
+  const newSentences=(G.run_sentences_survived||0)+1;
+  await saveG({run_sentences_survived:newSentences,sentence_survived:(G.sentence_survived||0)+1});
+  addRunLogEntry({outcome:'fled',steps:stepsToday});
+  showToast('✓ FUITE RÉUSSIE','heal');
+  render();
+}
+
+function finalizeSentence(escapes){
+  if(!escapes){showDeathScreen();return;}
+  render();
+}
+
+async function advanceFloor(){
+  const nF=G.floor+1,nB=getBoss(nF),nBH=bossMaxHp(nF);
+  addLog(`▶ ÉTAGE ${nF} — ${nB.name} apparaît.`,'kill');
+  showToast(`▶ ÉTAGE ${nF}`,'kill');
+  await saveG({floor:nF,boss_hp:nBH,boss_max_hp:nBH,boss_type_id:nB.id,phoenix_revived:false,boss_days_survived:0,boss_killed_today:false,attack_used_today:false,dot_poison:0,last_sentence_date:today(),pa_spent_today:0,camp_available:false});
+  render();
+}
+
+// ─── DEATH / PRESTIGE ────────────────────────────────────────────────
+function showDeathScreen(){
+  hide('screen-sentence');show('screen-dead');
+  document.getElementById('dead-stats').innerHTML=`
+    <div class="stat-row"><span class="sk">Étage atteint</span><span class="sv">${G.floor}</span></div>
+    <div class="stat-row"><span class="sk">Boss tués</span><span class="sv">${G.bosses_killed}</span></div>
+    <div class="stat-row"><span class="sk">Sentences survécues</span><span class="sv">${G.sentence_survived}</span></div>
+    <div class="stat-row"><span class="sk">Pas du jour</span><span class="sv">${fmtNum(stepsToday)}</span></div>`;
+  document.getElementById('souls-earn').textContent=`+${runSouls} 💀 Âmes`;
+  document.getElementById('souls-left').textContent=G.souls;
+  renderPrestige();
+}
+function renderPrestige(){
+  const ups=[
+    {key:'prestige_atk',   icon:'⚔️',name:'FORCE',      branch:'force',
+     ef:l=>`+${l*5}% dégâts`},
+    {key:'prestige_crit',  icon:'💥',name:'BRUTALITÉ',   branch:'force',
+     ef:l=>`+${l*3}% crit`},
+    {key:'prestige_escape',icon:'🏃',name:'DESTIN',      branch:'destin',
+     ef:l=>`+${l*3}% fuite`},
+    {key:'prestige_souls', icon:'💀',name:'ÂMES',        branch:'ame',
+     ef:l=>`Âmes +${l*5}%`},
+    {key:'prestige_march', icon:'👣',name:'MARCHE',      branch:'march',
+     ef:l=>`Charge +${l*5}% dégâts`},
+    {key:'prestige_savoir',icon:'📚',name:'SAVOIR',      branch:'savoir',
+     ef:l=>`+${l*5}% XP pas · +${l*4}% XP boss`},
+  ];
+  const list=document.getElementById('prestige-list');list.innerHTML='';
+  ups.forEach(u=>{
+    const lvl=G[u.key]||0,cost=prestigeCost(lvl),can=G.souls>=cost;
+    const el=document.createElement('div');el.className='pitem';
+    el.innerHTML=`<div class="pico">${u.icon}</div><div class="pbody"><div class="pname">${u.name}</div><div class="peff">${u.ef(lvl)} → ${u.ef(lvl+1)}</div></div><span class="plvl">Niv.${lvl}</span><button class="pbtn" onclick="buyPrestige('${u.key}',${cost})" ${!can?'disabled':''}>${cost}💀</button>`;
+    list.appendChild(el);
+  });
+}
+async function buyPrestige(key,cost){
+  if(G.souls<cost)return;G[key]=(G[key]||0)+1;G.souls-=cost;
+  await saveG();document.getElementById('souls-left').textContent=G.souls;renderPrestige();
+}
+async function startNewRun(){
+  const nbh=bossMaxHp(1),nB=getBoss(1);
+  await saveG({floor:1,player_hp:1,player_max_hp:100,
+    run_xp:0,run_level:1,run_xp_to_next:XP_CFG.TO_NEXT[0],run_upgrades:[],xp_banked_today:false,
+    boss_hp:nbh,boss_max_hp:nbh,boss_type_id:nB.id,
+    phoenix_revived:false,boss_days_survived:0,sentence_survived:0,run_sentences_survived:0,
+    run_id:(G.run_id||1)+1,runs_total:(G.runs_total||0)+1,bosses_killed:0,
+    last_sentence_date:today(),pa_spent_today:0,boss_killed_today:false,
+    attack_used_today:false,dot_poison:0,
+    combat_log:[{text:'▶ Nouvelle run.',type:'kill'}],
+    equipped_weapon:null,equipped_armor:null,equipped_ring:null,
+    camp_available:false,current_event:null});
+  xpBankedToday=false;levelUpPending=false;
+  runSouls=0;hide('screen-dead');render();
+}
+
+// ─── RENDER (HUD only, canvas runs its own RAF loop) ─────────────────
+function render(){
+  if(!G)return;
+  const boss=getBoss(G.floor),eq=getEquipEffects(),zone=getZone(G.floor);
+
+  document.documentElement.style.setProperty('--zone',zone.color);
+
+  // HUD top — zone + étage uniquement
+  document.getElementById('hud-zone').textContent=zone.name;
+  document.getElementById('hud-zone').style.color=zone.color;
+  document.getElementById('h-floor').textContent=G.floor;
+
+  // Âmes (fantôme) + streak top-right
+  const sc=document.getElementById('souls-count');if(sc)sc.textContent=G.souls;
+  const stk=document.getElementById('streak-count');if(stk)stk.textContent=G.flame_streak||0;
+  const stkBar=document.getElementById('streak-count-bar');if(stkBar)stkBar.textContent=G.flame_streak||0;
+  // Pas en gros + barre boss + hint
+  const sb=document.getElementById('steps-big');if(sb)sb.textContent=stepsToday.toLocaleString('fr-FR');
+  const bossBarFill=document.getElementById('steps-boss-bar-fill');
+  const bossHint=document.getElementById('steps-boss-hint');
+  const atksEl=document.getElementById('steps-attacks-avail');
+  const charged=stepsToday>=C.CHARGE;
+  const stepsPct=Math.min(100,stepsToday/C.CHARGE*100);
+  if(bossBarFill)bossBarFill.style.width=(charged?100:stepsPct)+'%';
+  // Valeur charge droite du header
+  const chargeRval=document.getElementById('charge-rval');
+  if(chargeRval){
+    if(G.boss_killed_today)chargeRval.textContent='✓';
+    else if(charged)chargeRval.textContent='10 000 ✓';
+    else chargeRval.textContent=stepsToday.toLocaleString('fr-FR')+'/10 000 PAS';
+  }
+  if(atksEl){
+    if(G.boss_killed_today){atksEl.textContent='';atksEl.className='zero';}
+    else if(levelUpPending){atksEl.textContent='⭐ NIVEAU SUPÉRIEUR — CHOISIR';atksEl.className='';}
+    else if(G.attack_used_today){
+      const esc=Math.round(calcEscapeChance(G.boss_hp/G.boss_max_hp,eq)*100);
+      atksEl.textContent=`FUITE ${esc}% — BOSS ${Math.round(G.boss_hp/G.boss_max_hp*100)}%`;
+      atksEl.className='';
+    }
+    else if(charged){atksEl.textContent='⚡ CHARGE COMPLÈTE — ATTAQUE !';atksEl.className='';}
+    else{atksEl.textContent='';atksEl.className='zero';}
+  }
+
+  // Boss bar hud
+  const bossNameEl=document.getElementById('boss-name-txt');
+  if(bossNameEl){
+    bossNameEl.textContent=G.boss_killed_today?'★ VAINCU':boss.name;
+    bossNameEl.style.color=G.boss_killed_today?zone.color:'rgba(255,255,255,.9)';
+  }
+  const bFill=document.getElementById('boss-bar-fill');
+  const bPct=Math.max(0,G.boss_hp/G.boss_max_hp*100);
+  if(bFill){
+    bFill.style.width=bPct+'%';
+    if(bPct>50)bFill.style.background='linear-gradient(90deg,#006633,#00e676)';
+    else if(bPct>20)bFill.style.background='linear-gradient(90deg,#885500,#ffaa00)';
+    else bFill.style.background='linear-gradient(90deg,#880000,#ff2255)';
+  }
+  const bHpLbl=document.getElementById('hud-boss-hp-lbl');
+  if(bHpLbl)bHpLbl.textContent=G.boss_killed_today?'—':Math.round(bPct)+'%';
+
+  // XP bar
+  const runLvl=G.run_level||1;
+  const runXp=G.run_xp||0;
+  const toNext=G.run_xp_to_next||XP_CFG.TO_NEXT[0];
+  const xpPct=toNext<9999?Math.min(100,runXp/toNext*100):100;
+  const xpLvlEl=document.getElementById('xp-level-lbl');
+  const xpBarEl=document.getElementById('xp-bar-fill');
+  const xpValEl=document.getElementById('xp-val-lbl');
+  if(xpLvlEl)xpLvlEl.textContent='NIV. '+runLvl;
+  if(xpBarEl)xpBarEl.style.width=xpPct+'%';
+  if(xpValEl)xpValEl.textContent=runXp+'/'+(toNext<9999?toNext:'MAX')+' XP';
+
+  // PA fill fantôme (legacy)
+  document.getElementById('pa-fill').style.width='0%';
+  document.getElementById('pa-val').textContent='';
+
+  // Texte dynamique du bouton attaque
+  const aName=document.querySelector('#btn-attack .a-name');
+  if(aName){
+    if(!charged&&!G.attack_used_today&&!G.boss_killed_today){
+      const reste=C.CHARGE-stepsToday;
+      aName.textContent='-'+reste.toLocaleString('fr-FR')+' PAS';
+    } else {
+      aName.textContent='ATTAQUE';
+    }
+  }
+  // Bouton attaque — actif si 10K atteints, pas encore utilisé, boss vivant, pas de level-up en attente
+  setAbtn('btn-attack',G.boss_killed_today||G.attack_used_today||stepsToday<C.CHARGE||levelUpPending);
+
+  // Sync
+  const mins=Math.floor((Date.now()-new Date(G.updated_at))/60000);
+  document.getElementById('sync-txt').textContent=mins<1?'LIVE':mins<60?`${mins}M`:`${Math.floor(mins/60)}H`;
+}
+
+function setAbtn(id,off,active=false){
+  const el=document.getElementById(id);
+  el.classList.toggle('off',off);
+  el.classList.toggle('active-def',active);
+}
+function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// ─── EQUIPMENT ───────────────────────────────────────────────────────
+function openEquip(){
+  const eq=getEquipEffects();
+  const slots=[{key:'equipped_weapon',icon:'⚔️',label:'ARME'},{key:'equipped_armor',icon:'🛡️',label:'ARMURE'},{key:'equipped_ring',icon:'💍',label:'ANNEAU'}];
+  const list=document.getElementById('eq-list');list.innerHTML='';
+  slots.forEach(s=>{
+    const item=G[s.key]?findItem(G[s.key].id):null;
+    const el=document.createElement('div');el.className='eq-row';
+    if(item){const cvs=makeItemCanvas(item,24);cvs.style.flexShrink='0';el.appendChild(cvs);}
+    else{const ico=document.createElement('div');ico.className='eq-icon';ico.textContent=s.icon;el.appendChild(ico);}
+    const body=document.createElement('div');body.className='eq-body';
+    body.innerHTML=`<div class="eq-slot">${s.label}</div>${item?`<div class="eq-name">${item.name}</div><div class="eq-desc">${item.desc}</div>`:'<div class="eq-empty">— aucun équipé</div>'}`;
+    el.appendChild(body);
+    list.appendChild(el);
+  });
+  const eq2=getEquipEffects();
+  const rups2=getRunUpgradeEffects();
+  const critPct=Math.round((C.BASE_CRIT+(G.prestige_crit||0)*.03+(eq2.critChance||0)+(rups2.critChance||0))*100);
+  const atk=calcAttack(eq2,rups2);
+  const esc=Math.round(calcEscapeChance(G.boss_hp/G.boss_max_hp,eq2,rups2)*100);
+  const runUps=G.run_upgrades||[];
+  const upNames=runUps.map(id=>{const u=RUN_UPGRADES.find(x=>x.id===id);return u?u.icon+' '+u.name:'';}).filter(Boolean);
+  document.getElementById('eq-crit').textContent=`ATK ${fmtNum(atk)} · CRIT ${critPct}% · FUITE ${esc}%${upNames.length?'\nNIV: '+upNames.join(' · '):''}`;
+  document.getElementById('equip-panel').classList.add('open');
+}
+function closeEquip(e){if(e.target===e.currentTarget)closeEquipDirect();}
+function closeEquipDirect(){document.getElementById('equip-panel').classList.remove('open');}
+
+// ─── UI HELPERS ──────────────────────────────────────────────────────
+function show(id){document.getElementById(id)?.classList.remove('hidden');}
+function hide(id){document.getElementById(id)?.classList.add('hidden');}
+function toggleDev(){document.getElementById('dev-panel').classList.toggle('open');}
+function openSetup(){document.getElementById('modal-bg').classList.add('open');}
+function closeSetup(){document.getElementById('modal-bg').classList.remove('open');}
+document.getElementById('modal-bg').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSetup();});
+
+// ─── STARTER ITEM ────────────────────────────────────────────────────
+function showStarterScreen(){
+  const isFirst=(G.runs_total||0)<=1;
+  const items=pickStarterItems(isFirst);
+  const lbl=document.getElementById('starter-run-lbl');
+  if(lbl)lbl.textContent=isFirst?'PREMIÈRE VIE':'VIE #'+(G.runs_total||1);
+  const container=document.getElementById('starter-items');
+  container.innerHTML='';
+  const cats=['offensive','defensive','utility'];
+  const catLabels={offensive:'OFFENSIF',defensive:'DÉFENSIF / FUITE',utility:'UTILITAIRE / XP'};
+  items.forEach((item,i)=>{
+    const cat=isFirst?['offensive','defensive','utility'][i]:(item.fx.escapeMod||item.fx.escapeModIfBossLow?'defensive':item.fx.xpStepBonus||item.fx.dmgPerLevel||item.fx.daysBonusMult?'utility':'offensive');
+    const el=document.createElement('div');
+    el.className='item-card '+cat;
+    const icoCvs=makeItemCanvas(item,32);icoCvs.className='item-canvas';icoCvs.style.flexShrink='0';
+    const body=document.createElement('div');body.className='ic-body';
+    body.innerHTML=`<div class="ic-tag">${catLabels[cat]||''}</div><div class="ic-name">${item.name}</div><div class="ic-desc">${item.desc}</div>`;
+    el.appendChild(icoCvs);el.appendChild(body);
+    el.onclick=()=>chooseStarterItem(item);
+    container.appendChild(el);
+  });
+  show('screen-starter');
+}
+async function chooseStarterItem(item){
+  hide('screen-starter');
+  // Équiper dans le bon slot
+  const slot='equipped_'+(item.type==='weapon'?'weapon':item.type==='armor'?'armor':'ring');
+  await saveG({starter_chosen:true,[slot]:{id:item.id}});
+  showToast(`★ ${item.name} emporté`,'kill');
+  render();
+}
+
+// ─── JOURNAL ─────────────────────────────────────────────────────────
+function openJournal(){
+  const log=G.run_log||[];
+  const container=document.getElementById('journal-list');
+  container.innerHTML='';
+  if(log.length===0){
+    container.innerHTML='<div style="font-family:var(--px);font-size:7px;color:rgba(255,255,255,.3);text-align:center;padding:20px">AUCUNE ENTRÉE POUR CETTE VIE.</div>';
+  } else {
+    [...log].reverse().forEach(entry=>{
+      const isCurrent=!entry.outcome;
+      const node=document.createElement('div');node.className='jnode';
+      const dot=document.createElement('div');
+      dot.className='jnode-dot '+(isCurrent?'current':entry.outcome||'');
+      const body=document.createElement('div');body.className='jnode-body';
+      const zname=getZone(entry.floor||1).name;
+      const badge=isCurrent?'EN COURS':entry.outcome==='kill'?'✓ VAINCU':entry.outcome==='fled'?'↗ FUITE':'✗ MORT';
+      const badgeCls=isCurrent?'current':entry.outcome||'';
+      body.innerHTML=`<div class="jnode-day">JOUR ${entry.day} — ${zname} — ÉT.${entry.floor}</div><div class="jnode-boss">${entry.boss_name||'—'}</div><div class="jnode-detail">${entry.steps?entry.steps.toLocaleString('fr-FR')+' pas':''} ${entry.xp?'· +'+entry.xp+' XP':''} ${entry.loot?'· '+entry.loot:''}</div><div class="jnode-badge ${badgeCls}">${badge}</div>`;
+      node.appendChild(dot);node.appendChild(body);
+      container.appendChild(node);
+    });
+  }
+  // Ajouter entrée du jour actuel si pas encore dans le log
+  show('screen-journal');
+}
+function addRunLogEntry(entry){
+  const log=[...(G.run_log||[])];
+  const day=(G.boss_days_survived||0)+(G.bosses_killed||0)+1;
+  log.push({day,floor:G.floor,boss_name:getBoss(G.floor).name,...entry,date:today()});
+  saveG({run_log:log});
+}
+
+// ─── BOSS KILLED SCREEN ──────────────────────────────────────────────
+function showBossKilledScreen(boss){
+  const nameEl=document.getElementById('bkill-name');
+  const floorEl=document.getElementById('bkill-floor');
+  if(nameEl)nameEl.textContent=(boss.name||'VEILLEUR')+' VAINCU !';
+  if(floorEl)floorEl.textContent='ÉTAGE '+G.floor+(boss.type==='major'?' — BOSS MAJEUR':'');
+  show('screen-boss-killed');
+}
+function closeBossKilled(){
+  hide('screen-boss-killed');
+  delay(200).then(()=>showLootScreen());
+}
+
+// ─── DUNGEON MAP ─────────────────────────────────────────────────────
+function openDungeonMap(){
+  // Streak display
+  const streakEl=document.getElementById('dmap-streak');
+  if(streakEl)streakEl.textContent='🔥 '+(G.flame_streak||0)+' JOURS CONSÉCUTIFS';
+
+  const container=document.getElementById('dmap-content');
+  if(!container)return;
+  container.innerHTML='';
+
+  const log=G.run_log||[];
+  const maxFloor=Math.min(G.floor+2,50);
+  let lastZoneId=0;
+
+  for(let f=1;f<=maxFloor;f++){
+    const zone=getZone(f);
+    const boss=getBoss(f);
+    const logEntry=log.find(e=>e.floor===f);
+    let state=f<G.floor?(logEntry?logEntry.outcome:'fled'):f===G.floor?'current':'locked';
+    if(f===G.floor&&G.boss_killed_today)state='killed';
+
+    // Zone banner
+    if(zone.id!==lastZoneId){
+      lastZoneId=zone.id;
+      const zb=document.createElement('div');
+      zb.className='dmap-zone-banner';
+      zb.style.cssText=`color:${zone.color};background:${zone.color}18;border:1px solid ${zone.color}28;`;
+      zb.textContent=zone.name;
+      container.appendChild(zb);
+    }
+
+    const row=document.createElement('div');
+    row.className='dmap-floor-row';
+
+    // Dot + vertical line
+    const dotCol=document.createElement('div');
+    dotCol.className='dmap-dot-col';
+    const dot=document.createElement('div');
+    const isMajor=boss.type==='major';
+    dot.className='dmap-dot '+(state==='current'&&isMajor?'major':state);
+    dotCol.appendChild(dot);
+    if(f<maxFloor){
+      const line=document.createElement('div');
+      line.className='dmap-line';
+      dotCol.appendChild(line);
+    }
+
+    // Room block
+    const room=document.createElement('div');
+    room.className='dmap-room '+(
+      isMajor&&state==='current'?'major current':
+      isMajor&&state!=='locked'?'major':
+      state
+    );
+
+    // Mini boss sprite (only for current and major floors — others: just dot color)
+    const inner=document.createElement('div');
+    inner.className='dmap-room-inner';
+
+    if(state==='current'||isMajor){
+      const bspr=getBossSprite(boss);
+      const bsc=Math.max(1,Math.floor(22/bspr[0].length));
+      const bcw=bspr[0].length*bsc,bch=bspr.length*bsc;
+      const bc=document.createElement('canvas');
+      bc.className='dmap-boss-canvas';
+      bc.width=bcw;bc.height=bch;
+      bc.style.cssText=`width:${bcw}px;height:${bch}px;opacity:${state==='locked'?.2:.85};`;
+      drawPx(bc.getContext('2d'),bspr,0,0,bsc,state==='locked'?'#333':null);
+      inner.appendChild(bc);
+    }
+
+    const info=document.createElement('div');
+    info.className='dmap-room-info';
+
+    const flNum=document.createElement('div');
+    flNum.className='dmap-floor-num';
+    flNum.textContent='ÉT. '+f+(isMajor?' · MAJEUR':'');
+
+    const bname=document.createElement('div');
+    bname.className='dmap-boss-name';
+    bname.style.color=state==='locked'?'rgba(255,255,255,.25)':isMajor?'#ffd600':zone.color;
+    bname.textContent=boss.name;
+
+    const outRow=document.createElement('div');
+    outRow.className='dmap-outcome';
+
+    const badge=document.createElement('div');
+    badge.className='dmap-badge '+(state==='current'&&isMajor?'major':state);
+    badge.textContent=state==='killed'?'✓ VAINCU':state==='fled'?'↗ FUITE':state==='died'?'✗ MORT':state==='current'?'EN COURS':'???';
+    outRow.appendChild(badge);
+
+    // HP bar on current floor
+    if(state==='current'&&G.boss_hp>0&&G.boss_max_hp>0){
+      const pct=G.boss_hp/G.boss_max_hp;
+      const hpCol=pct>0.5?'linear-gradient(90deg,#006633,#00e676)':pct>0.2?'linear-gradient(90deg,#885500,#ffaa00)':'linear-gradient(90deg,#880000,#ff2255)';
+      const hpBar=document.createElement('div');
+      hpBar.className='dmap-hp-bar';
+      const hpFill=document.createElement('div');
+      hpFill.className='dmap-hp-fill';
+      hpFill.style.cssText=`width:${Math.round(pct*100)}%;background:${hpCol};`;
+      hpBar.appendChild(hpFill);
+      info.appendChild(flNum);info.appendChild(bname);info.appendChild(outRow);info.appendChild(hpBar);
+    } else {
+      info.appendChild(flNum);info.appendChild(bname);info.appendChild(outRow);
+    }
+
+    inner.appendChild(info);
+    room.appendChild(inner);
+    row.appendChild(dotCol);
+    row.appendChild(room);
+    container.appendChild(row);
+  }
+
+  show('screen-dungeon');
+}
+
+// ─── SKILL TREE ───────────────────────────────────────────────────────
+function openSkillTree(){
+  renderSkillTree();
+  show('screen-skills');
+}
+
+function renderSkillTree(){
+  const container=document.getElementById('stree-container');
+  if(!container)return;
+  container.innerHTML='';
+
+  const soulsEl=document.getElementById('skill-souls-lbl');
+  if(soulsEl)soulsEl.textContent='💀 '+(G.souls||0)+' ÂMES DISPONIBLES';
+
+  const owned=G.skill_tree||[];
+  const branches=['force','destin','savoir'];
+  const branchLabels={force:'FORCE',destin:'DESTIN',savoir:'SAVOIR'};
+
+  const wrap=document.createElement('div');
+  wrap.className='stree-branches';
+
+  branches.forEach(branch=>{
+    const nodes=SKILL_NODES.filter(n=>n.branch===branch).sort((a,b)=>a.row-b.row);
+    const col=document.createElement('div');
+    col.className='stree-branch';
+
+    const title=document.createElement('div');
+    title.className='stree-branch-title '+branch;
+    title.textContent=branchLabels[branch];
+    col.appendChild(title);
+
+    nodes.forEach((node,ni)=>{
+      const isOwned=owned.includes(node.id);
+      const reqMet=!node.req||owned.includes(node.req);
+      const canAfford=G.souls>=node.cost;
+      const state=isOwned?'owned':reqMet?'available':'locked';
+
+      if(ni>0){const conn=document.createElement('div');conn.className='stree-connector';col.appendChild(conn);}
+
+      const el=document.createElement('div');
+      el.className='stree-node '+state+(!isOwned&&reqMet?' '+branch:'');
+      el.innerHTML=`<div class="stree-node-icon">${node.icon}</div><div class="stree-node-name">${node.name}</div><div class="stree-node-desc">${node.desc}</div><div class="stree-node-cost ${isOwned?'owned':canAfford&&reqMet?'can':'cant'}">${isOwned?'✓ ACQUIS':node.cost+' 💀'}</div>`;
+      if(!isOwned&&reqMet)el.onclick=()=>buySkillNode(node.id);
+      col.appendChild(el);
+    });
+
+    wrap.appendChild(col);
+  });
+  container.appendChild(wrap);
+}
+
+async function buySkillNode(nodeId){
+  const node=SKILL_NODES.find(n=>n.id===nodeId);
+  if(!node||!G)return;
+  const owned=G.skill_tree||[];
+  if(owned.includes(nodeId))return;
+  if(!(!node.req||owned.includes(node.req)))return;
+  if(G.souls<node.cost){showToast('💀 Pas assez d\'âmes','sent');return;}
+  const newTree=[...owned,nodeId];
+  await saveG({skill_tree:newTree,souls:G.souls-node.cost});
+  showToast('⭐ '+node.name+' acquis !','kill');
+  renderSkillTree();
+}
+
+// ─── SKIN SCREEN ─────────────────────────────────────────────────────
+function openSkinScreen(){
+  const grid=document.getElementById('skin-grid');
+  if(!grid)return;
+  grid.innerHTML='';
+  const curSkin=G&&G.skin_id||'crimson';
+  SKINS.forEach(skin=>{
+    const card=document.createElement('div');
+    card.className='skin-card'+(skin.id===curSkin?' active':'');
+
+    // Preview canvas — draw hero with skin palette
+    const sc=3;
+    const sw=HERO_SPR[0].length*sc,sh=HERO_SPR.length*sc;
+    const cvs=document.createElement('canvas');
+    cvs.className='skin-canvas';
+    cvs.width=sw;cvs.height=sh;
+    cvs.style.width=Math.round(sw/2)+'px';
+    cvs.style.height=Math.round(sh/2)+'px';
+    const pal=skin.palette?{...PX,...skin.palette}:PX;
+    drawPxSkin(cvs.getContext('2d'),HERO_SPR,0,0,sc,pal);
+
+    const name=document.createElement('div');name.className='skin-name';name.textContent=skin.name;
+    const desc=document.createElement('div');desc.className='skin-desc';desc.textContent=skin.desc;
+    card.appendChild(cvs);card.appendChild(name);card.appendChild(desc);
+
+    if(skin.id===curSkin){
+      const badge=document.createElement('div');badge.className='skin-badge';badge.textContent='ACTIF';
+      card.appendChild(badge);
+    } else {
+      card.onclick=()=>chooseSkin(skin.id);
+    }
+    grid.appendChild(card);
+  });
+  show('screen-skin');
+}
+
+async function chooseSkin(skinId){
+  await saveG({skin_id:skinId});
+  showToast('✓ APPARENCE CHANGÉE','heal');
+  hide('screen-skin');
+}
+
+// ─── FETCH ──────────────────────────────────────────────────────────
+async function fetchAll(){
+  const t=today();
+  const[gsRes,stRes]=await Promise.all([
+    db.from('game_state').select('*').eq('user_id','simon').maybeSingle(),
+    db.from('steps_log').select('steps').gte('date',t).lte('date',t+'z').maybeSingle(),
+  ]);
+  document.getElementById('loading').style.display='none';
+  if(gsRes.error){openSetup();return;}
+  G=gsRes.data;
+  if(!G){
+    await db.from('game_state').insert({user_id:'simon'});
+    const r=await db.from('game_state').select('*').eq('user_id','simon').maybeSingle();G=r.data;
+  }
+  stepsToday=stRes.data?.steps||0;
+  // Colonnes optionnelles — défaut si absentes
+  if(!G.skill_tree)G.skill_tree=[];
+  if(!G.skin_id)G.skin_id='crimson';
+  if(!G.run_log)G.run_log=[];
+  // Restaurer le flag en mémoire
+  xpBankedToday=!!(G.xp_banked_today);
+  // player_hp = 1 par défaut (run level marqueur), mort = run terminée = screen-dead
+  // on ne bloque plus ici via player_hp (supprimé système PV)
+  // if(G.player_hp<=0){render();showDeathScreen();return;}
+  const isNewDay=normDate(G.last_sentence_date)&&normDate(G.last_sentence_date)!==t;
+  if(isNewDay){
+    if(G.boss_killed_today){render();await advanceFloor();return;}
+    if(G.boss_hp>0){render();await applyBossNight();return;}
+    await saveG({last_sentence_date:t,pa_spent_today:0,attack_used_today:false,xp_banked_today:false});
+    xpBankedToday=false;
+  }
+  // Écran choix item de départ si pas encore fait cette run
+  if(!G.starter_chosen){showStarterScreen();return;}
+  await maybeXpTrigger();
+  render();
+}
+
+// ─── REALTIME ───────────────────────────────────────────────────────
+try{
+  db.channel('steps-rt').on('postgres_changes',{event:'*',schema:'public',table:'steps_log'},async()=>{
+    const t=today();
+    const{data}=await db.from('steps_log').select('steps').gte('date',t).lte('date',t+'z').maybeSingle();
+    stepsToday=data?.steps||0;await maybeXpTrigger();render();
+  }).subscribe();
+}catch(e){}
+setInterval(fetchAll,60000);
+
+// ─── DEV TOOLS ──────────────────────────────────────────────────────
+async function devAddPa(n){stepsToday+=n;render();}// legacy alias
+async function devAddSteps(n){stepsToday+=n;await maybeXpTrigger();render();}
+async function devResetBoss(){await saveG({boss_hp:G.boss_max_hp,boss_killed_today:false,attack_used_today:false,pa_spent_today:0,last_sentence_date:''});stepsToday=0;render();}
+async function devKillBoss(){stepsToday=C.CHARGE;await saveG({attack_used_today:false,boss_hp:1});await doAction('attack');}
+async function devAddSouls(n){await saveG({souls:G.souls+n});render();}
+async function devHealPlayer(){await saveG({player_hp:effMaxHp()});render();}
+async function devNextFloor(){await saveG({boss_killed_today:true,last_sentence_date:'yesterday'});await advanceFloor();}
+async function devTriggerNight(){await saveG({boss_killed_today:false,attack_used_today:true,last_sentence_date:'yesterday',boss_hp:Math.floor(G.boss_max_hp*.5)});await applyBossNight();}
+function devShowLoot(){if(!G)return;showLootScreen();}
+async function devResetAll(){
+  const nbh=bossMaxHp(1),nB=getBoss(1);
+  const patch={
+    floor:1,
+    player_hp:100,player_max_hp:100,
+    boss_hp:nbh,boss_max_hp:nbh,boss_type_id:nB.id,
+    boss_killed_today:false,attack_used_today:false,
+    boss_days_survived:0,bosses_killed:0,
+    pa_spent_today:0,dot_poison:0,
+    souls:0,flame_streak:0,
+    prestige_atk:0,prestige_crit:0,prestige_escape:0,prestige_souls:0,prestige_march:0,prestige_savoir:0,
+    equipped_weapon:null,equipped_armor:null,equipped_ring:null,
+    last_sentence_date:today(),
+    run_id:(G.run_id||1)+1,runs_total:(G.runs_total||0)+1,
+    run_sentences_survived:0,sentence_survived:0,
+    run_xp:0,run_level:1,run_xp_to_next:XP_CFG.TO_NEXT[0],run_upgrades:[],xp_banked_today:false,
+    starter_chosen:false,run_log:[],
+    skill_tree:G.skill_tree||[],skin_id:G.skin_id||'crimson',
+    combat_log:[{text:'▶ Reset total.',type:'kill'}],
+    phoenix_revived:false,camp_available:false,current_event:null,
+  };
+  Object.assign(G,patch);G.updated_at=new Date().toISOString();
+  const{error}=await db.from('game_state').upsert({...G},{onConflict:'user_id'});
+  if(error){showToast('❌ ERREUR RESET : '+error.message,'sent');return;}
+  xpBankedToday=false;levelUpPending=false;
+  stepsToday=0;
+  showToast('✓ RESET OK — ÉTAGE 1','kill');
+  render();
+  toggleDev();
+}
+
+async function devTestLevelUp(){if(!G)return;showLevelUpOverlay((G.run_level||1)+1);}
+async function devAddXp(n){if(!G)return;await grantXp(n,'steps');}
+
+// stubs pour overlays legacy (inaccessibles mais restent dans le DOM)
+function dismissEvent(){hide('screen-event');render();}
+function resolveSentence(){}
+function sentenceContinue(){hide('screen-sentence');render();}
+function closeCamp(){hide('screen-camp');render();}
+function devShowCamp(){}
+function devRollEvent(){}
+
+// ─── INIT ───────────────────────────────────────────────────────────
+window.addEventListener('resize',()=>{resizeCvs();});
+resizeCvs();
+startLoop();
+fetchAll();
+</script>
+</body>
+</html>

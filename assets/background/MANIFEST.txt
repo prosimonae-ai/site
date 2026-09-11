@@ -1,0 +1,2561 @@
+BACKGROUNDS PALIER 1 — LE SEUIL
+======================================================================
+DA DU PALIER (à ajouter par toi en tête de chaque prompt, avec ton style pixel art) :
+Le Seuil est l'ancienne zone d'entrée, de passage et de contrôle d'un immense complexe souterrain.
+Autrefois fonctionnel (péages, postes de garde, salles d'attente, stockage, mécanismes, sanctuaires), aujourd'hui abandonné.
+Matériaux : pierre taillée gris-brun froid, bois pourri, fer et bronze rouillés. Ombres bleu-noir. Rares lumières chaudes.
+Trois motifs récurrents, RARES, jamais tous ensemble : A) le cercle incomplet · B) les traces noires verticales · C) les pierres blanches lisses.
+Le style reste constant ; la composition, l'échelle, l'éclairage et la silhouette changent à chaque salle.
+
+RÈGLES TECHNIQUES : portrait 9:16 · quart inférieur = sol dégagé pour le héros de dos · pas de texte/UI/personnage/créature ·
+zones des sorties : GAUCHE x 3–27 % y 30–64 % · FOND x 35–65 % y 22–54 % · DROITE x 73–97 % y 30–64 % · une porte visible = une connexion réelle.
+Les objets interactifs (coffres, statues, autels, battants de porte, marchand, pièges, corps) et les créatures sont des sprites séparés
+(voir assets/object et assets/creature) : le décor laisse leur emplacement libre.
+Les fichiers actuels sont des placeholders 1x1 : remplace-les par le vrai PNG avec le même nom.
+======================================================================
+
+NOM :
+P1_ENTRANCE_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+Un ancien péage souterrain : le seuil du complexe, où l'on contrôlait qui entrait.
+
+ANCIENNE FONCTION :
+Poste de contrôle des entrées.
+
+HERO FEATURE :
+Une grille de fer monumentale relevée à moitié, coincée dans son rail, qui coupe le haut de l'image.
+
+AMBIANCE / ÉCLAIRAGE :
+Dernière lumière du jour, froide et grise, venant de derrière le spectateur ; le fond de la salle est déjà noir.
+
+SORTIES NÉCESSAIRES :
+CENTER / LEFT / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un ancien péage souterrain : le seuil du complexe, où l'on contrôlait qui entrait. Ancienne fonction : Poste de contrôle des entrées. Ce que le temps en a fait : Une guérite de pierre vide à gauche avec un tabouret renversé ; au sol, des dalles usées par des milliers de pas formant deux sillons vers le fond ; un panneau de pierre brisé. HERO FEATURE (doit structurer la composition) : Une grille de fer monumentale relevée à moitié, coincée dans son rail, qui coupe le haut de l'image. ÉCLAIRAGE : Dernière lumière du jour, froide et grise, venant de derrière le spectateur ; le fond de la salle est déjà noir. Motif A discret : un cercle incomplet (symbole circulaire auquel il manque une portion). Sorties, exactement celles-ci et intégrées au lieu (gauche : petite arche de service basse près de la guérite ; fond : le passage principal sous la grille relevée ; droite : une brèche irrégulière dans le mur, plus récente que le reste.) : FOND au centre (zone x 35–65 %, y 22–54 %) ; GAUCHE (zone x 3–27 %, y 30–64 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_ENTRANCE_02.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Le hall d'entrée dont la moitié gauche s'est effondrée en diagonale.
+
+ANCIENNE FONCTION :
+Hall d'accueil et de tri des arrivants.
+
+HERO FEATURE :
+Un pan de plafond effondré en diagonale qui écrase toute la partie gauche de la salle.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière du jour rasante venant de derrière, qui accroche la poussière en suspension ; ombre totale sous l'effondrement.
+
+SORTIES NÉCESSAIRES :
+CENTER / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Le hall d'entrée dont la moitié gauche s'est effondrée en diagonale. Ancienne fonction : Hall d'accueil et de tri des arrivants. Ce que le temps en a fait : Un banc de pierre à moitié enseveli ; une lance rouillée qui dépasse des gravats ; un sac abandonné. HERO FEATURE (doit structurer la composition) : Un pan de plafond effondré en diagonale qui écrase toute la partie gauche de la salle. ÉCLAIRAGE : Lumière du jour rasante venant de derrière, qui accroche la poussière en suspension ; ombre totale sous l'effondrement. Sorties, exactement celles-ci et intégrées au lieu (fond : un large escalier de pierre usé qui descend ; droite : un couloir étroit dégagé entre deux piliers — aucune sortie à gauche (bloquée par l'effondrement).) : FOND au centre (zone x 35–65 %, y 22–54 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_ENTRANCE_03.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Un hall d'entrée bâti autour d'une paire de statues dont il ne reste que les jambes.
+
+ANCIENNE FONCTION :
+Passage cérémoniel d'entrée.
+
+HERO FEATURE :
+Deux socles de statues gigantesques dont ne subsistent que les pieds et les jambes jusqu'aux genoux, encadrant la porte du fond.
+
+AMBIANCE / ÉCLAIRAGE :
+Lueur grise du dehors derrière le spectateur ; aucune torche.
+
+SORTIES NÉCESSAIRES :
+CENTER / LEFT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un hall d'entrée bâti autour d'une paire de statues dont il ne reste que les jambes. Ancienne fonction : Passage cérémoniel d'entrée. Ce que le temps en a fait : Des fragments de bras et de tête de statue au sol côté droit ; des marques de burin sur les socles. HERO FEATURE (doit structurer la composition) : Deux socles de statues gigantesques dont ne subsistent que les pieds et les jambes jusqu'aux genoux, encadrant la porte du fond. ÉCLAIRAGE : Lueur grise du dehors derrière le spectateur ; aucune torche. Motif C discret : de petites pierres blanches parfaitement lisses incrustées dans la structure ancienne. Sorties, exactement celles-ci et intégrées au lieu (fond : porte haute et étroite entre les deux socles ; gauche : une brèche dans le mur derrière les débris de statue — aucune sortie à droite.) : FOND au centre (zone x 35–65 %, y 22–54 %) ; GAUCHE (zone x 3–27 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_ENTRANCE_HALL_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Un vestibule presque vide, long et étroit, où l'unique porte est très loin.
+
+ANCIENNE FONCTION :
+Sas d'entrée.
+
+HERO FEATURE :
+La profondeur exagérée du couloir : la porte du fond paraît minuscule.
+
+AMBIANCE / ÉCLAIRAGE :
+Un rai de lumière grise tombe d'une fissure du plafond au milieu du couloir ; le reste est sombre.
+
+SORTIES NÉCESSAIRES :
+CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un vestibule presque vide, long et étroit, où l'unique porte est très loin. Ancienne fonction : Sas d'entrée. Ce que le temps en a fait : Une seule chaussure abandonnée dans le rai de lumière ; des crochets vides sur le mur droit. HERO FEATURE (doit structurer la composition) : La profondeur exagérée du couloir : la porte du fond paraît minuscule. ÉCLAIRAGE : Un rai de lumière grise tombe d'une fissure du plafond au milieu du couloir ; le reste est sombre. Sorties, exactement celles-ci et intégrées au lieu (fond : une seule porte, petite, à peine éclairée — murs pleins à gauche et à droite.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_CORRIDOR_STRAIGHT_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Le couloir des marques : des centaines de gravures laissées par les voyageurs sur les deux murs.
+
+ANCIENNE FONCTION :
+Couloir de passage principal.
+
+HERO FEATURE :
+Les murs entièrement couverts de petites gravures (traits, noms illisibles, dates) jusqu'à hauteur d'homme.
+
+AMBIANCE / ÉCLAIRAGE :
+Une seule bougie consumée posée dans une niche à gauche ; obscurité au-delà.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Le couloir des marques : des centaines de gravures laissées par les voyageurs sur les deux murs. Ancienne fonction : Couloir de passage principal. Ce que le temps en a fait : Un morceau de craie au sol ; une gravure plus grande et plus récente que les autres. HERO FEATURE (doit structurer la composition) : Les murs entièrement couverts de petites gravures (traits, noms illisibles, dates) jusqu'à hauteur d'homme. ÉCLAIRAGE : Une seule bougie consumée posée dans une niche à gauche ; obscurité au-delà. Motif A discret : un cercle incomplet (symbole circulaire auquel il manque une portion). Sorties, exactement celles-ci et intégrées au lieu (fond : une porte simple en bois cerclée de fer.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_CORRIDOR_STRAIGHT_02.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Un couloir écrasé : le plafond descend jusqu'à obliger à se baisser.
+
+ANCIENNE FONCTION :
+Passage secondaire creusé après coup dans une structure existante.
+
+HERO FEATURE :
+Le plafond très bas et irrégulier qui descend vers le fond, avec des étais de bois pourris.
+
+AMBIANCE / ÉCLAIRAGE :
+Aucune source visible : seule la porte du fond laisse filtrer un mince trait de lumière par-dessous.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un couloir écrasé : le plafond descend jusqu'à obliger à se baisser. Ancienne fonction : Passage secondaire creusé après coup dans une structure existante. Ce que le temps en a fait : Un étai cassé ; des traces de mains noires de suie sur la pierre basse du plafond. HERO FEATURE (doit structurer la composition) : Le plafond très bas et irrégulier qui descend vers le fond, avec des étais de bois pourris. ÉCLAIRAGE : Aucune source visible : seule la porte du fond laisse filtrer un mince trait de lumière par-dessous. Motif B discret : quelques traces noires verticales sur certaines pierres, qui ne ressemblent pas à de la saleté. Sorties, exactement celles-ci et intégrées au lieu (fond : une porte basse et large, presque une trappe verticale.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_CORRIDOR_LEFT_RIGHT_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Un couloir qui bute sur un mur entièrement gravé d'un cercle incomplet géant.
+
+ANCIENNE FONCTION :
+Carrefour de distribution.
+
+HERO FEATURE :
+Le mur du fond occupé par un cercle gravé de deux mètres auquel il manque un quart.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière froide venant du passage de droite, chaude et faible venant de gauche : les deux se rencontrent sur le mur gravé.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / LEFT / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un couloir qui bute sur un mur entièrement gravé d'un cercle incomplet géant. Ancienne fonction : Carrefour de distribution. Ce que le temps en a fait : Un bol d'offrande vide au pied du mur ; des dalles polies par les pas devant la gravure. HERO FEATURE (doit structurer la composition) : Le mur du fond occupé par un cercle gravé de deux mètres auquel il manque un quart. ÉCLAIRAGE : Lumière froide venant du passage de droite, chaude et faible venant de gauche : les deux se rencontrent sur le mur gravé. Motif A discret : un cercle incomplet (symbole circulaire auquel il manque une portion). Sorties, exactement celles-ci et intégrées au lieu (gauche : arche basse d'où vient une lueur chaude ; droite : couloir large d'où vient une lumière froide — mur plein gravé au fond.) : GAUCHE (zone x 3–27 %, y 30–64 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_CORRIDOR_THREE_WAY_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Un carrefour dominé par un pilier central massif qui répartit les chemins.
+
+ANCIENNE FONCTION :
+Nœud de circulation du complexe.
+
+HERO FEATURE :
+Un pilier octogonal énorme au centre, cerclé d'anneaux de fer rouillés à hauteur d'homme (anciens points d'attache).
+
+AMBIANCE / ÉCLAIRAGE :
+Un brasero de pierre éteint au pied du pilier, quelques braises rougeoyantes encore.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER / LEFT / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un carrefour dominé par un pilier central massif qui répartit les chemins. Ancienne fonction : Nœud de circulation du complexe. Ce que le temps en a fait : Des cordes pourries pendues aux anneaux ; trois usures différentes au sol vers les trois sorties. HERO FEATURE (doit structurer la composition) : Un pilier octogonal énorme au centre, cerclé d'anneaux de fer rouillés à hauteur d'homme (anciens points d'attache). ÉCLAIRAGE : Un brasero de pierre éteint au pied du pilier, quelques braises rougeoyantes encore. Motif C discret : de petites pierres blanches parfaitement lisses incrustées dans la structure ancienne. Sorties, exactement celles-ci et intégrées au lieu (gauche : passage voûté ; fond : passage derrière le pilier, visible de chaque côté ; droite : escalier de quelques marches qui monte vers une porte.) : FOND au centre (zone x 35–65 %, y 22–54 %) ; GAUCHE (zone x 3–27 %, y 30–64 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_CORRIDOR_COLLAPSED_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Un couloir dont un mur entier s'est couché vers l'intérieur, laissant un passage en triangle.
+
+ANCIENNE FONCTION :
+Couloir de service.
+
+HERO FEATURE :
+Le mur de droite basculé en bloc, appuyé contre le mur de gauche : le passage est un triangle.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière poussiéreuse venant de la porte du fond, en contre-jour.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un couloir dont un mur entier s'est couché vers l'intérieur, laissant un passage en triangle. Ancienne fonction : Couloir de service. Ce que le temps en a fait : Une brouette de pierre écrasée sous le mur ; des outils. HERO FEATURE (doit structurer la composition) : Le mur de droite basculé en bloc, appuyé contre le mur de gauche : le passage est un triangle. ÉCLAIRAGE : Lumière poussiéreuse venant de la porte du fond, en contre-jour. Sorties, exactement celles-ci et intégrées au lieu (fond : porte visible à travers le triangle formé par le mur effondré.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_CORRIDOR_TORCHES_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+La galerie des torches : la seule qui soit encore entretenue, et personne pour le faire.
+
+ANCIENNE FONCTION :
+Galerie d'honneur menant à une zone importante.
+
+HERO FEATURE :
+Une double rangée de torches toutes allumées, parfaitement alignées jusqu'au fond.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière chaude et régulière ; ombres nettes ; c'est presque trop propre.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : La galerie des torches : la seule qui soit encore entretenue, et personne pour le faire. Ancienne fonction : Galerie d'honneur menant à une zone importante. Ce que le temps en a fait : Aucune poussière au sol contrairement au reste du complexe ; une torche fraîchement remplacée, plus claire que les autres. HERO FEATURE (doit structurer la composition) : Une double rangée de torches toutes allumées, parfaitement alignées jusqu'au fond. ÉCLAIRAGE : Lumière chaude et régulière ; ombres nettes ; c'est presque trop propre. Sorties, exactement celles-ci et intégrées au lieu (fond : double porte en bois haute, entrouverte.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_CORRIDOR_DARK_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Un couloir sans lumière où l'on ne devine que le début des murs.
+
+ANCIENNE FONCTION :
+Couloir condamné.
+
+HERO FEATURE :
+L'obscurité elle-même : 80 % de l'image est noire, seuls les premiers mètres de murs sont lisibles.
+
+AMBIANCE / ÉCLAIRAGE :
+Uniquement la lueur de la torche du héros, qui éclaire un demi-cercle au sol.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un couloir sans lumière où l'on ne devine que le début des murs. Ancienne fonction : Couloir condamné. Ce que le temps en a fait : Au bord de la lumière, une chaîne qui part vers le noir ; un panneau de pierre fixé au mur portant un symbole barré. HERO FEATURE (doit structurer la composition) : L'obscurité elle-même : 80 % de l'image est noire, seuls les premiers mètres de murs sont lisibles. ÉCLAIRAGE : Uniquement la lueur de la torche du héros, qui éclaire un demi-cercle au sol. Motif B discret : quelques traces noires verticales sur certaines pierres, qui ne ressemblent pas à de la saleté. Sorties, exactement celles-ci et intégrées au lieu (fond : une porte que l'on distingue uniquement par un fin contour lumineux.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_CORRIDOR_ROOTS_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Un couloir traversé par une racine unique, énorme, qui entre par un mur et ressort par l'autre.
+
+ANCIENNE FONCTION :
+Couloir de liaison.
+
+HERO FEATURE :
+Une seule racine de la taille d'un tronc qui traverse la salle en diagonale, de haut à gauche vers bas à droite.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lueur verdâtre très faible autour de la racine ; le reste est sombre.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un couloir traversé par une racine unique, énorme, qui entre par un mur et ressort par l'autre. Ancienne fonction : Couloir de liaison. Ce que le temps en a fait : La pierre fendue autour de la racine ; de l'eau qui goutte le long ; aucune plante là-haut ne devrait avoir de racines ici. HERO FEATURE (doit structurer la composition) : Une seule racine de la taille d'un tronc qui traverse la salle en diagonale, de haut à gauche vers bas à droite. ÉCLAIRAGE : Une lueur verdâtre très faible autour de la racine ; le reste est sombre. Sorties, exactement celles-ci et intégrées au lieu (fond : porte partiellement masquée par la racine, mais lisible.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_SMALL_ROOM_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Un ancien vestiaire : des dizaines de crochets rouillés sur un mur, un seul manteau encore accroché.
+
+ANCIENNE FONCTION :
+Vestiaire des gardes.
+
+HERO FEATURE :
+Le mur de gauche entièrement couvert de rangées de crochets de fer.
+
+AMBIANCE / ÉCLAIRAGE :
+Une petite fenêtre grillagée en hauteur laisse entrer une lumière grise sur les crochets.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un ancien vestiaire : des dizaines de crochets rouillés sur un mur, un seul manteau encore accroché. Ancienne fonction : Vestiaire des gardes. Ce que le temps en a fait : Un manteau déchiré encore pendu ; un banc bas ; un bol retourné. HERO FEATURE (doit structurer la composition) : Le mur de gauche entièrement couvert de rangées de crochets de fer. ÉCLAIRAGE : Une petite fenêtre grillagée en hauteur laisse entrer une lumière grise sur les crochets. Sorties, exactement celles-ci et intégrées au lieu (fond : porte étroite en bois.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_SMALL_ROOM_02.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une salle d'attente abandonnée : des bancs de pierre alignés face à un guichet muré.
+
+ANCIENNE FONCTION :
+Salle d'attente avant le contrôle.
+
+HERO FEATURE :
+Trois bancs de pierre alignés, dont un cassé en deux, face à un guichet grillagé muré.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lampe à huile éteinte sur le guichet ; lumière faible venant du passage de droite.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle d'attente abandonnée : des bancs de pierre alignés face à un guichet muré. Ancienne fonction : Salle d'attente avant le contrôle. Ce que le temps en a fait : Un tissu abandonné sur un banc ; des marques de doigts sur le mur là où les gens attendaient adossés. HERO FEATURE (doit structurer la composition) : Trois bancs de pierre alignés, dont un cassé en deux, face à un guichet grillagé muré. ÉCLAIRAGE : Une lampe à huile éteinte sur le guichet ; lumière faible venant du passage de droite. Motif A discret : un cercle incomplet (symbole circulaire auquel il manque une portion). Sorties, exactement celles-ci et intégrées au lieu (droite : passage derrière le dernier banc — mur du guichet au fond, pas de sortie à gauche.) : DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_SMALL_STORAGE_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une réserve où tout a été renversé d'un coup, comme par une secousse.
+
+ANCIENNE FONCTION :
+Stockage de vivres et de matériel.
+
+HERO FEATURE :
+Des étagères de pierre toutes basculées dans le même sens.
+
+AMBIANCE / ÉCLAIRAGE :
+Aucune lumière propre ; seule la torche du héros ; les recoins sont noirs.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une réserve où tout a été renversé d'un coup, comme par une secousse. Ancienne fonction : Stockage de vivres et de matériel. Ce que le temps en a fait : Des caisses ouvertes et vides ; des rats ; une trace noire verticale sur une étagère encore debout. HERO FEATURE (doit structurer la composition) : Des étagères de pierre toutes basculées dans le même sens. ÉCLAIRAGE : Aucune lumière propre ; seule la torche du héros ; les recoins sont noirs. Motif B discret : quelques traces noires verticales sur certaines pierres, qui ne ressemblent pas à de la saleté. Aucune sortie visible : murs pleins ; cul-de-sac : murs pleins partout, sans aucune porte.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_SMALL_RUINS_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une salle dont le plafond s'est effondré en laissant un seul pilier debout au milieu du chaos.
+
+ANCIENNE FONCTION :
+Petite salle de garde.
+
+HERO FEATURE :
+Un pilier intact, seul, au centre d'un sol de gravats et de poutres.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lueur grise tombe du trou du plafond directement sur le pilier.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / LEFT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle dont le plafond s'est effondré en laissant un seul pilier debout au milieu du chaos. Ancienne fonction : Petite salle de garde. Ce que le temps en a fait : Un râtelier d'armes écrasé ; un casque au sol. HERO FEATURE (doit structurer la composition) : Un pilier intact, seul, au centre d'un sol de gravats et de poutres. ÉCLAIRAGE : Une lueur grise tombe du trou du plafond directement sur le pilier. Sorties, exactement celles-ci et intégrées au lieu (gauche : passage dégagé derrière les gravats — mur effondré au fond et à droite.) : GAUCHE (zone x 3–27 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_SMALL_EMPTY_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une pièce totalement vide, parfaitement propre, où quelqu'un a nettoyé le sol récemment.
+
+ANCIENNE FONCTION :
+Cellule ou chambre de veille.
+
+HERO FEATURE :
+Le vide et la propreté : dalles nettes, murs nus, au centre une seule pierre blanche lisse incrustée dans le sol.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lueur très pâle sans source visible, venant d'en haut.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une pièce totalement vide, parfaitement propre, où quelqu'un a nettoyé le sol récemment. Ancienne fonction : Cellule ou chambre de veille. Ce que le temps en a fait : Rien d'autre. C'est ce qui inquiète. HERO FEATURE (doit structurer la composition) : Le vide et la propreté : dalles nettes, murs nus, au centre une seule pierre blanche lisse incrustée dans le sol. ÉCLAIRAGE : Une lueur très pâle sans source visible, venant d'en haut. Motif C discret : de petites pierres blanches parfaitement lisses incrustées dans la structure ancienne. Aucune sortie visible : murs pleins ; cul-de-sac : murs pleins partout, sans aucune porte.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GREAT_HALL_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+Le hall des bannières : de longues bannières en lambeaux pendent encore des voûtes.
+
+ANCIENNE FONCTION :
+Salle de rassemblement.
+
+HERO FEATURE :
+Quatre bannières immenses déchirées suspendues au plafond, qui descendent presque jusqu'au sol.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lumière froide tombe d'une ouverture au plafond derrière les bannières, en contre-jour.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER / LEFT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Le hall des bannières : de longues bannières en lambeaux pendent encore des voûtes. Ancienne fonction : Salle de rassemblement. Ce que le temps en a fait : Un cercle incomplet brodé sur la seule bannière encore lisible ; une estrade de pierre vide au fond. HERO FEATURE (doit structurer la composition) : Quatre bannières immenses déchirées suspendues au plafond, qui descendent presque jusqu'au sol. ÉCLAIRAGE : Une lumière froide tombe d'une ouverture au plafond derrière les bannières, en contre-jour. Motif A discret : un cercle incomplet (symbole circulaire auquel il manque une portion). Sorties, exactement celles-ci et intégrées au lieu (fond : grande porte sous l'estrade ; gauche : arche entre deux bannières.) : FOND au centre (zone x 35–65 %, y 22–54 %) ; GAUCHE (zone x 3–27 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GREAT_HALL_02.png
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+Une salle des archives détruites : des rayonnages de pierre à perte de vue, tous vides.
+
+ANCIENNE FONCTION :
+Archives du poste de contrôle.
+
+HERO FEATURE :
+Des rayonnages de pierre de trois niveaux qui montent jusqu'au plafond, avec des échelles brisées.
+
+AMBIANCE / ÉCLAIRAGE :
+Des bougies éteintes sur un pupitre central ; lumière faible depuis les trois sorties.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER / LEFT / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle des archives détruites : des rayonnages de pierre à perte de vue, tous vides. Ancienne fonction : Archives du poste de contrôle. Ce que le temps en a fait : Des tablettes brisées au sol ; une seule encore entière sur le pupitre. HERO FEATURE (doit structurer la composition) : Des rayonnages de pierre de trois niveaux qui montent jusqu'au plafond, avec des échelles brisées. ÉCLAIRAGE : Des bougies éteintes sur un pupitre central ; lumière faible depuis les trois sorties. Sorties, exactement celles-ci et intégrées au lieu (gauche : porte entre deux rayonnages ; fond : porte au bout de l'allée centrale ; droite : escalier qui monte derrière un rayonnage effondré.) : FOND au centre (zone x 35–65 %, y 22–54 %) ; GAUCHE (zone x 3–27 %, y 30–64 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_PILLAR_HALL_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Le passage aux piliers : des colonnes si rapprochées qu'elles forment une forêt de pierre.
+
+ANCIENNE FONCTION :
+Soutènement d'une structure supérieure.
+
+HERO FEATURE :
+Une forêt de piliers fins et très rapprochés qui bouchent la vue, avec de la profondeur entre eux.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière rasante venant de la droite qui fait des rayures d'ombre entre les piliers.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Le passage aux piliers : des colonnes si rapprochées qu'elles forment une forêt de pierre. Ancienne fonction : Soutènement d'une structure supérieure. Ce que le temps en a fait : Une corde tendue entre deux piliers avec des lambeaux de tissu ; un pilier fendu portant une trace noire. HERO FEATURE (doit structurer la composition) : Une forêt de piliers fins et très rapprochés qui bouchent la vue, avec de la profondeur entre eux. ÉCLAIRAGE : Lumière rasante venant de la droite qui fait des rayures d'ombre entre les piliers. Motif B discret : quelques traces noires verticales sur certaines pierres, qui ne ressemblent pas à de la saleté. Sorties, exactement celles-ci et intégrées au lieu (fond : porte visible dans l'axe d'une allée ; droite : passage entre les derniers piliers d'où vient la lumière.) : FOND au centre (zone x 35–65 %, y 22–54 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_TORCH_HALL_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+La salle du treuil : une roue de bois et de fer gigantesque, bloquée, occupe la moitié de l'espace.
+
+ANCIENNE FONCTION :
+Salle mécanique (levage d'une grille ou d'une plateforme).
+
+HERO FEATURE :
+Une roue de treuil de trois mètres de diamètre, inclinée, avec des chaînes qui montent dans le plafond.
+
+AMBIANCE / ÉCLAIRAGE :
+Un brasero allumé au pied de la roue ; ombres tournantes des rayons sur les murs.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : La salle du treuil : une roue de bois et de fer gigantesque, bloquée, occupe la moitié de l'espace. Ancienne fonction : Salle mécanique (levage d'une grille ou d'une plateforme). Ce que le temps en a fait : Des chaînes détendues au sol ; un levier cassé ; des cales de bois. HERO FEATURE (doit structurer la composition) : Une roue de treuil de trois mètres de diamètre, inclinée, avec des chaînes qui montent dans le plafond. ÉCLAIRAGE : Un brasero allumé au pied de la roue ; ombres tournantes des rayons sur les murs. Motif C discret : de petites pierres blanches parfaitement lisses incrustées dans la structure ancienne. Sorties, exactement celles-ci et intégrées au lieu (fond : porte derrière la roue, visible entre les rayons.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_BROKEN_HALL_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une grande salle coupée en deux par une fissure béante qui traverse mur et sol.
+
+ANCIENNE FONCTION :
+Salle de réunion.
+
+HERO FEATURE :
+Une fissure noire d'un mètre de large qui part du plafond, descend le mur du fond et traverse le sol vers la droite.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lueur bleutée très faible monte de la fissure ; le reste est sombre.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / LEFT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une grande salle coupée en deux par une fissure béante qui traverse mur et sol. Ancienne fonction : Salle de réunion. Ce que le temps en a fait : Une grande table de pierre coupée en deux par la fissure ; des sièges renversés. HERO FEATURE (doit structurer la composition) : Une fissure noire d'un mètre de large qui part du plafond, descend le mur du fond et traverse le sol vers la droite. ÉCLAIRAGE : Une lueur bleutée très faible monte de la fissure ; le reste est sombre. Sorties, exactement celles-ci et intégrées au lieu (gauche : porte intacte — la droite et le fond sont coupés par la fissure, infranchissables.) : GAUCHE (zone x 3–27 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_INTERSECTION_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+La salle de la grille : une grille monumentale sépare visuellement la pièce en deux, relevée juste assez pour passer.
+
+ANCIENNE FONCTION :
+Second poste de contrôle intérieur.
+
+HERO FEATURE :
+Une grille de fer de toute la largeur, relevée d'un mètre cinquante, avec ses contrepoids de pierre visibles.
+
+AMBIANCE / ÉCLAIRAGE :
+Torches uniquement de l'autre côté de la grille : les barreaux projettent de longues ombres vers le spectateur.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER / LEFT / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : La salle de la grille : une grille monumentale sépare visuellement la pièce en deux, relevée juste assez pour passer. Ancienne fonction : Second poste de contrôle intérieur. Ce que le temps en a fait : Un poste de garde vide à droite avec une chaise ; une trace de sang ancienne devant le passage de gauche. HERO FEATURE (doit structurer la composition) : Une grille de fer de toute la largeur, relevée d'un mètre cinquante, avec ses contrepoids de pierre visibles. ÉCLAIRAGE : Torches uniquement de l'autre côté de la grille : les barreaux projettent de longues ombres vers le spectateur. Sorties, exactement celles-ci et intégrées au lieu (gauche : passage sous la grille côté gauche, avec une trace au sol ; fond : passage sous la grille au centre ; droite : petite porte de service à côté du poste de garde, hors de la grille.) : FOND au centre (zone x 35–65 %, y 22–54 %) ; GAUCHE (zone x 3–27 %, y 30–64 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_INTERSECTION_02.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une bifurcation où les deux chemins ont des climats opposés : humide et noir à gauche, sec et chaud à droite.
+
+ANCIENNE FONCTION :
+Jonction entre deux quartiers du complexe.
+
+HERO FEATURE :
+Le contraste des deux passages, séparés par un mur central avec une niche vide de statue.
+
+AMBIANCE / ÉCLAIRAGE :
+Gauche : reflets d'eau et obscurité ; droite : lueur orangée et sèche ; le centre est neutre.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / LEFT / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une bifurcation où les deux chemins ont des climats opposés : humide et noir à gauche, sec et chaud à droite. Ancienne fonction : Jonction entre deux quartiers du complexe. Ce que le temps en a fait : De l'eau qui suinte et coule vers la gauche ; du sable sec vers la droite ; dans la niche, seulement les pieds d'une statuette. HERO FEATURE (doit structurer la composition) : Le contraste des deux passages, séparés par un mur central avec une niche vide de statue. ÉCLAIRAGE : Gauche : reflets d'eau et obscurité ; droite : lueur orangée et sèche ; le centre est neutre. Sorties, exactement celles-ci et intégrées au lieu (gauche : passage voûté humide avec de l'eau au sol ; droite : passage sec d'où vient une lueur chaude — niche murale au fond, pas de sortie.) : GAUCHE (zone x 3–27 %, y 30–64 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_FORK_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Un couloir qui fourche autour d'un énorme bloc de pierre tombé, trop gros pour être dégagé.
+
+ANCIENNE FONCTION :
+Couloir de liaison.
+
+HERO FEATURE :
+Un bloc de pierre cubique de deux mètres au centre, tombé du plafond, autour duquel le passage se divise.
+
+AMBIANCE / ÉCLAIRAGE :
+Faible lumière venant des deux côtés du bloc.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / LEFT / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un couloir qui fourche autour d'un énorme bloc de pierre tombé, trop gros pour être dégagé. Ancienne fonction : Couloir de liaison. Ce que le temps en a fait : Des traces de coups de pioche sur le bloc, abandonnées ; un outil cassé. HERO FEATURE (doit structurer la composition) : Un bloc de pierre cubique de deux mètres au centre, tombé du plafond, autour duquel le passage se divise. ÉCLAIRAGE : Faible lumière venant des deux côtés du bloc. Sorties, exactement celles-ci et intégrées au lieu (gauche et droite : les deux côtés du bloc — le bloc bouche le fond.) : GAUCHE (zone x 3–27 %, y 30–64 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_MULTI_DOOR_ROOM_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une salle de tri où trois portes identiques portent chacune un symbole différent.
+
+ANCIENNE FONCTION :
+Salle de tri / répartition des arrivants.
+
+HERO FEATURE :
+Trois portes de bois identiques, alignées, chacune surmontée d'un symbole gravé différent (dont un cercle incomplet).
+
+AMBIANCE / ÉCLAIRAGE :
+Une lampe centrale suspendue, éteinte ; lumière pâle uniforme sans source nette.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER / LEFT / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle de tri où trois portes identiques portent chacune un symbole différent. Ancienne fonction : Salle de tri / répartition des arrivants. Ce que le temps en a fait : Trois usures différentes au sol devant chaque porte ; une des portes porte des traces d'ongles. HERO FEATURE (doit structurer la composition) : Trois portes de bois identiques, alignées, chacune surmontée d'un symbole gravé différent (dont un cercle incomplet). ÉCLAIRAGE : Une lampe centrale suspendue, éteinte ; lumière pâle uniforme sans source nette. Motif A discret : un cercle incomplet (symbole circulaire auquel il manque une portion). Sorties, exactement celles-ci et intégrées au lieu (gauche, fond, droite : les trois portes, régulièrement espacées.) : FOND au centre (zone x 35–65 %, y 22–54 %) ; GAUCHE (zone x 3–27 %, y 30–64 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_MULTI_DOOR_ROOM_02.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Un ancien dortoir dont les alcôves de couchage ont été murées une à une.
+
+ANCIENNE FONCTION :
+Dortoir des gardes.
+
+HERO FEATURE :
+Une rangée d'alcôves murées de manière grossière, sauf trois qui sont restées ouvertes.
+
+AMBIANCE / ÉCLAIRAGE :
+Une bougie allumée dans une alcôve murée à moitié ; obscurité générale.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER / LEFT / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un ancien dortoir dont les alcôves de couchage ont été murées une à une. Ancienne fonction : Dortoir des gardes. Ce que le temps en a fait : Des paillasses pourries dans les alcôves ouvertes ; des noms gravés au-dessus de chaque alcôve. HERO FEATURE (doit structurer la composition) : Une rangée d'alcôves murées de manière grossière, sauf trois qui sont restées ouvertes. ÉCLAIRAGE : Une bougie allumée dans une alcôve murée à moitié ; obscurité générale. Sorties, exactement celles-ci et intégrées au lieu (gauche, fond, droite : les trois alcôves restées ouvertes, chacune un passage — les autres sont visiblement murées.) : FOND au centre (zone x 35–65 %, y 22–54 %) ; GAUCHE (zone x 3–27 %, y 30–64 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_STAIRS_DOWN_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+L'escalier monumental : des marches de six mètres de large qui descendent dans le noir.
+
+ANCIENNE FONCTION :
+Descente principale vers les niveaux inférieurs.
+
+HERO FEATURE :
+Un escalier gigantesque occupant toute la largeur, dont les marches deviennent invisibles dans l'obscurité.
+
+AMBIANCE / ÉCLAIRAGE :
+Deux braseros de pierre allumés au sommet des marches ; le bas est totalement noir.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : L'escalier monumental : des marches de six mètres de large qui descendent dans le noir. Ancienne fonction : Descente principale vers les niveaux inférieurs. Ce que le temps en a fait : Une rampe de pierre brisée ; une petite pierre blanche lisse incrustée sur chaque première marche. HERO FEATURE (doit structurer la composition) : Un escalier gigantesque occupant toute la largeur, dont les marches deviennent invisibles dans l'obscurité. ÉCLAIRAGE : Deux braseros de pierre allumés au sommet des marches ; le bas est totalement noir. Motif C discret : de petites pierres blanches parfaitement lisses incrustées dans la structure ancienne. Sorties, exactement celles-ci et intégrées au lieu (fond : l'escalier lui-même est la sortie, la zone centrale montre la descente.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_STAIRS_DOWN_02.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Un escalier de service si étroit que les murs frottent les épaules.
+
+ANCIENNE FONCTION :
+Escalier de service.
+
+HERO FEATURE :
+L'étroitesse extrême : le passage fait moins d'un mètre de large, les marches sont raides.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lueur tremblante vient d'en bas, comme une torche loin sous nos pieds.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un escalier de service si étroit que les murs frottent les épaules. Ancienne fonction : Escalier de service. Ce que le temps en a fait : Des marches creusées par l'usage ; une corde de rampe pourrie. HERO FEATURE (doit structurer la composition) : L'étroitesse extrême : le passage fait moins d'un mètre de large, les marches sont raides. ÉCLAIRAGE : Une lueur tremblante vient d'en bas, comme une torche loin sous nos pieds. Sorties, exactement celles-ci et intégrées au lieu (fond : l'escalier étroit qui descend, centré.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_STAIRS_BROKEN_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+L'escalier impossible : effondré au milieu, il crée deux niveaux reliés par une planche.
+
+ANCIENNE FONCTION :
+Descente secondaire.
+
+HERO FEATURE :
+Un trou béant au milieu de l'escalier, avec une planche posée en travers.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière venant d'en bas, à travers le trou.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : L'escalier impossible : effondré au milieu, il crée deux niveaux reliés par une planche. Ancienne fonction : Descente secondaire. Ce que le temps en a fait : Des marches tombées visibles au fond du trou ; des traces de pas récentes sur la planche. HERO FEATURE (doit structurer la composition) : Un trou béant au milieu de l'escalier, avec une planche posée en travers. ÉCLAIRAGE : Lumière venant d'en bas, à travers le trou. Sorties, exactement celles-ci et intégrées au lieu (fond : la suite de l'escalier de l'autre côté du trou.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_VERTICAL_PASSAGE_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Un ancien monte-charge : une cage vide et ses cordes, avec l'échelle que les gens utilisent depuis.
+
+ANCIENNE FONCTION :
+Monte-charge pour les livraisons.
+
+HERO FEATURE :
+Une cage de monte-charge en bois et fer, vide, suspendue à des cordes, avec une échelle scellée à côté.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière descendante par le puits du monte-charge.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un ancien monte-charge : une cage vide et ses cordes, avec l'échelle que les gens utilisent depuis. Ancienne fonction : Monte-charge pour les livraisons. Ce que le temps en a fait : Un contrepoids de pierre au sol ; des caisses cassées ; une roue de poulie. HERO FEATURE (doit structurer la composition) : Une cage de monte-charge en bois et fer, vide, suspendue à des cordes, avec une échelle scellée à côté. ÉCLAIRAGE : Lumière descendante par le puits du monte-charge. Sorties, exactement celles-ci et intégrées au lieu (fond : l'échelle et l'ouverture du puits.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_SMALL_BRIDGE_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+Un pont de pierre au-dessus d'une fosse d'où monte une lueur, et la sortie de l'autre côté.
+
+ANCIENNE FONCTION :
+Passage au-dessus d'un ancien bassin ou d'une fosse de drainage.
+
+HERO FEATURE :
+Le pont étroit sans garde-fou, et sous lui la fosse noire dont on ne voit pas le fond.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lueur bleu-vert monte de la fosse et éclaire le pont par-dessous.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un pont de pierre au-dessus d'une fosse d'où monte une lueur, et la sortie de l'autre côté. Ancienne fonction : Passage au-dessus d'un ancien bassin ou d'une fosse de drainage. Ce que le temps en a fait : Une chaîne qui pend dans la fosse ; un pilier de pont fissuré. HERO FEATURE (doit structurer la composition) : Le pont étroit sans garde-fou, et sous lui la fosse noire dont on ne voit pas le fond. ÉCLAIRAGE : Une lueur bleu-vert monte de la fosse et éclaire le pont par-dessous. Motif B discret : quelques traces noires verticales sur certaines pierres, qui ne ressemblent pas à de la saleté. Sorties, exactement celles-ci et intégrées au lieu (fond : porte de l'autre côté du pont.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_COMBAT_ROOM_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une ancienne armurerie pillée : les râteliers sont vides, sauf un.
+
+ANCIENNE FONCTION :
+Armurerie.
+
+HERO FEATURE :
+Un mur entier de râteliers d'armes vides, et une seule épée encore en place, cassée.
+
+AMBIANCE / ÉCLAIRAGE :
+Une torche unique près de la porte du fond ; le reste de la salle est dans la pénombre.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une ancienne armurerie pillée : les râteliers sont vides, sauf un. Ancienne fonction : Armurerie. Ce que le temps en a fait : Une enclume ; un bouclier fendu ; des cercles incomplets gravés sur les râteliers. HERO FEATURE (doit structurer la composition) : Un mur entier de râteliers d'armes vides, et une seule épée encore en place, cassée. ÉCLAIRAGE : Une torche unique près de la porte du fond ; le reste de la salle est dans la pénombre. Motif A discret : un cercle incomplet (symbole circulaire auquel il manque une portion). Sorties, exactement celles-ci et intégrées au lieu (fond : porte renforcée de fer. Laisser le centre de la salle dégagé (une créature y apparaît par-dessus).) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_COMBAT_ROOM_02.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une ancienne cuisine au plafond bas, avec un four de pierre éventré.
+
+ANCIENNE FONCTION :
+Cuisine du poste.
+
+HERO FEATURE :
+Un four de pierre massif à gauche, dont la gueule noire fait la moitié du mur.
+
+AMBIANCE / ÉCLAIRAGE :
+Braises encore rouges au fond du four ; c'est la seule lumière.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une ancienne cuisine au plafond bas, avec un four de pierre éventré. Ancienne fonction : Cuisine du poste. Ce que le temps en a fait : Des marmites renversées ; des crochets à viande au plafond ; des os d'animaux. HERO FEATURE (doit structurer la composition) : Un four de pierre massif à gauche, dont la gueule noire fait la moitié du mur. ÉCLAIRAGE : Braises encore rouges au fond du four ; c'est la seule lumière. Sorties, exactement celles-ci et intégrées au lieu (droite : porte basse à côté du four — le fond et la gauche sont des murs pleins. Laisser le centre dégagé.) : DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_COMBAT_HALL_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+La salle des chaînes : un mécanisme mural relié à des chaînes qui montent dans le plafond.
+
+ANCIENNE FONCTION :
+Salle mécanique (commande de grilles à distance).
+
+HERO FEATURE :
+Un mécanisme d'engrenages de pierre encastré dans le mur de droite, avec cinq chaînes qui montent verticalement et disparaissent dans le plafond.
+
+AMBIANCE / ÉCLAIRAGE :
+Lueur rougeâtre d'un brasero à gauche ; les chaînes brillent par endroits.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER / LEFT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : La salle des chaînes : un mécanisme mural relié à des chaînes qui montent dans le plafond. Ancienne fonction : Salle mécanique (commande de grilles à distance). Ce que le temps en a fait : Un maillon de chaîne au sol aussi grand qu'un torse ; un engrenage bloqué par une pierre coincée. HERO FEATURE (doit structurer la composition) : Un mécanisme d'engrenages de pierre encastré dans le mur de droite, avec cinq chaînes qui montent verticalement et disparaissent dans le plafond. ÉCLAIRAGE : Lueur rougeâtre d'un brasero à gauche ; les chaînes brillent par endroits. Sorties, exactement celles-ci et intégrées au lieu (fond : porte entre deux chaînes ; gauche : arche près du brasero. Laisser le centre dégagé.) : FOND au centre (zone x 35–65 %, y 22–54 %) ; GAUCHE (zone x 3–27 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_AMBUSH_ROOM_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une salle de surveillance percée de meurtrières intérieures : on est observé de tous les côtés.
+
+ANCIENNE FONCTION :
+Poste de surveillance.
+
+HERO FEATURE :
+Des meurtrières étroites dans les trois murs, à hauteur d'yeux, toutes noires.
+
+AMBIANCE / ÉCLAIRAGE :
+Aucune lumière propre ; la torche du héros ; un point de lumière derrière une seule meurtrière.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle de surveillance percée de meurtrières intérieures : on est observé de tous les côtés. Ancienne fonction : Poste de surveillance. Ce que le temps en a fait : Des traces de pas dans la poussière qui s'arrêtent net au centre ; une flèche fichée dans le sol. HERO FEATURE (doit structurer la composition) : Des meurtrières étroites dans les trois murs, à hauteur d'yeux, toutes noires. ÉCLAIRAGE : Aucune lumière propre ; la torche du héros ; un point de lumière derrière une seule meurtrière. Sorties, exactement celles-ci et intégrées au lieu (fond : porte sous une meurtrière. Laisser le centre dégagé.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GUARD_POST_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Un ancien poste de garde intérieur, petite pièce défensive qui commande deux passages.
+
+ANCIENNE FONCTION :
+Poste de garde.
+
+HERO FEATURE :
+Une table de garde renversée en barricade au centre, derrière laquelle on voit les deux sorties.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lanterne au sol encore allumée, couchée.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un ancien poste de garde intérieur, petite pièce défensive qui commande deux passages. Ancienne fonction : Poste de garde. Ce que le temps en a fait : Un tabouret ; un jeu de dés ; une lance appuyée au mur ; une trace noire verticale près de la porte de droite. HERO FEATURE (doit structurer la composition) : Une table de garde renversée en barricade au centre, derrière laquelle on voit les deux sorties. ÉCLAIRAGE : Une lanterne au sol encore allumée, couchée. Motif B discret : quelques traces noires verticales sur certaines pierres, qui ne ressemblent pas à de la saleté. Sorties, exactement celles-ci et intégrées au lieu (fond : porte à barreaux ouverte ; droite : passage voûté. Laisser le centre dégagé.) : FOND au centre (zone x 35–65 %, y 22–54 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_TREASURE_SMALL_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Une niche de dépôt : une alcôve creusée pour ranger une seule chose de valeur.
+
+ANCIENNE FONCTION :
+Niche de consigne.
+
+HERO FEATURE :
+L'alcôve elle-même, taillée avec soin, encadrée de deux pierres blanches lisses.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lueur chaude et douce sans source dans l'alcôve.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une niche de dépôt : une alcôve creusée pour ranger une seule chose de valeur. Ancienne fonction : Niche de consigne. Ce que le temps en a fait : Une clé cassée pendue à un crochet ; le sol devant l'alcôve est poli. Laisser le centre bas dégagé pour le coffre. HERO FEATURE (doit structurer la composition) : L'alcôve elle-même, taillée avec soin, encadrée de deux pierres blanches lisses. ÉCLAIRAGE : Une lueur chaude et douce sans source dans l'alcôve. Motif C discret : de petites pierres blanches parfaitement lisses incrustées dans la structure ancienne. Aucune sortie visible : murs pleins ; cul-de-sac : murs pleins, l'alcôve n'est pas une sortie.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_TREASURE_HALL_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une salle de trésorerie avec un socle central et des murs percés de niches vides.
+
+ANCIENNE FONCTION :
+Trésorerie du poste.
+
+HERO FEATURE :
+Un socle de pierre central surélevé de deux marches, sous une voûte plus haute que le reste.
+
+AMBIANCE / ÉCLAIRAGE :
+Une ouverture au sommet de la voûte laisse tomber un rai de lumière exactement sur le socle.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle de trésorerie avec un socle central et des murs percés de niches vides. Ancienne fonction : Trésorerie du poste. Ce que le temps en a fait : Des niches murales vidées ; des chaînes coupées ; une porte-grille tordue à l'entrée. Laisser le socle dégagé pour le coffre. HERO FEATURE (doit structurer la composition) : Un socle de pierre central surélevé de deux marches, sous une voûte plus haute que le reste. ÉCLAIRAGE : Une ouverture au sommet de la voûte laisse tomber un rai de lumière exactement sur le socle. Sorties, exactement celles-ci et intégrées au lieu (fond : porte derrière le socle.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_ABANDONED_CHEST_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une zone de livraison abandonnée : des caisses empilées et une charrette à bras.
+
+ANCIENNE FONCTION :
+Zone de réception des marchandises.
+
+HERO FEATURE :
+Une charrette à bras de pierre et de bois, renversée, roues en l'air, à droite.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière poussiéreuse venant d'une trappe au plafond à gauche.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / LEFT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une zone de livraison abandonnée : des caisses empilées et une charrette à bras. Ancienne fonction : Zone de réception des marchandises. Ce que le temps en a fait : Des caisses ouvertes ; des sacs éventrés ; des étiquettes de pierre. Laisser le centre bas dégagé pour le coffre. HERO FEATURE (doit structurer la composition) : Une charrette à bras de pierre et de bois, renversée, roues en l'air, à droite. ÉCLAIRAGE : Lumière poussiéreuse venant d'une trappe au plafond à gauche. Sorties, exactement celles-ci et intégrées au lieu (gauche : large porte de livraison à double battant — mur plein au fond.) : GAUCHE (zone x 3–27 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_CURSED_CHEST_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une petite chapelle noircie, comme si quelque chose y avait brûlé sans feu.
+
+ANCIENNE FONCTION :
+Petit sanctuaire privé.
+
+HERO FEATURE :
+Les murs noircis en éventail autour du centre de la salle, comme une explosion de suie.
+
+AMBIANCE / ÉCLAIRAGE :
+Aucune lumière ; les murs absorbent la torche du héros.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une petite chapelle noircie, comme si quelque chose y avait brûlé sans feu. Ancienne fonction : Petit sanctuaire privé. Ce que le temps en a fait : Des offrandes calcinées ; des traces noires verticales partout ; un cercle incomplet tracé au sol. Laisser le centre bas dégagé pour le coffre. HERO FEATURE (doit structurer la composition) : Les murs noircis en éventail autour du centre de la salle, comme une explosion de suie. ÉCLAIRAGE : Aucune lumière ; les murs absorbent la torche du héros. Motif B discret : quelques traces noires verticales sur certaines pierres, qui ne ressemblent pas à de la saleté. Aucune sortie visible : murs pleins ; cul-de-sac : murs pleins partout.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_HIDDEN_TREASURE_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une cache creusée à la hâte derrière un mur, jamais rouverte.
+
+ANCIENNE FONCTION :
+Cache clandestine.
+
+HERO FEATURE :
+Une cavité irrégulière, taillée grossièrement, qui contraste avec la pierre régulière autour.
+
+AMBIANCE / ÉCLAIRAGE :
+Une seule bougie neuve, éteinte, posée à l'entrée de la cache.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une cache creusée à la hâte derrière un mur, jamais rouverte. Ancienne fonction : Cache clandestine. Ce que le temps en a fait : Un pic abandonné ; une couverture pliée. Laisser le centre bas dégagé pour le tas de trésor. HERO FEATURE (doit structurer la composition) : Une cavité irrégulière, taillée grossièrement, qui contraste avec la pierre régulière autour. ÉCLAIRAGE : Une seule bougie neuve, éteinte, posée à l'entrée de la cache. Aucune sortie visible : murs pleins ; cul-de-sac : murs pleins partout.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_MERCHANT_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Un ancien guichet de change transformé en étal de fortune.
+
+ANCIENNE FONCTION :
+Guichet de change / comptoir.
+
+HERO FEATURE :
+Un comptoir de pierre en arc de cercle avec sa grille de guichet relevée.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lanterne posée sur le comptoir éclaire chaudement le centre ; le reste est sombre.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un ancien guichet de change transformé en étal de fortune. Ancienne fonction : Guichet de change / comptoir. Ce que le temps en a fait : Un tissu étalé sur le comptoir ; des fioles vides ; une balance de pierre. Laisser le centre dégagé pour le marchand. HERO FEATURE (doit structurer la composition) : Un comptoir de pierre en arc de cercle avec sa grille de guichet relevée. ÉCLAIRAGE : Une lanterne posée sur le comptoir éclaire chaudement le centre ; le reste est sombre. Sorties, exactement celles-ci et intégrées au lieu (fond : porte derrière le comptoir.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_STATUE_SMALL_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Le couloir de la tête : la tête d'une statue gigantesque tombée au sol, qu'il faut contourner.
+
+ANCIENNE FONCTION :
+Couloir cérémoniel.
+
+HERO FEATURE :
+Une tête de statue de deux mètres, couchée sur le côté, au visage effacé, qui occupe la moitié droite.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lueur grise vient d'en haut, à l'endroit où la tête est tombée.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Le couloir de la tête : la tête d'une statue gigantesque tombée au sol, qu'il faut contourner. Ancienne fonction : Couloir cérémoniel. Ce que le temps en a fait : Le cou brisé visible en hauteur sur le mur de droite ; des éclats. HERO FEATURE (doit structurer la composition) : Une tête de statue de deux mètres, couchée sur le côté, au visage effacé, qui occupe la moitié droite. ÉCLAIRAGE : Une lueur grise vient d'en haut, à l'endroit où la tête est tombée. Sorties, exactement celles-ci et intégrées au lieu (fond : porte visible à gauche de la tête.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_STATUE_GUARDIAN_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+Le passage du veilleur : un couloir construit autour d'une statue monumentale qu'on longe entre ses jambes.
+
+ANCIENNE FONCTION :
+Passage cérémoniel / de contrôle.
+
+HERO FEATURE :
+La statue gigantesque dont on ne voit que les jambes et le bas du torse, le passage se faisant entre ses pieds.
+
+AMBIANCE / ÉCLAIRAGE :
+Contre-jour : la lumière vient de derrière la statue, par la porte.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Le passage du veilleur : un couloir construit autour d'une statue monumentale qu'on longe entre ses jambes. Ancienne fonction : Passage cérémoniel / de contrôle. Ce que le temps en a fait : Des offrandes desséchées entre les pieds ; des pierres blanches lisses incrustées dans le socle. Laisser le centre dégagé pour le sprite de la statue gardienne (plus petite, au premier plan). HERO FEATURE (doit structurer la composition) : La statue gigantesque dont on ne voit que les jambes et le bas du torse, le passage se faisant entre ses pieds. ÉCLAIRAGE : Contre-jour : la lumière vient de derrière la statue, par la porte. Motif C discret : de petites pierres blanches parfaitement lisses incrustées dans la structure ancienne. Sorties, exactement celles-ci et intégrées au lieu (fond : porte entre les pieds de la statue.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_STATUE_SLEEPING_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une salle de veille : un socle vide et, tout autour, les traces de ceux qui attendaient que la statue s'éveille.
+
+ANCIENNE FONCTION :
+Salle de veille rituelle.
+
+HERO FEATURE :
+Un socle de pierre circulaire central, entouré de bougies consumées en cercle.
+
+AMBIANCE / ÉCLAIRAGE :
+Des bougies : la moitié encore allumées, en cercle au sol ; le reste dans l'ombre.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle de veille : un socle vide et, tout autour, les traces de ceux qui attendaient que la statue s'éveille. Ancienne fonction : Salle de veille rituelle. Ce que le temps en a fait : Des coussins pourris ; des bols ; un cercle incomplet gravé sur le socle. Laisser le socle dégagé pour le sprite de la statue endormie. HERO FEATURE (doit structurer la composition) : Un socle de pierre circulaire central, entouré de bougies consumées en cercle. ÉCLAIRAGE : Des bougies : la moitié encore allumées, en cercle au sol ; le reste dans l'ombre. Motif A discret : un cercle incomplet (symbole circulaire auquel il manque une portion). Sorties, exactement celles-ci et intégrées au lieu (fond : porte derrière le socle.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_STATUE_BROKEN_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Le gardien décapité : une statue en morceaux dont le bras géant barre le sol.
+
+ANCIENNE FONCTION :
+Salle de garde cérémonielle.
+
+HERO FEATURE :
+Un bras de statue gigantesque tombé en travers de la salle, la main ouverte vers le spectateur.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière venant de la droite, rasante sur le bras.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Le gardien décapité : une statue en morceaux dont le bras géant barre le sol. Ancienne fonction : Salle de garde cérémonielle. Ce que le temps en a fait : Le torse brisé contre le mur du fond ; des éclats récents ; une trace noire sur la paume de la main. HERO FEATURE (doit structurer la composition) : Un bras de statue gigantesque tombé en travers de la salle, la main ouverte vers le spectateur. ÉCLAIRAGE : Lumière venant de la droite, rasante sur le bras. Motif B discret : quelques traces noires verticales sur certaines pierres, qui ne ressemblent pas à de la saleté. Sorties, exactement celles-ci et intégrées au lieu (droite : passage au-dessus du poignet du bras — mur plein au fond.) : DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_ALTAR_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+La salle de la cloche : une cloche de bronze verdi suspendue au-dessus d'une dalle.
+
+ANCIENNE FONCTION :
+Sanctuaire des passages (on sonnait avant de descendre).
+
+HERO FEATURE :
+Une cloche de deux mètres suspendue par des chaînes au centre, juste au-dessus d'une dalle rituelle.
+
+AMBIANCE / ÉCLAIRAGE :
+Lueur pâle venant d'en haut le long des chaînes.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : La salle de la cloche : une cloche de bronze verdi suspendue au-dessus d'une dalle. Ancienne fonction : Sanctuaire des passages (on sonnait avant de descendre). Ce que le temps en a fait : Une corde de cloche coupée ; des traces de sang séché sur la dalle. Laisser la dalle sous la cloche dégagée pour le sprite de l'autel. HERO FEATURE (doit structurer la composition) : Une cloche de deux mètres suspendue par des chaînes au centre, juste au-dessus d'une dalle rituelle. ÉCLAIRAGE : Lueur pâle venant d'en haut le long des chaînes. Sorties, exactement celles-ci et intégrées au lieu (fond : porte derrière la cloche.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_ALTAR_CURSED_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une fosse de pierre fermée par une grille au sol, et quelque chose qu'on a voulu enfermer dedans.
+
+ANCIENNE FONCTION :
+Prison temporaire / oubliette.
+
+HERO FEATURE :
+Une grille ronde au sol au centre, enchaînée, au-dessus d'un trou noir.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lueur rouge très faible monte de la grille.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une fosse de pierre fermée par une grille au sol, et quelque chose qu'on a voulu enfermer dedans. Ancienne fonction : Prison temporaire / oubliette. Ce que le temps en a fait : Des chaînes ; des marques de griffes autour de la grille ; des traces noires verticales sur les murs. Laisser le centre dégagé pour le sprite de l'autel maudit. HERO FEATURE (doit structurer la composition) : Une grille ronde au sol au centre, enchaînée, au-dessus d'un trou noir. ÉCLAIRAGE : Une lueur rouge très faible monte de la grille. Motif B discret : quelques traces noires verticales sur certaines pierres, qui ne ressemblent pas à de la saleté. Aucune sortie visible : murs pleins ; cul-de-sac : murs pleins partout.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_LOCKED_DOOR_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une antichambre de sécurité : couloir court, sol en pente, et l'encadrement d'une porte blindée.
+
+ANCIENNE FONCTION :
+Sas de sécurité vers une réserve.
+
+HERO FEATURE :
+L'encadrement de porte massif, en pierre et fer, avec des gonds énormes, qui domine le fond.
+
+AMBIANCE / ÉCLAIRAGE :
+Deux lampes murales éteintes de part et d'autre ; lueur faible venant du couloir derrière.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une antichambre de sécurité : couloir court, sol en pente, et l'encadrement d'une porte blindée. Ancienne fonction : Sas de sécurité vers une réserve. Ce que le temps en a fait : Un tabouret de garde ; une plaque gravée d'un cercle incomplet au-dessus de l'encadrement. Le battant de porte lui-même est un sprite : laisser l'ouverture vide et noire. HERO FEATURE (doit structurer la composition) : L'encadrement de porte massif, en pierre et fer, avec des gonds énormes, qui domine le fond. ÉCLAIRAGE : Deux lampes murales éteintes de part et d'autre ; lueur faible venant du couloir derrière. Motif A discret : un cercle incomplet (symbole circulaire auquel il manque une portion). Sorties, exactement celles-ci et intégrées au lieu (fond : l'encadrement de porte (vide, le battant est ajouté par-dessus).) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_LOCKED_GATE_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Un ancien péage secondaire : guérite, comptoir, et l'encadrement d'une grille.
+
+ANCIENNE FONCTION :
+Péage intérieur.
+
+HERO FEATURE :
+Un comptoir de péage de pierre à gauche avec des rainures à jetons, face à l'encadrement de grille au fond.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière venant de derrière la grille, en contre-jour.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un ancien péage secondaire : guérite, comptoir, et l'encadrement d'une grille. Ancienne fonction : Péage intérieur. Ce que le temps en a fait : Des jetons de pierre au sol ; une chaîne ; une pierre blanche lisse incrustée dans le comptoir. Le battant de grille est un sprite : laisser l'ouverture vide. HERO FEATURE (doit structurer la composition) : Un comptoir de péage de pierre à gauche avec des rainures à jetons, face à l'encadrement de grille au fond. ÉCLAIRAGE : Lumière venant de derrière la grille, en contre-jour. Motif C discret : de petites pierres blanches parfaitement lisses incrustées dans la structure ancienne. Sorties, exactement celles-ci et intégrées au lieu (fond : l'encadrement de grille (vide).) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_ANCIENT_DOOR_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une porte qui n'appartient pas à ce lieu : son encadrement est d'une pierre plus ancienne que tout le reste.
+
+ANCIENNE FONCTION :
+Accès à une partie antérieure du complexe.
+
+HERO FEATURE :
+L'encadrement en pierre noire lisse, sans joints, enchâssé dans le mur de pierre grise ordinaire.
+
+AMBIANCE / ÉCLAIRAGE :
+Aucune lumière propre ; l'encadrement semble absorber la torche.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une porte qui n'appartient pas à ce lieu : son encadrement est d'une pierre plus ancienne que tout le reste. Ancienne fonction : Accès à une partie antérieure du complexe. Ce que le temps en a fait : Des tentatives d'effraction anciennes autour ; une trace noire verticale. Le battant est un sprite : laisser l'ouverture vide. HERO FEATURE (doit structurer la composition) : L'encadrement en pierre noire lisse, sans joints, enchâssé dans le mur de pierre grise ordinaire. ÉCLAIRAGE : Aucune lumière propre ; l'encadrement semble absorber la torche. Motif B discret : quelques traces noires verticales sur certaines pierres, qui ne ressemblent pas à de la saleté. Sorties, exactement celles-ci et intégrées au lieu (fond : l'encadrement de porte (vide).) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_KEY_DOOR_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une porte de garde : l'encadrement porte une main gravée là où l'on posait la clé.
+
+ANCIENNE FONCTION :
+Accès réservé aux gardes.
+
+HERO FEATURE :
+Une grande main gravée en creux au-dessus de l'encadrement, paume ouverte.
+
+AMBIANCE / ÉCLAIRAGE :
+Une torche à droite de la porte, éteinte, et une à gauche, allumée : éclairage asymétrique.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une porte de garde : l'encadrement porte une main gravée là où l'on posait la clé. Ancienne fonction : Accès réservé aux gardes. Ce que le temps en a fait : Un râtelier à clés vide sur le mur gauche. Le battant est un sprite : laisser l'ouverture vide. HERO FEATURE (doit structurer la composition) : Une grande main gravée en creux au-dessus de l'encadrement, paume ouverte. ÉCLAIRAGE : Une torche à droite de la porte, éteinte, et une à gauche, allumée : éclairage asymétrique. Sorties, exactement celles-ci et intégrées au lieu (fond : l'encadrement de porte (vide).) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_CRACKED_WALL_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une impasse trop propre : un couloir qui s'arrête net sur un mur maçonné après coup.
+
+ANCIENNE FONCTION :
+Couloir condamné.
+
+HERO FEATURE :
+Le mur du fond, visiblement plus récent et plus grossier que les murs latéraux, avec un joint bien net.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière faible venant de derrière le spectateur ; le mur du fond est dans l'ombre.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une impasse trop propre : un couloir qui s'arrête net sur un mur maçonné après coup. Ancienne fonction : Couloir condamné. Ce que le temps en a fait : Des outils de maçon abandonnés ; un seau. La fissure et le passage ouvert sont un sprite : laisser le centre du mur uni. HERO FEATURE (doit structurer la composition) : Le mur du fond, visiblement plus récent et plus grossier que les murs latéraux, avec un joint bien net. ÉCLAIRAGE : Lumière faible venant de derrière le spectateur ; le mur du fond est dans l'ombre. Aucune sortie visible : murs pleins ; cul-de-sac : le mur du fond est plein (le sprite gère l'ouverture).
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_HIDDEN_ALCOVE_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Un réduit où quelqu'un s'est caché longtemps, et a gratté les murs.
+
+ANCIENNE FONCTION :
+Cachette.
+
+HERO FEATURE :
+Le réduit minuscule, à peine plus grand que le héros, aux murs couverts de griffures de l'intérieur.
+
+AMBIANCE / ÉCLAIRAGE :
+Aucune lumière ; torche du héros seulement.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un réduit où quelqu'un s'est caché longtemps, et a gratté les murs. Ancienne fonction : Cachette. Ce que le temps en a fait : Une couverture ; des os de petits animaux ; un carnet de pierre. HERO FEATURE (doit structurer la composition) : Le réduit minuscule, à peine plus grand que le héros, aux murs couverts de griffures de l'intérieur. ÉCLAIRAGE : Aucune lumière ; torche du héros seulement. Aucune sortie visible : murs pleins ; cul-de-sac : murs pleins partout.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_SECRET_ROOM_01.png
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+Une salle cérémonielle intacte, scellée avant l'abandon, où rien n'a bougé.
+
+ANCIENNE FONCTION :
+Salle rituelle privée.
+
+HERO FEATURE :
+Une symétrie parfaite : deux colonnes, un bassin central rond, et un cercle incomplet incrusté de pierres blanches au sol.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lueur douce et propre sans poussière, venant du bassin.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle cérémonielle intacte, scellée avant l'abandon, où rien n'a bougé. Ancienne fonction : Salle rituelle privée. Ce que le temps en a fait : Des objets rituels alignés ; aucune trace de passage. Laisser le centre dégagé pour le tas de trésor. HERO FEATURE (doit structurer la composition) : Une symétrie parfaite : deux colonnes, un bassin central rond, et un cercle incomplet incrusté de pierres blanches au sol. ÉCLAIRAGE : Une lueur douce et propre sans poussière, venant du bassin. Motif A discret : un cercle incomplet (symbole circulaire auquel il manque une portion). Aucune sortie visible : murs pleins ; cul-de-sac : murs pleins partout.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_SECRET_STATUE_01.png
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+Une statue cachée, tournée vers le mur, comme si on ne devait pas voir son visage.
+
+ANCIENNE FONCTION :
+Réserve d'une statue retirée du culte.
+
+HERO FEATURE :
+Une statue à taille humaine, de dos, face au mur du fond, dans un espace exigu.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lueur pâle sur les épaules de la statue, sans source.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une statue cachée, tournée vers le mur, comme si on ne devait pas voir son visage. Ancienne fonction : Réserve d'une statue retirée du culte. Ce que le temps en a fait : Un drap tombé à ses pieds ; ses mains sont jointes dans le dos. HERO FEATURE (doit structurer la composition) : Une statue à taille humaine, de dos, face au mur du fond, dans un espace exigu. ÉCLAIRAGE : Une lueur pâle sur les épaules de la statue, sans source. Aucune sortie visible : murs pleins ; cul-de-sac : murs pleins partout.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_SECRET_DOOR_01.png
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+Une porte ronde sans bord ni serrure, scellée dans le mur du fond d'un réduit.
+
+ANCIENNE FONCTION :
+Inconnue.
+
+HERO FEATURE :
+Un disque de pierre noire lisse de deux mètres, parfaitement rond, encastré dans le mur.
+
+AMBIANCE / ÉCLAIRAGE :
+Le disque reflète faiblement la torche ; aucune autre lumière.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une porte ronde sans bord ni serrure, scellée dans le mur du fond d'un réduit. Ancienne fonction : Inconnue. Ce que le temps en a fait : Un cercle incomplet gravé au centre du disque ; le sol devant est poli en demi-cercle. Ce n'est pas une sortie. HERO FEATURE (doit structurer la composition) : Un disque de pierre noire lisse de deux mètres, parfaitement rond, encastré dans le mur. ÉCLAIRAGE : Le disque reflète faiblement la torche ; aucune autre lumière. Motif A discret : un cercle incomplet (symbole circulaire auquel il manque une portion). Aucune sortie visible : murs pleins ; cul-de-sac : murs pleins, le disque n'est pas une ouverture.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_TRAP_CORRIDOR_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Un couloir au dallage trop régulier, entouré de murs percés de petits trous alignés.
+
+ANCIENNE FONCTION :
+Couloir défensif.
+
+HERO FEATURE :
+Les murs percés de deux rangées de trous parfaitement alignés à hauteur de genou et de poitrine.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière pâle uniforme, sans ombre marquée, qui rend le couloir plat et inquiétant.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un couloir au dallage trop régulier, entouré de murs percés de petits trous alignés. Ancienne fonction : Couloir défensif. Ce que le temps en a fait : Une flèche cassée au sol ; une dalle plus claire que les autres. Le mécanisme visible du piège est un sprite : garder le sol central lisse. HERO FEATURE (doit structurer la composition) : Les murs percés de deux rangées de trous parfaitement alignés à hauteur de genou et de poitrine. ÉCLAIRAGE : Lumière pâle uniforme, sans ombre marquée, qui rend le couloir plat et inquiétant. Sorties, exactement celles-ci et intégrées au lieu (fond : porte simple.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_TRAP_ROOM_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une salle de tri au sol quadrillé de dalles mobiles, dont certaines sont restées enfoncées.
+
+ANCIENNE FONCTION :
+Salle de tri sécurisée.
+
+HERO FEATURE :
+Le sol en damier de grandes dalles, plusieurs enfoncées de façon irrégulière, créant un relief.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lampe à huile suspendue au centre, allumée, qui projette le quadrillage en ombres.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle de tri au sol quadrillé de dalles mobiles, dont certaines sont restées enfoncées. Ancienne fonction : Salle de tri sécurisée. Ce que le temps en a fait : Un squelette d'animal dans une dalle enfoncée ; un levier au mur. Garder le centre lisse pour le sprite du piège. HERO FEATURE (doit structurer la composition) : Le sol en damier de grandes dalles, plusieurs enfoncées de façon irrégulière, créant un relief. ÉCLAIRAGE : Une lampe à huile suspendue au centre, allumée, qui projette le quadrillage en ombres. Sorties, exactement celles-ci et intégrées au lieu (fond : porte ; droite : passage voûté.) : FOND au centre (zone x 35–65 %, y 22–54 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_FLOOR_TRAP_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une salle de nettoyage avec des rigoles au sol et une bonde centrale trop grande.
+
+ANCIENNE FONCTION :
+Salle de nettoyage / drainage.
+
+HERO FEATURE :
+Des rigoles de pierre convergeant vers une bonde ronde de un mètre au centre, grillagée.
+
+AMBIANCE / ÉCLAIRAGE :
+Reflets d'eau stagnante dans les rigoles ; lueur froide venant de la gauche.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / LEFT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle de nettoyage avec des rigoles au sol et une bonde centrale trop grande. Ancienne fonction : Salle de nettoyage / drainage. Ce que le temps en a fait : Des seaux ; une brosse ; des traces noires dans les rigoles. Le centre est réservé au sprite du piège. HERO FEATURE (doit structurer la composition) : Des rigoles de pierre convergeant vers une bonde ronde de un mètre au centre, grillagée. ÉCLAIRAGE : Reflets d'eau stagnante dans les rigoles ; lueur froide venant de la gauche. Motif B discret : quelques traces noires verticales sur certaines pierres, qui ne ressemblent pas à de la saleté. Sorties, exactement celles-ci et intégrées au lieu (gauche : porte basse — mur plein au fond.) : GAUCHE (zone x 3–27 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_OLD_FRESCO_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+Le mur de la descente : une fresque de toute la hauteur montrant une procession qui descend.
+
+ANCIENNE FONCTION :
+Galerie commémorative.
+
+HERO FEATURE :
+La fresque monumentale sur le mur de gauche : des dizaines de silhouettes en file qui descendent en spirale.
+
+AMBIANCE / ÉCLAIRAGE :
+Un rai de lumière oblique venant d'en haut à droite éclaire seulement le milieu de la fresque.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Le mur de la descente : une fresque de toute la hauteur montrant une procession qui descend. Ancienne fonction : Galerie commémorative. Ce que le temps en a fait : Au bas de la fresque, un cercle incomplet en pierres blanches ; une silhouette de la procession a été grattée. HERO FEATURE (doit structurer la composition) : La fresque monumentale sur le mur de gauche : des dizaines de silhouettes en file qui descendent en spirale. ÉCLAIRAGE : Un rai de lumière oblique venant d'en haut à droite éclaire seulement le milieu de la fresque. Motif A discret : un cercle incomplet (symbole circulaire auquel il manque une portion). Sorties, exactement celles-ci et intégrées au lieu (fond : porte au bout de la galerie.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_DEAD_EXPLORER_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Le dernier campement : un explorateur s'est assis contre le mur d'un renfoncement et n'est jamais reparti.
+
+ANCIENNE FONCTION :
+Renfoncement de repos.
+
+HERO FEATURE :
+Un renfoncement voûté avec une banquette de pierre, et une carte gravée à la hâte sur le mur au-dessus.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lanterne posée au sol, presque éteinte, lueur orange minuscule.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Le dernier campement : un explorateur s'est assis contre le mur d'un renfoncement et n'est jamais reparti. Ancienne fonction : Renfoncement de repos. Ce que le temps en a fait : Une carte gravée sur le mur avec un point marqué ; une gourde ; des flèches. Le corps est un sprite : laisser la droite de la banquette vide. HERO FEATURE (doit structurer la composition) : Un renfoncement voûté avec une banquette de pierre, et une carte gravée à la hâte sur le mur au-dessus. ÉCLAIRAGE : Une lanterne posée au sol, presque éteinte, lueur orange minuscule. Aucune sortie visible : murs pleins ; cul-de-sac : murs pleins partout.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_ABANDONED_CAMP_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Un campement de plusieurs personnes, abandonné en plein repas.
+
+ANCIENNE FONCTION :
+Bivouac de voyageurs.
+
+HERO FEATURE :
+Un cercle de pierres avec un feu éteint au centre, entouré de quatre couchages.
+
+AMBIANCE / ÉCLAIRAGE :
+Une braise unique encore rouge dans le foyer ; le reste est sombre.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un campement de plusieurs personnes, abandonné en plein repas. Ancienne fonction : Bivouac de voyageurs. Ce que le temps en a fait : Des bols encore pleins ; un manteau ; une corde coupée net ; des vivres laissés. HERO FEATURE (doit structurer la composition) : Un cercle de pierres avec un feu éteint au centre, entouré de quatre couchages. ÉCLAIRAGE : Une braise unique encore rouge dans le foyer ; le reste est sombre. Sorties, exactement celles-ci et intégrées au lieu (fond : porte derrière le foyer.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GIANT_SCRATCHES_01.png
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+Un couloir large où cinq griffures traversent le mur de gauche à trois mètres de haut.
+
+ANCIENNE FONCTION :
+Couloir de liaison.
+
+HERO FEATURE :
+Cinq entailles parallèles profondes, longues de quatre mètres, qui traversent le mur en diagonale.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière venant de la droite, rasante, qui creuse les entailles d'ombre.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un couloir large où cinq griffures traversent le mur de gauche à trois mètres de haut. Ancienne fonction : Couloir de liaison. Ce que le temps en a fait : Des éclats de pierre au sol sous les griffures ; un panneau de pierre qui a été arraché. HERO FEATURE (doit structurer la composition) : Cinq entailles parallèles profondes, longues de quatre mètres, qui traversent le mur en diagonale. ÉCLAIRAGE : Lumière venant de la droite, rasante, qui creuse les entailles d'ombre. Sorties, exactement celles-ci et intégrées au lieu (droite : passage large — mur griffé au fond et à gauche.) : DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_OLD_WEAPONS_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Un tas d'armes déposées volontairement à l'entrée d'une salle, comme à un vestiaire d'armes.
+
+ANCIENNE FONCTION :
+Dépôt d'armes obligatoire avant une zone.
+
+HERO FEATURE :
+Un tas de lances, d'épées et de boucliers rouillés, empilés contre un socle portant des rainures d'armes.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lueur froide venant d'en haut.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un tas d'armes déposées volontairement à l'entrée d'une salle, comme à un vestiaire d'armes. Ancienne fonction : Dépôt d'armes obligatoire avant une zone. Ce que le temps en a fait : Les armes n'ont jamais été reprises ; des étiquettes de pierre à chaque arme ; un cercle incomplet sur le socle. HERO FEATURE (doit structurer la composition) : Un tas de lances, d'épées et de boucliers rouillés, empilés contre un socle portant des rainures d'armes. ÉCLAIRAGE : Une lueur froide venant d'en haut. Motif A discret : un cercle incomplet (symbole circulaire auquel il manque une portion). Aucune sortie visible : murs pleins ; cul-de-sac : murs pleins partout.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_MYSTERIOUS_SYMBOL_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une salle où le cercle incomplet est gravé cent fois, de plus en plus grand vers la porte.
+
+ANCIENNE FONCTION :
+Inconnue (peut-être une salle d'apprentissage du symbole).
+
+HERO FEATURE :
+Le motif répété qui couvre le mur du fond en spirale, du minuscule au géant autour de la porte.
+
+AMBIANCE / ÉCLAIRAGE :
+Lueur pâle venant de la porte, qui fait ressortir les gravures en relief.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle où le cercle incomplet est gravé cent fois, de plus en plus grand vers la porte. Ancienne fonction : Inconnue (peut-être une salle d'apprentissage du symbole). Ce que le temps en a fait : Un burin au sol ; une gravure inachevée en bas à droite. HERO FEATURE (doit structurer la composition) : Le motif répété qui couvre le mur du fond en spirale, du minuscule au géant autour de la porte. ÉCLAIRAGE : Lueur pâle venant de la porte, qui fait ressortir les gravures en relief. Motif A discret : un cercle incomplet (symbole circulaire auquel il manque une portion). Sorties, exactement celles-ci et intégrées au lieu (fond : porte au centre de la spirale de gravures.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_WELL_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une salle d'eau : un puits central avec son treuil et un seau qui pend dans le vide.
+
+ANCIENNE FONCTION :
+Puits d'alimentation en eau.
+
+HERO FEATURE :
+Le puits de pierre ronde au centre avec son portique de bois et une corde qui descend dans le noir.
+
+AMBIANCE / ÉCLAIRAGE :
+Reflets froids venant du puits, comme si quelque chose luisait très loin en bas.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle d'eau : un puits central avec son treuil et un seau qui pend dans le vide. Ancienne fonction : Puits d'alimentation en eau. Ce que le temps en a fait : Des marques de niveau d'eau gravées sur la margelle, très anciennes ; une pierre blanche lisse incrustée dans la margelle. HERO FEATURE (doit structurer la composition) : Le puits de pierre ronde au centre avec son portique de bois et une corde qui descend dans le noir. ÉCLAIRAGE : Reflets froids venant du puits, comme si quelque chose luisait très loin en bas. Motif C discret : de petites pierres blanches parfaitement lisses incrustées dans la structure ancienne. Aucune sortie visible : murs pleins ; cul-de-sac : murs pleins partout.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_WINDOW_ABYSS_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+Le premier vertige : une brèche dans le mur du fond ouvre sur un gouffre gigantesque où le complexe continue très loin en bas.
+
+ANCIENNE FONCTION :
+Balcon de surveillance (autrefois muré).
+
+HERO FEATURE :
+La brèche irrégulière dans le mur qui révèle, derrière, des structures suspendues, des passerelles et des lumières minuscules à des centaines de mètres en dessous.
+
+AMBIANCE / ÉCLAIRAGE :
+Contre-jour bleuté venant du gouffre ; la salle elle-même est sombre.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Le premier vertige : une brèche dans le mur du fond ouvre sur un gouffre gigantesque où le complexe continue très loin en bas. Ancienne fonction : Balcon de surveillance (autrefois muré). Ce que le temps en a fait : Une rambarde de pierre brisée devant la brèche ; un vent suggéré par des tissus qui flottent. HERO FEATURE (doit structurer la composition) : La brèche irrégulière dans le mur qui révèle, derrière, des structures suspendues, des passerelles et des lumières minuscules à des centaines de mètres en dessous. ÉCLAIRAGE : Contre-jour bleuté venant du gouffre ; la salle elle-même est sombre. Aucune sortie visible : murs pleins ; cul-de-sac : la brèche n'est pas une sortie, murs pleins à gauche et à droite.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_ATMOS_DUST_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Le puits de lumière : un rayon vertical unique éclaire un carré de sol au milieu d'une salle noire.
+
+ANCIENNE FONCTION :
+Salle de passage sous une cheminée d'aération.
+
+HERO FEATURE :
+Le rayon de lumière vertical, très net, avec la poussière en suspension dedans.
+
+AMBIANCE / ÉCLAIRAGE :
+Uniquement ce rayon ; le reste est noir, la porte du fond à peine devinée.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Le puits de lumière : un rayon vertical unique éclaire un carré de sol au milieu d'une salle noire. Ancienne fonction : Salle de passage sous une cheminée d'aération. Ce que le temps en a fait : Dans le carré éclairé : un seul objet, un petit carnet de pierre ouvert. HERO FEATURE (doit structurer la composition) : Le rayon de lumière vertical, très net, avec la poussière en suspension dedans. ÉCLAIRAGE : Uniquement ce rayon ; le reste est noir, la porte du fond à peine devinée. Sorties, exactement celles-ci et intégrées au lieu (fond : porte devinée dans le noir derrière le rayon.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_ATMOS_CHAINS_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une salle de suspension : des dizaines de chaînes pendent du plafond à différentes hauteurs.
+
+ANCIENNE FONCTION :
+Salle de levage / stockage suspendu.
+
+HERO FEATURE :
+Un rideau de chaînes de toutes longueurs pendant du plafond, certaines avec des crochets, une avec une caisse encore accrochée.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière venant de la gauche à travers les chaînes, qui projettent des rayures.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / LEFT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle de suspension : des dizaines de chaînes pendent du plafond à différentes hauteurs. Ancienne fonction : Salle de levage / stockage suspendu. Ce que le temps en a fait : Une caisse suspendue qui oscille légèrement ; des chaînes coupées au sol. HERO FEATURE (doit structurer la composition) : Un rideau de chaînes de toutes longueurs pendant du plafond, certaines avec des crochets, une avec une caisse encore accrochée. ÉCLAIRAGE : Lumière venant de la gauche à travers les chaînes, qui projettent des rayures. Sorties, exactement celles-ci et intégrées au lieu (gauche : porte visible à travers les chaînes — mur plein au fond.) : GAUCHE (zone x 3–27 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_ATMOS_DARK_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Une salle immense dont on ne voit que le sol : les murs et le plafond sont perdus dans le noir.
+
+ANCIENNE FONCTION :
+Grande salle (fonction illisible).
+
+HERO FEATURE :
+L'absence de murs visibles : seul le dallage s'étend vers une porte lointaine et minuscule, éclairée.
+
+AMBIANCE / ÉCLAIRAGE :
+La porte du fond, loin, est la seule source : un petit rectangle de lumière.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle immense dont on ne voit que le sol : les murs et le plafond sont perdus dans le noir. Ancienne fonction : Grande salle (fonction illisible). Ce que le temps en a fait : Des colonnes devinées à peine dans le noir ; des traces de pas qui vont droit vers la porte. HERO FEATURE (doit structurer la composition) : L'absence de murs visibles : seul le dallage s'étend vers une porte lointaine et minuscule, éclairée. ÉCLAIRAGE : La porte du fond, loin, est la seule source : un petit rectangle de lumière. Sorties, exactement celles-ci et intégrées au lieu (fond : la porte lointaine, petite mais nette et lumineuse.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_ATMOS_RUINS_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une salle fracturée : une colonne cassée gigantesque couchée en travers, plus large que le héros n'est haut.
+
+ANCIENNE FONCTION :
+Salle à colonnes.
+
+HERO FEATURE :
+Le tronçon de colonne colossal couché en diagonale, qu'on doit longer, avec ses cannelures.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière grise venant de l'endroit du plafond d'où la colonne est tombée.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle fracturée : une colonne cassée gigantesque couchée en travers, plus large que le héros n'est haut. Ancienne fonction : Salle à colonnes. Ce que le temps en a fait : Le chapiteau brisé à droite ; des pierres blanches lisses dans les cannelures. HERO FEATURE (doit structurer la composition) : Le tronçon de colonne colossal couché en diagonale, qu'on doit longer, avec ses cannelures. ÉCLAIRAGE : Lumière grise venant de l'endroit du plafond d'où la colonne est tombée. Motif C discret : de petites pierres blanches parfaitement lisses incrustées dans la structure ancienne. Sorties, exactement celles-ci et intégrées au lieu (fond : porte visible au-dessus de la colonne couchée ; droite : passage derrière le chapiteau.) : FOND au centre (zone x 35–65 %, y 22–54 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_ATMOS_SILHOUETTE_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une salle d'attente intacte, bancs alignés, et une place où quelqu'un vient de se lever.
+
+ANCIENNE FONCTION :
+Salle d'attente.
+
+HERO FEATURE :
+Des bancs de pierre en rangées face à la porte du fond, tous vides, sauf un où un tissu est encore posé comme si quelqu'un venait de partir.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière pâle uniforme ; une ombre allongée sur le mur du fond sans personne pour la projeter.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle d'attente intacte, bancs alignés, et une place où quelqu'un vient de se lever. Ancienne fonction : Salle d'attente. Ce que le temps en a fait : Une bougie encore fumante sur un banc ; des marques d'usure sur chaque place. HERO FEATURE (doit structurer la composition) : Des bancs de pierre en rangées face à la porte du fond, tous vides, sauf un où un tissu est encore posé comme si quelqu'un venait de partir. ÉCLAIRAGE : Lumière pâle uniforme ; une ombre allongée sur le mur du fond sans personne pour la projeter. Sorties, exactement celles-ci et intégrées au lieu (fond : porte face aux bancs.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_RARE_EYES_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Un couloir bordé de niches noires, à hauteur d'homme, toutes vides.
+
+ANCIENNE FONCTION :
+Galerie de niches (anciennes urnes ou statuettes).
+
+HERO FEATURE :
+Deux rangées de niches profondes et noires de chaque côté, comme des yeux fermés.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lumière très faible venant de la porte du fond ; les niches restent noires.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un couloir bordé de niches noires, à hauteur d'homme, toutes vides. Ancienne fonction : Galerie de niches (anciennes urnes ou statuettes). Ce que le temps en a fait : Une seule niche contient encore une petite statuette ; des traces noires coulent sous plusieurs niches. HERO FEATURE (doit structurer la composition) : Deux rangées de niches profondes et noires de chaque côté, comme des yeux fermés. ÉCLAIRAGE : Une lumière très faible venant de la porte du fond ; les niches restent noires. Motif B discret : quelques traces noires verticales sur certaines pierres, qui ne ressemblent pas à de la saleté. Sorties, exactement celles-ci et intégrées au lieu (fond : porte.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_RARE_SHADOW_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une galerie haute où le mur du fond est éclairé par derrière : tout ce qui passe devant projette une ombre géante.
+
+ANCIENNE FONCTION :
+Galerie de passage.
+
+HERO FEATURE :
+Le mur du fond translucide (fine paroi de pierre claire ou de tissu) éclairé par derrière, avec la porte en bas.
+
+AMBIANCE / ÉCLAIRAGE :
+Contre-jour total : lumière chaude derrière la paroi, le premier plan est sombre.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une galerie haute où le mur du fond est éclairé par derrière : tout ce qui passe devant projette une ombre géante. Ancienne fonction : Galerie de passage. Ce que le temps en a fait : Des piliers en silhouette ; une chaîne qui se balance. HERO FEATURE (doit structurer la composition) : Le mur du fond translucide (fine paroi de pierre claire ou de tissu) éclairé par derrière, avec la porte en bas. ÉCLAIRAGE : Contre-jour total : lumière chaude derrière la paroi, le premier plan est sombre. Sorties, exactement celles-ci et intégrées au lieu (fond : porte au bas de la paroi éclairée.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_RARE_COLLAPSE_01.png
+
+NIVEAU :
+Niveau B — identité
+
+IDENTITÉ :
+Une galerie en équilibre : les étais de bois ploient et la poussière tombe déjà du plafond.
+
+ANCIENNE FONCTION :
+Galerie étayée (chantier abandonné).
+
+HERO FEATURE :
+Une forêt d'étais de bois de travers, certains fendus, soutenant un plafond visiblement fissuré.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lanterne de chantier au sol ; de la poussière qui tombe en filets dans sa lumière.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une galerie en équilibre : les étais de bois ploient et la poussière tombe déjà du plafond. Ancienne fonction : Galerie étayée (chantier abandonné). Ce que le temps en a fait : Des outils ; un panneau de pierre avec un cercle incomplet. HERO FEATURE (doit structurer la composition) : Une forêt d'étais de bois de travers, certains fendus, soutenant un plafond visiblement fissuré. ÉCLAIRAGE : Une lanterne de chantier au sol ; de la poussière qui tombe en filets dans sa lumière. Motif A discret : un cercle incomplet (symbole circulaire auquel il manque une portion). Sorties, exactement celles-ci et intégrées au lieu (fond : porte entre les étais.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_RARE_STRANGER_01.png
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+Un cul-de-sac aménagé comme une petite pièce à vivre, par quelqu'un qui est encore là.
+
+ANCIENNE FONCTION :
+Inconnue.
+
+HERO FEATURE :
+Un banc face à un petit foyer allumé, et sur le banc une silhouette assise, de dos, immobile, capuchonnée.
+
+AMBIANCE / ÉCLAIRAGE :
+Le foyer est la seule lumière ; il éclaire la silhouette par devant, elle reste sombre de dos.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un cul-de-sac aménagé comme une petite pièce à vivre, par quelqu'un qui est encore là. Ancienne fonction : Inconnue. Ce que le temps en a fait : Une tasse posée à côté d'elle ; un bâton ; des objets rangés avec soin. Rien d'agressif. HERO FEATURE (doit structurer la composition) : Un banc face à un petit foyer allumé, et sur le banc une silhouette assise, de dos, immobile, capuchonnée. ÉCLAIRAGE : Le foyer est la seule lumière ; il éclaire la silhouette par devant, elle reste sombre de dos. Aucune sortie visible : murs pleins ; cul-de-sac : murs pleins partout.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_RARE_DOOR_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+Une porte ronde en métal sombre, sans bord ni poignée, encastrée au bout d'un couloir trop étroit pour elle.
+
+ANCIENNE FONCTION :
+Inconnue.
+
+HERO FEATURE :
+Le disque de métal sombre de trois mètres, qui dépasse la largeur du couloir : il a été posé avant les murs.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lueur très faible, tiède, émane du pourtour du disque.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une porte ronde en métal sombre, sans bord ni poignée, encastrée au bout d'un couloir trop étroit pour elle. Ancienne fonction : Inconnue. Ce que le temps en a fait : Aucune trace de pas devant ; un cercle incomplet en relief au centre du disque. Ce n'est pas une sortie. HERO FEATURE (doit structurer la composition) : Le disque de métal sombre de trois mètres, qui dépasse la largeur du couloir : il a été posé avant les murs. ÉCLAIRAGE : Une lueur très faible, tiède, émane du pourtour du disque. Motif A discret : un cercle incomplet (symbole circulaire auquel il manque une portion). Aucune sortie visible : murs pleins ; cul-de-sac : le disque n'est pas une ouverture, murs pleins.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_BOSS_APPROACH_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+L'antichambre du Portier : une salle démesurée, parfaitement symétrique, où tout est trop grand pour un humain.
+
+ANCIENNE FONCTION :
+Antichambre cérémonielle avant la porte de contrôle principale.
+
+HERO FEATURE :
+Deux rangées de colonnes colossales qui montent hors champ, et au fond, l'amorce d'une porte dont on ne voit que le bas.
+
+AMBIANCE / ÉCLAIRAGE :
+Deux braseros monumentaux allumés de part et d'autre du fond ; ombres immenses.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : L'antichambre du Portier : une salle démesurée, parfaitement symétrique, où tout est trop grand pour un humain. Ancienne fonction : Antichambre cérémonielle avant la porte de contrôle principale. Ce que le temps en a fait : Des os d'animaux et d'hommes rangés en tas réguliers le long des colonnes ; des pierres blanches lisses incrustées en ligne au sol vers la porte. HERO FEATURE (doit structurer la composition) : Deux rangées de colonnes colossales qui montent hors champ, et au fond, l'amorce d'une porte dont on ne voit que le bas. ÉCLAIRAGE : Deux braseros monumentaux allumés de part et d'autre du fond ; ombres immenses. Motif C discret : de petites pierres blanches parfaitement lisses incrustées dans la structure ancienne. Sorties, exactement celles-ci et intégrées au lieu (fond : le passage vers la grande porte, au centre exact.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_BOSS_DOOR_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+La porte disproportionnée : elle occupe tout le mur du fond, quatre fois plus haute que le héros.
+
+ANCIENNE FONCTION :
+Porte de contrôle principale du complexe.
+
+HERO FEATURE :
+L'encadrement de la porte monumentale, en pierre noire et bronze, avec un cercle incomplet géant gravé au-dessus.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lueur chaude filtre par le contour de l'encadrement ; le reste est froid et sombre.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : La porte disproportionnée : elle occupe tout le mur du fond, quatre fois plus haute que le héros. Ancienne fonction : Porte de contrôle principale du complexe. Ce que le temps en a fait : Des chaînes de fermeture énormes tombées au sol ; des marques de coups sur le seuil. Le battant est un sprite : laisser l'ouverture centrale vide et sombre. HERO FEATURE (doit structurer la composition) : L'encadrement de la porte monumentale, en pierre noire et bronze, avec un cercle incomplet géant gravé au-dessus. ÉCLAIRAGE : Une lueur chaude filtre par le contour de l'encadrement ; le reste est froid et sombre. Motif A discret : un cercle incomplet (symbole circulaire auquel il manque une portion). Sorties, exactement celles-ci et intégrées au lieu (fond : l'encadrement (vide, le battant est ajouté par-dessus), centré et symétrique.) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_BOSS_ARENA_01.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+La salle du Portier : une salle de contrôle circulaire avec, au centre, la dalle où il se tient depuis toujours.
+
+ANCIENNE FONCTION :
+Salle de contrôle principale (le Portier décidait qui descendait).
+
+HERO FEATURE :
+Une dalle circulaire surélevée au centre, entourée d'un anneau de pierres blanches lisses, sous une voûte perdue dans le noir.
+
+AMBIANCE / ÉCLAIRAGE :
+Un anneau de braseros tout autour, allumés ; le centre est éclairé de partout, sans ombre.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : La salle du Portier : une salle de contrôle circulaire avec, au centre, la dalle où il se tient depuis toujours. Ancienne fonction : Salle de contrôle principale (le Portier décidait qui descendait). Ce que le temps en a fait : Des armes brisées de ceux qui ont essayé, rangées contre le mur ; un cercle incomplet géant au sol dont la dalle centrale est la partie manquante. Le Portier est un sprite : laisser la dalle centrale vide. Le passage de sortie derrière la dalle est muré dans cette version. HERO FEATURE (doit structurer la composition) : Une dalle circulaire surélevée au centre, entourée d'un anneau de pierres blanches lisses, sous une voûte perdue dans le noir. ÉCLAIRAGE : Un anneau de braseros tout autour, allumés ; le centre est éclairé de partout, sans ombre. Motif A discret : un cercle incomplet (symbole circulaire auquel il manque une portion). Aucune sortie visible : murs pleins ; cul-de-sac : mur plein au fond (la sortie n'apparaît qu'après la victoire, gérée par le jeu).
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_EXIT_TO_FLOOR_2.png  [PRIORITAIRE]
+
+NIVEAU :
+Niveau C — mémorable
+
+IDENTITÉ :
+Derrière le Portier : un escalier en spirale taillé dans la roche brute, qui descend sans fin.
+
+ANCIENNE FONCTION :
+Descente principale vers le Palier 2.
+
+HERO FEATURE :
+L'amorce d'un escalier en spirale colossal, dont les marches s'enroulent autour d'un vide central noir.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lueur froide monte du vide central, très loin en bas.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Derrière le Portier : un escalier en spirale taillé dans la roche brute, qui descend sans fin. Ancienne fonction : Descente principale vers le Palier 2. Ce que le temps en a fait : La pierre change : ici elle n'est plus taillée en blocs mais creusée dans la roche ; une pierre blanche lisse sur la première marche. HERO FEATURE (doit structurer la composition) : L'amorce d'un escalier en spirale colossal, dont les marches s'enroulent autour d'un vide central noir. ÉCLAIRAGE : Une lueur froide monte du vide central, très loin en bas. Motif C discret : de petites pierres blanches parfaitement lisses incrustées dans la structure ancienne. Aucune sortie visible : murs pleins ; cul-de-sac : la descente est déclenchée par le jeu, pas de porte à dessiner (l'escalier est le décor central).
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GEN_B_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Un cul-de-sac : ancienne niche de garde avec un banc. (décor de secours, utilisé souvent : doit avoir sa propre identité)
+
+ANCIENNE FONCTION :
+Niche de garde.
+
+HERO FEATURE :
+Une niche voûtée avec un banc de pierre et un crochet à lanterne.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lanterne au crochet, allumée, faible.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible)
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un cul-de-sac : ancienne niche de garde avec un banc. (décor de secours, utilisé souvent : doit avoir sa propre identité) Ancienne fonction : Niche de garde. Ce que le temps en a fait : Un manteau au crochet ; des gravures de traits comptés sur le mur. HERO FEATURE (doit structurer la composition) : Une niche voûtée avec un banc de pierre et un crochet à lanterne. ÉCLAIRAGE : Une lanterne au crochet, allumée, faible. Aucune sortie visible : murs pleins ; sorties intégrées naturellement au décor décrit
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GEN_C_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Un couloir qui descend en pente vers une porte, avec une rigole d'eau au centre. (décor de secours, utilisé souvent : doit avoir sa propre identité)
+
+ANCIENNE FONCTION :
+Couloir de drainage.
+
+HERO FEATURE :
+Le sol en pente et la rigole centrale qui luit.
+
+AMBIANCE / ÉCLAIRAGE :
+Reflets d'eau ; lueur venant de la porte.
+
+SORTIES NÉCESSAIRES :
+CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un couloir qui descend en pente vers une porte, avec une rigole d'eau au centre. (décor de secours, utilisé souvent : doit avoir sa propre identité) Ancienne fonction : Couloir de drainage. Ce que le temps en a fait : Un seau ; des marques de niveau d'eau sur les murs. HERO FEATURE (doit structurer la composition) : Le sol en pente et la rigole centrale qui luit. ÉCLAIRAGE : Reflets d'eau ; lueur venant de la porte. Sorties, exactement celles-ci et intégrées au lieu (sorties intégrées naturellement au décor décrit) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GEN_L_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Un couloir qui tourne à angle droit vers la gauche autour d'un pilier d'angle massif. (décor de secours, utilisé souvent : doit avoir sa propre identité)
+
+ANCIENNE FONCTION :
+Couloir de liaison.
+
+HERO FEATURE :
+Le pilier d'angle massif portant une pierre blanche lisse.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière venant de la gauche, rasante.
+
+SORTIES NÉCESSAIRES :
+LEFT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un couloir qui tourne à angle droit vers la gauche autour d'un pilier d'angle massif. (décor de secours, utilisé souvent : doit avoir sa propre identité) Ancienne fonction : Couloir de liaison. Ce que le temps en a fait : Des marques de charrette dans l'angle. HERO FEATURE (doit structurer la composition) : Le pilier d'angle massif portant une pierre blanche lisse. ÉCLAIRAGE : Lumière venant de la gauche, rasante. Sorties, exactement celles-ci et intégrées au lieu (sorties intégrées naturellement au décor décrit) : GAUCHE (zone x 3–27 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GEN_R_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Un couloir qui tourne à angle droit vers la droite, le mur du fond portant une fresque effacée. (décor de secours, utilisé souvent : doit avoir sa propre identité)
+
+ANCIENNE FONCTION :
+Couloir de liaison.
+
+HERO FEATURE :
+La fresque presque entièrement effacée du mur du fond, dont il reste un cercle incomplet.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière venant de la droite.
+
+SORTIES NÉCESSAIRES :
+RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un couloir qui tourne à angle droit vers la droite, le mur du fond portant une fresque effacée. (décor de secours, utilisé souvent : doit avoir sa propre identité) Ancienne fonction : Couloir de liaison. Ce que le temps en a fait : Un pinceau de pierre au sol. HERO FEATURE (doit structurer la composition) : La fresque presque entièrement effacée du mur du fond, dont il reste un cercle incomplet. ÉCLAIRAGE : Lumière venant de la droite. Sorties, exactement celles-ci et intégrées au lieu (sorties intégrées naturellement au décor décrit) : DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GEN_BC_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Un couloir voûté où une rangée de crochets vides longe tout le mur de gauche. (décor de secours, utilisé souvent : doit avoir sa propre identité)
+
+ANCIENNE FONCTION :
+Couloir de service.
+
+HERO FEATURE :
+La rangée de crochets qui donne la mesure de la longueur du couloir.
+
+AMBIANCE / ÉCLAIRAGE :
+Une bougie tous les trois mètres, la moitié éteintes.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un couloir voûté où une rangée de crochets vides longe tout le mur de gauche. (décor de secours, utilisé souvent : doit avoir sa propre identité) Ancienne fonction : Couloir de service. Ce que le temps en a fait : Un sac pendu à un crochet. HERO FEATURE (doit structurer la composition) : La rangée de crochets qui donne la mesure de la longueur du couloir. ÉCLAIRAGE : Une bougie tous les trois mètres, la moitié éteintes. Sorties, exactement celles-ci et intégrées au lieu (sorties intégrées naturellement au décor décrit) : FOND au centre (zone x 35–65 %, y 22–54 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GEN_BL_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Une petite salle de veille avec une table et deux chaises, l'une renversée. (décor de secours, utilisé souvent : doit avoir sa propre identité)
+
+ANCIENNE FONCTION :
+Salle de veille.
+
+HERO FEATURE :
+La table de garde au centre avec ses deux chaises.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lampe à huile sur la table, allumée.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / LEFT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une petite salle de veille avec une table et deux chaises, l'une renversée. (décor de secours, utilisé souvent : doit avoir sa propre identité) Ancienne fonction : Salle de veille. Ce que le temps en a fait : Des dés ; une chope ; une lance appuyée au mur de gauche près du passage. HERO FEATURE (doit structurer la composition) : La table de garde au centre avec ses deux chaises. ÉCLAIRAGE : Une lampe à huile sur la table, allumée. Sorties, exactement celles-ci et intégrées au lieu (sorties intégrées naturellement au décor décrit) : GAUCHE (zone x 3–27 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GEN_BR_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Un couloir dont le mur de gauche est une paroi de roche brute non taillée. (décor de secours, utilisé souvent : doit avoir sa propre identité)
+
+ANCIENNE FONCTION :
+Couloir de raccord entre deux constructions.
+
+HERO FEATURE :
+Le contraste entre la roche brute à gauche et la pierre taillée à droite.
+
+AMBIANCE / ÉCLAIRAGE :
+Lueur froide venant de la droite.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un couloir dont le mur de gauche est une paroi de roche brute non taillée. (décor de secours, utilisé souvent : doit avoir sa propre identité) Ancienne fonction : Couloir de raccord entre deux constructions. Ce que le temps en a fait : Des outils de taille abandonnés au pied de la roche. HERO FEATURE (doit structurer la composition) : Le contraste entre la roche brute à gauche et la pierre taillée à droite. ÉCLAIRAGE : Lueur froide venant de la droite. Sorties, exactement celles-ci et intégrées au lieu (sorties intégrées naturellement au décor décrit) : DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GEN_CL_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Une salle d'angle avec un bassin d'ablutions asséché au centre. (décor de secours, utilisé souvent : doit avoir sa propre identité)
+
+ANCIENNE FONCTION :
+Salle d'ablutions.
+
+HERO FEATURE :
+Le bassin rond vide au centre avec ses marches.
+
+AMBIANCE / ÉCLAIRAGE :
+Reflets de la torche sur le fond humide du bassin.
+
+SORTIES NÉCESSAIRES :
+CENTER / LEFT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle d'angle avec un bassin d'ablutions asséché au centre. (décor de secours, utilisé souvent : doit avoir sa propre identité) Ancienne fonction : Salle d'ablutions. Ce que le temps en a fait : Des bols ; des traces noires verticales sur le rebord du bassin. HERO FEATURE (doit structurer la composition) : Le bassin rond vide au centre avec ses marches. ÉCLAIRAGE : Reflets de la torche sur le fond humide du bassin. Sorties, exactement celles-ci et intégrées au lieu (sorties intégrées naturellement au décor décrit) : FOND au centre (zone x 35–65 %, y 22–54 %) ; GAUCHE (zone x 3–27 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GEN_CR_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Une salle d'angle traversée par une chaîne qui va du sol au plafond. (décor de secours, utilisé souvent : doit avoir sa propre identité)
+
+ANCIENNE FONCTION :
+Salle mécanique secondaire.
+
+HERO FEATURE :
+La chaîne verticale tendue au centre, gros maillons, qui disparaît en haut et en bas.
+
+AMBIANCE / ÉCLAIRAGE :
+Lueur venant de la droite.
+
+SORTIES NÉCESSAIRES :
+CENTER / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle d'angle traversée par une chaîne qui va du sol au plafond. (décor de secours, utilisé souvent : doit avoir sa propre identité) Ancienne fonction : Salle mécanique secondaire. Ce que le temps en a fait : Un contrepoids de pierre à moitié enfoncé dans le sol. HERO FEATURE (doit structurer la composition) : La chaîne verticale tendue au centre, gros maillons, qui disparaît en haut et en bas. ÉCLAIRAGE : Lueur venant de la droite. Sorties, exactement celles-ci et intégrées au lieu (sorties intégrées naturellement au décor décrit) : FOND au centre (zone x 35–65 %, y 22–54 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GEN_LR_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Un couloir en T dont le mur du fond porte une niche avec une statuette sans tête. (décor de secours, utilisé souvent : doit avoir sa propre identité)
+
+ANCIENNE FONCTION :
+Carrefour.
+
+HERO FEATURE :
+La niche centrale et sa statuette décapitée.
+
+AMBIANCE / ÉCLAIRAGE :
+Une bougie dans la niche, allumée.
+
+SORTIES NÉCESSAIRES :
+LEFT / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un couloir en T dont le mur du fond porte une niche avec une statuette sans tête. (décor de secours, utilisé souvent : doit avoir sa propre identité) Ancienne fonction : Carrefour. Ce que le temps en a fait : Deux usures au sol vers gauche et droite ; des offrandes desséchées. HERO FEATURE (doit structurer la composition) : La niche centrale et sa statuette décapitée. ÉCLAIRAGE : Une bougie dans la niche, allumée. Sorties, exactement celles-ci et intégrées au lieu (sorties intégrées naturellement au décor décrit) : GAUCHE (zone x 3–27 %, y 30–64 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GEN_BCL_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Une salle à deux niveaux : une mezzanine effondrée à droite, le passage continue en bas. (décor de secours, utilisé souvent : doit avoir sa propre identité)
+
+ANCIENNE FONCTION :
+Salle de stockage à mezzanine.
+
+HERO FEATURE :
+La mezzanine effondrée en pente, avec son escalier cassé.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière venant de la mezzanine, en hauteur.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER / LEFT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle à deux niveaux : une mezzanine effondrée à droite, le passage continue en bas. (décor de secours, utilisé souvent : doit avoir sa propre identité) Ancienne fonction : Salle de stockage à mezzanine. Ce que le temps en a fait : Des caisses tombées de la mezzanine ; une corde. HERO FEATURE (doit structurer la composition) : La mezzanine effondrée en pente, avec son escalier cassé. ÉCLAIRAGE : Lumière venant de la mezzanine, en hauteur. Sorties, exactement celles-ci et intégrées au lieu (sorties intégrées naturellement au décor décrit) : FOND au centre (zone x 35–65 %, y 22–54 %) ; GAUCHE (zone x 3–27 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GEN_BCR_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Une salle avec une fosse rectangulaire au centre, grillagée, qu'on longe par la gauche. (décor de secours, utilisé souvent : doit avoir sa propre identité)
+
+ANCIENNE FONCTION :
+Salle de tri avec trappe.
+
+HERO FEATURE :
+La grande fosse grillagée au centre.
+
+AMBIANCE / ÉCLAIRAGE :
+Une lueur rouge très faible monte de la grille.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle avec une fosse rectangulaire au centre, grillagée, qu'on longe par la gauche. (décor de secours, utilisé souvent : doit avoir sa propre identité) Ancienne fonction : Salle de tri avec trappe. Ce que le temps en a fait : Une chaîne dans la fosse ; un levier au mur droit. HERO FEATURE (doit structurer la composition) : La grande fosse grillagée au centre. ÉCLAIRAGE : Une lueur rouge très faible monte de la grille. Sorties, exactement celles-ci et intégrées au lieu (sorties intégrées naturellement au décor décrit) : FOND au centre (zone x 35–65 %, y 22–54 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GEN_BLR_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Un carrefour sous une voûte effondrée en dôme, dont les pierres forment un tas au centre. (décor de secours, utilisé souvent : doit avoir sa propre identité)
+
+ANCIENNE FONCTION :
+Carrefour.
+
+HERO FEATURE :
+Le tas de pierres du dôme effondré au centre, qu'on contourne des deux côtés.
+
+AMBIANCE / ÉCLAIRAGE :
+Lumière grise tombant du trou du dôme sur le tas.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / LEFT / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Un carrefour sous une voûte effondrée en dôme, dont les pierres forment un tas au centre. (décor de secours, utilisé souvent : doit avoir sa propre identité) Ancienne fonction : Carrefour. Ce que le temps en a fait : Des pierres blanches lisses parmi les gravats. HERO FEATURE (doit structurer la composition) : Le tas de pierres du dôme effondré au centre, qu'on contourne des deux côtés. ÉCLAIRAGE : Lumière grise tombant du trou du dôme sur le tas. Sorties, exactement celles-ci et intégrées au lieu (sorties intégrées naturellement au décor décrit) : GAUCHE (zone x 3–27 %, y 30–64 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GEN_CLR_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Une salle de répartition avec trois arches de tailles différentes. (décor de secours, utilisé souvent : doit avoir sa propre identité)
+
+ANCIENNE FONCTION :
+Salle de répartition.
+
+HERO FEATURE :
+Trois arches : petite à gauche, monumentale au centre, moyenne à droite.
+
+AMBIANCE / ÉCLAIRAGE :
+Chaque arche a sa propre lumière : froide, chaude, aucune.
+
+SORTIES NÉCESSAIRES :
+CENTER / LEFT / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une salle de répartition avec trois arches de tailles différentes. (décor de secours, utilisé souvent : doit avoir sa propre identité) Ancienne fonction : Salle de répartition. Ce que le temps en a fait : Un panneau de pierre avec trois symboles, dont un cercle incomplet. HERO FEATURE (doit structurer la composition) : Trois arches : petite à gauche, monumentale au centre, moyenne à droite. ÉCLAIRAGE : Chaque arche a sa propre lumière : froide, chaude, aucune. Sorties, exactement celles-ci et intégrées au lieu (sorties intégrées naturellement au décor décrit) : FOND au centre (zone x 35–65 %, y 22–54 %) ; GAUCHE (zone x 3–27 %, y 30–64 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.
+
+──────────────────────────────────────────────────────────
+
+NOM :
+P1_GEN_BCLR_01.png
+
+NIVEAU :
+Niveau A — transition
+
+IDENTITÉ :
+Une rotonde à quatre portes avec un puits de lumière central. (décor de secours, utilisé souvent : doit avoir sa propre identité)
+
+ANCIENNE FONCTION :
+Rotonde de distribution.
+
+HERO FEATURE :
+La rotonde circulaire et le rayon de lumière vertical qui tombe en son centre.
+
+AMBIANCE / ÉCLAIRAGE :
+Le rayon central seul ; les portes sont dans la pénombre.
+
+SORTIES NÉCESSAIRES :
+BACK (non visible) / CENTER / LEFT / RIGHT
+
+PROMPT :
+Background de jeu mobile, format portrait 9:16 (1024x1792), vue de face depuis l'entrée de la salle, perspective simple ; le quart inférieur de l'image reste un sol dégagé (le personnage vu de dos y sera superposé) ; pas de texte, pas d'interface, pas de personnage, pas de créature. LIEU : Une rotonde à quatre portes avec un puits de lumière central. (décor de secours, utilisé souvent : doit avoir sa propre identité) Ancienne fonction : Rotonde de distribution. Ce que le temps en a fait : Une mosaïque de pierres blanches au sol sous le rayon, formant un cercle incomplet. HERO FEATURE (doit structurer la composition) : La rotonde circulaire et le rayon de lumière vertical qui tombe en son centre. ÉCLAIRAGE : Le rayon central seul ; les portes sont dans la pénombre. Sorties, exactement celles-ci et intégrées au lieu (sorties intégrées naturellement au décor décrit) : FOND au centre (zone x 35–65 %, y 22–54 %) ; GAUCHE (zone x 3–27 %, y 30–64 %) ; DROITE (zone x 73–97 %, y 30–64 %). Chaque sortie doit rester nette, lisible et non obstruée dans sa zone. Aucune autre porte, ouverture, escalier ou passage.

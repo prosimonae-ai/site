@@ -350,6 +350,24 @@
   .friend-action:hover { background: var(--text); color: var(--bg); border-color: var(--text); }
   .friend-action.remove { color: #c0392b; border-color: #c0392b; }
   .friend-action.remove:hover { background: #c0392b; color: #fff; border-color: #c0392b; }
+  .trash-toggle {
+    width: 100%; display: flex; justify-content: space-between; align-items: center;
+    background: none; border: 1px solid var(--border); border-radius: 4px;
+    padding: 10px 12px; cursor: pointer; color: var(--muted);
+    font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase; transition: color 150ms;
+  }
+  .trash-toggle:hover { color: var(--text); }
+  .trash-toggle span:last-child {
+    background: var(--border); color: var(--text); border-radius: 10px;
+    padding: 1px 8px; font-size: 10px;
+  }
+  #trash-list { margin-top: 8px; }
+  .trash-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .trash-row:last-child { border-bottom: none; }
+  .trash-thumb { width: 34px; height: 34px; border-radius: 4px; background: var(--border) center/cover no-repeat; flex-shrink: 0; }
+  .trash-name { flex: 1; font-size: 13px; color: var(--text); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .trash-name small { display: block; font-size: 10px; color: var(--muted); }
   #friends-search-results { display: flex; flex-direction: column; }
   #friends-search-results .friend-row { border-bottom: 1px solid var(--border); }
   .friend-action.pending { color: var(--muted); border-color: var(--border); cursor: default; }
@@ -844,6 +862,13 @@
       <div id="friends-list"></div>
     </div>
 
+    <div class="prof-section" id="trash-section" hidden>
+      <button class="trash-toggle" id="trash-toggle" type="button">
+        <span>Éléments supprimés</span><span id="trash-count">0</span>
+      </button>
+      <div id="trash-list" hidden></div>
+    </div>
+
     <button class="prof-btn secondary" id="prof-close-btn">Fermer</button>
   </div>
 </div>
@@ -1065,7 +1090,7 @@ let items = [];
 let activeCat = 'all';
 
 function cats() {
-  const s = new Set(items.map(i => i.cat).filter(Boolean));
+  const s = new Set(items.filter(i => !i.deleted).map(i => i.cat).filter(Boolean));
   return ['all', ...s];
 }
 
@@ -1104,7 +1129,8 @@ function renderNav() {
 
 function renderList() {
   const list = document.getElementById('wish-list');
-  const filtered = activeCat === 'all' ? items : items.filter(i => i.cat === activeCat);
+  const live = items.filter(i => !i.deleted);
+  const filtered = activeCat === 'all' ? live : live.filter(i => i.cat === activeCat);
 
   if (!filtered.length) {
     list.innerHTML = '<div class="v-empty">Rien dans cette catégorie.</div>';
@@ -1143,7 +1169,7 @@ function renderList() {
       </div>`;
     card.querySelector('.card-edit').addEventListener('click', () => openEdit(item));
     card.querySelector('.card-del').addEventListener('click', async () => {
-      items = items.filter(i => i.id !== item.id);
+      items = items.map(i => i.id === item.id ? { ...i, deleted: true, deletedAt: Date.now() } : i);
       await save(items);
       render();
     });
@@ -1192,7 +1218,7 @@ const wishlistCache = {};
 async function getFriendItems(uid) {
   if (wishlistCache[uid]) return wishlistCache[uid];
   const { data } = await db.from('wishlist').select('items').eq('id', uid).single();
-  const result = Array.isArray(data?.items) ? data.items : [];
+  const result = (Array.isArray(data?.items) ? data.items : []).filter(i => !i.deleted);
   wishlistCache[uid] = result;
   return result;
 }
@@ -1202,7 +1228,7 @@ async function prefetchFriendWishlists(friendIds) {
   if (uncached.length === 0) return;
   const { data } = await db.from('wishlist').select('id, items').in('id', uncached);
   (data || []).forEach(row => {
-    wishlistCache[row.id] = Array.isArray(row.items) ? row.items : [];
+    wishlistCache[row.id] = (Array.isArray(row.items) ? row.items : []).filter(i => !i.deleted);
   });
 }
 
@@ -1291,7 +1317,7 @@ async function renderFeed(filterUserId = feedFriendFilter) {
   (wishRes.data || []).forEach(row => {
     const owner = userMap[row.id];
     if (!owner) return;
-    (row.items || []).forEach(item => allItems.push({ ...item, _owner: owner }));
+    (row.items || []).forEach(item => { if (!item.deleted) allItems.push({ ...item, _owner: owner }); });
   });
 
   list.innerHTML = '';
@@ -1833,9 +1859,53 @@ async function searchFriends(q) {
   });
 }
 
+function renderTrash() {
+  const section = document.getElementById('trash-section');
+  const list = document.getElementById('trash-list');
+  const trashed = items.filter(i => i.deleted).sort((a, b) => (b.deletedAt || 0) - (a.deletedAt || 0));
+  section.hidden = trashed.length === 0;
+  document.getElementById('trash-count').textContent = trashed.length;
+  list.innerHTML = '';
+  trashed.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'trash-row';
+    const thumb = document.createElement('div');
+    thumb.className = 'trash-thumb';
+    if (item.img) thumb.style.backgroundImage = `url('${item.img}')`;
+    const name = document.createElement('div');
+    name.className = 'trash-name';
+    name.textContent = item.name || '—';
+    const sub = document.createElement('small');
+    sub.textContent = [item.brand, item.cat].filter(Boolean).join(' · ');
+    name.appendChild(sub);
+    const restore = document.createElement('button');
+    restore.className = 'friend-action';
+    restore.textContent = 'Restaurer';
+    restore.onclick = async () => {
+      items = items.map(i => i.id === item.id ? (({ deleted, deletedAt, ...rest }) => rest)(i) : i);
+      await save(items); render(); renderTrash();
+    };
+    const purge = document.createElement('button');
+    purge.className = 'friend-action remove';
+    purge.textContent = 'Effacer';
+    purge.onclick = async () => {
+      if (!confirm('Supprimer définitivement cet élément ?')) return;
+      items = items.filter(i => i.id !== item.id);
+      await save(items); renderTrash();
+    };
+    row.append(thumb, name, restore, purge);
+    list.appendChild(row);
+  });
+}
+document.getElementById('trash-toggle').addEventListener('click', () => {
+  const list = document.getElementById('trash-list');
+  list.hidden = !list.hidden;
+});
+
 function openProfile() {
   renderProfAvatar();
   loadFriends();
+  renderTrash();
   profilePanel.classList.add('open');
 }
 function closeProfile() { profilePanel.classList.remove('open'); }

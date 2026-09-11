@@ -1,0 +1,132 @@
+CRÉATURES PALIER 1
+Sprite de créature de jeu, PNG à fond transparent, format portrait 768x1024, créature vue de face (elle fait face au joueur), pieds/base en bas de l'image, isolée sans décor, ombre portée légère, pas de texte.
+Le jeu ajoute lui-même le flash rouge à l'impact, le tremblement et la disparition à la mort : ne dessine qu'une pose par état.
+Les états d'une même créature doivent garder la même échelle et la même position des pieds.
+Les fichiers actuels sont des placeholders 1x1 : remplace-les par le vrai PNG avec le même nom.
+
+
+──────────────────────────────
+
+NOM :
+P1_CRE_CHAROGNARD_idle.png
+
+CRÉATURE :
+CHAROGNARD — faible mais agressif, vole les potions.
+
+ÉTAT :
+idle
+
+PROMPT :
+Sprite de créature de jeu, PNG à fond transparent, format portrait 768x1024, créature vue de face (elle fait face au joueur), pieds/base en bas de l'image, isolée sans décor, ombre portée légère, pas de texte. Une créature voûtée à quatre pattes de la taille d'un grand chien, corps décharné couvert de cuir sombre, museau allongé plein de dents, yeux orange, une besace volée accrochée au cou, posture prête à bondir.
+
+──────────────────────────────
+
+NOM :
+P1_CRE_SENTINELLE_BRISEE_idle.png
+
+CRÉATURE :
+SENTINELLE BRISÉE — lente, attaque un tour sur deux, frappe très fort.
+
+ÉTAT :
+idle
+
+PROMPT :
+Sprite de créature de jeu, PNG à fond transparent, format portrait 768x1024, créature vue de face (elle fait face au joueur), pieds/base en bas de l'image, isolée sans décor, ombre portée légère, pas de texte. Un automate de garde humanoïde de pierre et de bronze, deux fois la taille du héros, dont un bras et une partie de la tête manquent ; une seule lentille jaune allumée ; une hallebarde de pierre trop lourde tenue à deux mains ; des câbles/chaînes qui pendent de la brisure ; posture lourde, penchée.
+
+──────────────────────────────
+
+NOM :
+P1_CRE_RODEUR_idle.png
+
+CRÉATURE :
+RÔDEUR — rapide, peut enchaîner deux coups.
+
+ÉTAT :
+idle
+
+PROMPT :
+Sprite de créature de jeu, PNG à fond transparent, format portrait 768x1024, créature vue de face (elle fait face au joueur), pieds/base en bas de l'image, isolée sans décor, ombre portée légère, pas de texte. Un humanoïde maigre et grand, entièrement enveloppé de bandelettes grises et de lambeaux de tissu, courbé en avant, longs bras se terminant par des griffes fines, visage caché sauf deux points rouges, posture de course prête à s'élancer.
+
+──────────────────────────────
+
+NOM :
+P1_CRE_PARASITE_idle.png
+
+CRÉATURE :
+VER PARASITE — faible, empoisonne un peu plus à chaque tour.
+
+ÉTAT :
+idle
+
+PROMPT :
+Sprite de créature de jeu, PNG à fond transparent, format portrait 768x1024, créature vue de face (elle fait face au joueur), pieds/base en bas de l'image, isolée sans décor, ombre portée légère, pas de texte. Un ver segmenté et pâle de la longueur du héros, dressé sur le tiers arrière, gueule circulaire ouverte garnie de dents, filaments luisants vert pâle sur les segments, une flaque sombre à sa base.
+
+──────────────────────────────
+
+NOM :
+P1_CRE_GARDIEN_PIERRE_idle.png
+
+CRÉATURE :
+GARDIEN DE PIERRE MINEUR — résistant, réduit les dégâts reçus.
+
+ÉTAT :
+idle
+
+PROMPT :
+Sprite de créature de jeu, PNG à fond transparent, format portrait 768x1024, créature vue de face (elle fait face au joueur), pieds/base en bas de l'image, isolée sans décor, ombre portée légère, pas de texte. Une statue de gardien animée, trapue et massive, plus large que haute, en pierre grise avec des joints qui luisent faiblement en blanc (pierres blanches lisses incrustées), tête sans visage, deux poings énormes, posture de bloc défensif.
+
+──────────────────────────────
+
+NOM :
+P1_CRE_PORTIER_idle.png
+
+CRÉATURE :
+LE PORTIER DU SEUIL — boss du palier. Cycle : frappe / garde (bouclier) / télégraphe (masse levée) / frappe lourde ; sous 40 % de HP il enrage.
+
+ÉTAT :
+idle
+
+PROMPT :
+Sprite de créature de jeu, PNG à fond transparent, format portrait 768x1024, créature vue de face (elle fait face au joueur), pieds/base en bas de l'image, isolée sans décor, ombre portée légère, pas de texte. Un colosse de pierre noire et de bronze, trois fois la taille du héros, en armure de gardien de porte ancienne, un heaume sans visage percé d'un cercle incomplet lumineux à la place des yeux, une masse à deux mains posée au sol devant lui, un grand bouclier de pierre sur le dos ; posture immobile, droite, imposante, symétrique.
+
+──────────────────────────────
+
+NOM :
+P1_CRE_PORTIER_guard.png
+
+CRÉATURE :
+LE PORTIER DU SEUIL — boss du palier. Cycle : frappe / garde (bouclier) / télégraphe (masse levée) / frappe lourde ; sous 40 % de HP il enrage.
+
+ÉTAT :
+guard
+
+PROMPT :
+Sprite de créature de jeu, PNG à fond transparent, format portrait 768x1024, créature vue de face (elle fait face au joueur), pieds/base en bas de l'image, isolée sans décor, ombre portée légère, pas de texte. Le même colosse, le bouclier de pierre ramené devant lui à deux mains, accroupi derrière, presque entièrement caché, le cercle lumineux brille plus fort au-dessus du bouclier.
+
+──────────────────────────────
+
+NOM :
+P1_CRE_PORTIER_rage.png
+
+CRÉATURE :
+LE PORTIER DU SEUIL — boss du palier. Cycle : frappe / garde (bouclier) / télégraphe (masse levée) / frappe lourde ; sous 40 % de HP il enrage.
+
+ÉTAT :
+rage
+
+PROMPT :
+Sprite de créature de jeu, PNG à fond transparent, format portrait 768x1024, créature vue de face (elle fait face au joueur), pieds/base en bas de l'image, isolée sans décor, ombre portée légère, pas de texte. Le même colosse, heaume fendu et cercle lumineux passé au rouge, fissures rouges sur tout le corps, masse levée au-dessus de la tête à deux mains, bouclier jeté au sol, posture penchée en avant, agressive.
+
+──────────────────────────────
+
+NOM :
+P1_CRE_PORTIER_dead.png
+
+CRÉATURE :
+LE PORTIER DU SEUIL — boss du palier. Cycle : frappe / garde (bouclier) / télégraphe (masse levée) / frappe lourde ; sous 40 % de HP il enrage.
+
+ÉTAT :
+dead
+
+PROMPT :
+Sprite de créature de jeu, PNG à fond transparent, format portrait 768x1024, créature vue de face (elle fait face au joueur), pieds/base en bas de l'image, isolée sans décor, ombre portée légère, pas de texte. Le même colosse effondré à genoux puis affaissé sur le côté, heaume brisé, cercle lumineux éteint, masse tombée, débris de pierre autour ; il reste au sol comme un tas de ruines reconnaissable.
