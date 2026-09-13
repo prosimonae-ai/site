@@ -1,0 +1,50 @@
+{
+ "sofa_02": {
+  "file": "sofa_02/sofa_02_1k.gltf",
+  "bytes": 427171
+ },
+ "sofa_03": {
+  "file": "sofa_03/sofa_03_1k.gltf",
+  "bytes": 668033
+ },
+ "modern_arm_chair_01": {
+  "file": "modern_arm_chair_01/modern_arm_chair_01_1k.gltf",
+  "bytes": 2698032
+ },
+ "modern_coffee_table_01": {
+  "file": "modern_coffee_table_01/modern_coffee_table_01_1k.gltf",
+  "bytes": 1331297
+ },
+ "coffee_table_round_01": {
+  "file": "coffee_table_round_01/coffee_table_round_01_1k.gltf",
+  "bytes": 1563153
+ },
+ "dining_chair_02": {
+  "file": "dining_chair_02/dining_chair_02_1k.gltf",
+  "bytes": 921075
+ },
+ "dining_table": {
+  "file": "dining_table/dining_table_1k.gltf",
+  "bytes": 2283933
+ },
+ "potted_plant_01": {
+  "file": "potted_plant_01/potted_plant_01_1k.gltf",
+  "bytes": 6325139
+ },
+ "potted_plant_02": {
+  "file": "potted_plant_02/potted_plant_02_1k.gltf",
+  "bytes": 2634698
+ },
+ "modern_wooden_cabinet": {
+  "file": "modern_wooden_cabinet/modern_wooden_cabinet_1k.gltf",
+  "bytes": 2855522
+ },
+ "side_table_01": {
+  "file": "side_table_01/side_table_01_1k.gltf",
+  "bytes": 505268
+ },
+ "wooden_table_02": {
+  "file": "wooden_table_02/wooden_table_02_1k.gltf",
+  "bytes": 485316
+ }
+}
