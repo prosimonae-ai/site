@@ -252,8 +252,8 @@ const repo = {
   save(state) { try { localStorage.setItem(this.KEY, JSON.stringify(state)) } catch {} },
   seed() {
     const products = []
-    SEED.forEach(([cat, ...items]) => items.forEach(s => { const [emoji, ...rest] = s.split(' '); products.push({ id: uid(), name: rest.join(' '), emoji, cat, uses: 0 }) }))
-    return { products, categoryOrder: CATEGORIES.map(c => c.id), list: [], shopping: false, startedAt: null, history: [], presence: {}, rev: 0 }
+    SEED.forEach(([cat, ...items]) => items.forEach(s => { const [emoji, ...rest] = s.split(' '); const name = rest.join(' '); products.push({ id: 'p-' + norm(name), name, emoji, cat, uses: 0 }) }))
+    return { products, categoryOrder: CATEGORIES.map(c => c.id), list: [], shopping: false, startedAt: null, history: [], presence: {}, rev: 0, epoch: 0 }
   },
 }
 const PROFILES = { lola: { name: 'Lola', initial: 'L' }, simon: { name: 'Simon', initial: 'S' } }
@@ -262,10 +262,31 @@ const local = { get: () => { try { return JSON.parse(localStorage.getItem('cours
 let ME = local.get().profile || null
 let HOUSEHOLD = local.get().household || 'lola-simon'
 const uid = () => Math.random().toString(36).slice(2, 10)
+const norm = s => String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 let S = repo.load() || repo.seed()
 if (!S.presence) S.presence = {}
 if (!S.rev) S.rev = 0
+if (!S.epoch) S.epoch = 0
 S.list.forEach(l => { if (!l.updatedAt) l.updatedAt = 0 })
+// Dédoublonnage : un seul produit par nom (les anciens identifiants aléatoires sont remplacés par 'p-<nom>')
+function dedupe(state) {
+  const keep = new Map(), remap = {}
+  state.products.forEach(p => {
+    const key = norm(p.name)
+    const id = 'p-' + key
+    const ex = keep.get(key)
+    if (ex) { ex.uses = Math.max(ex.uses || 0, p.uses || 0); remap[p.id] = ex.id }
+    else { if (p.id !== id) remap[p.id] = id; p.id = id; keep.set(key, p) }
+  })
+  state.products = [...keep.values()]
+  const fix = pid => remap[pid] || pid
+  const byPid = new Map()
+  ;(state.list || []).map(l => ({ ...l, pid: fix(l.pid) })).forEach(l => { const ex = byPid.get(l.pid); if (!ex || (l.updatedAt || 0) > (ex.updatedAt || 0)) byPid.set(l.pid, l) })
+  state.list = [...byPid.values()]
+  ;(state.history || []).forEach(h => { h.items = h.items.map(i => ({ ...i, pid: fix(i.pid) })) })
+  return state
+}
+dedupe(S)
 let saveT = null
 const persist = () => { S.rev = (S.rev || 0) + 1; clearTimeout(saveT); saveT = setTimeout(() => { repo.save(S); sync.push() }, 120) }
 const now = () => Date.now()
@@ -299,7 +320,7 @@ function showTab(t) {
 function addToList(pid, qty = 1) {
   const l = inList(pid)
   if (l) { l.qty += qty; if (l.qty <= 0) removeFromList(pid) }
-  else { S.list.push({ pid, qty: 1, note: '', done: false, addedBy: ME, updatedAt: now() }); const p = product(pid); if (p) p.uses = (p.uses || 0) + 1 }
+  else { S.list.push({ pid, qty: 1, note: '', done: false, addedBy: ME, updatedAt: now(), createdAt: now() }); const p = product(pid); if (p) p.uses = (p.uses || 0) + 1 }
   if (l) touch(l)
   persist(); render(); buzz()
 }
@@ -361,8 +382,8 @@ function renderList() {
   $('list-cta').innerHTML = S.shopping ? `<button class="cta" onclick="showTab('shop')">🛒 Continuer les courses</button>` : `<button class="cta" onclick="startShopping()">🛒 Commencer les courses</button>`
 }
 function setNote(pid, v) { const l = inList(pid); if (l) { l.note = v.trim(); touch(l); persist() } }
-function clearList() { if (!confirm('Vider la liste ?')) return; S.list = []; S.shopping = false; persist(); render() }
-function resumeLast() { const h = S.history[0]; if (!h) return; S.list = h.items.map(i => ({ ...i, done: false, doneBy: null, updatedAt: now() })); S.shopping = false; persist(); render(); toast('Dernière liste reprise') }
+function clearList() { if (!confirm('Vider la liste ?')) return; S.list = []; S.shopping = false; S.epoch = now(); persist(); render() }
+function resumeLast() { const h = S.history[0]; if (!h) return; S.list = h.items.map(i => ({ ...i, done: false, doneBy: null, updatedAt: now(), createdAt: now() })); S.shopping = false; persist(); render(); toast('Dernière liste reprise') }
 
 /* ═════════ COURSES ═════════ */
 function startShopping() { if (!S.list.length) return; S.shopping = true; S.startedAt = Date.now(); S.list.forEach(l => { l.done = false; l.doneBy = null; touch(l) }); persist(); showTab('shop') }
@@ -410,14 +431,14 @@ function finishShopping() {
   S.history.unshift({ id: uid(), at: Date.now(), items: S.list.map(l => ({ pid: l.pid, qty: l.qty, note: l.note })), taken: S.list.filter(l => l.done).length, by: ME })
   S.presence = {}
   S.history = S.history.slice(0, 20)
-  S.list = []; S.shopping = false; persist(); showTab('prep'); toast('Courses terminées 🎉')
+  S.list = []; S.shopping = false; S.epoch = now(); persist(); showTab('prep'); toast('Courses terminées 🎉')
 }
 $('quick').addEventListener('keydown', e => {
   if (e.key !== 'Enter') return
   const q = $('quick').value.trim(); if (!q) return
   let p = S.products.find(x => x.name.toLowerCase() === q.toLowerCase())
   if (!p) { p = { id: uid(), name: q, emoji: '🛒', cat: 'autres', uses: 0 }; S.products.push(p) }
-  if (!inList(p.id)) S.list.push({ pid: p.id, qty: 1, note: '', done: false, addedBy: ME, updatedAt: now() })
+  if (!inList(p.id)) S.list.push({ pid: p.id, qty: 1, note: '', done: false, addedBy: ME, updatedAt: now(), createdAt: now() })
   $('quick').value = ''; $('quick').blur(); persist(); render(); toast(`${p.emoji} ${p.name} ajouté`)
 })
 
@@ -454,12 +475,12 @@ function pickCat(c) { sheetState.cat = c; document.querySelectorAll('#f-cats .ch
 function saveProduct() {
   const name = $('f-name').value.trim(); if (!name) { $('f-name').focus(); return }
   if (sheetState.pid) { const p = product(sheetState.pid); p.name = name; p.emoji = sheetState.emoji; p.cat = sheetState.cat }
-  else { const p = { id: uid(), name, emoji: sheetState.emoji, cat: sheetState.cat, uses: 0 }; S.products.push(p); S.list.push({ pid: p.id, qty: 1, note: '', done: false, addedBy: ME, updatedAt: now() }); p.uses = 1; toast(`${p.emoji} ${p.name} ajouté`) }
+  else { const p = { id: uid(), name, emoji: sheetState.emoji, cat: sheetState.cat, uses: 0 }; S.products.push(p); S.list.push({ pid: p.id, qty: 1, note: '', done: false, addedBy: ME, updatedAt: now(), createdAt: now() }); p.uses = 1; toast(`${p.emoji} ${p.name} ajouté`) }
   clearSearch(); persist(); closeSheet(); render()
 }
 function deleteProduct(pid) { if (!confirm('Supprimer ce produit de la bibliothèque ?')) return; S.products = S.products.filter(p => p.id !== pid); S.list = S.list.filter(l => l.pid !== pid); persist(); closeSheet(); render() }
 function moveCat(id, dir) { const o = S.categoryOrder; const i = o.indexOf(id); const j = i + dir; if (i < 0 || j < 0 || j >= o.length) return; [o[i], o[j]] = [o[j], o[i]]; persist(); openSheet('settings'); render() }
-function reuse(hid) { const h = S.history.find(x => x.id === hid); if (!h) return; S.list = h.items.filter(i => product(i.pid)).map(i => ({ ...i, done: false, doneBy: null, updatedAt: now() })); S.shopping = false; persist(); closeSheet(); showTab('list'); toast('Liste reprise') }
+function reuse(hid) { const h = S.history.find(x => x.id === hid); if (!h) return; S.list = h.items.filter(i => product(i.pid)).map(i => ({ ...i, done: false, doneBy: null, updatedAt: now(), createdAt: now() })); S.shopping = false; persist(); closeSheet(); showTab('list'); toast('Liste reprise') }
 function setProfile(id) { ME = id; local.set({ ...local.get(), profile: id }); render(); openSheet('settings'); toast(`Salut ${PROFILES[id].name} 👋`) }
 function setHousehold(v) { HOUSEHOLD = (v || '').trim().toLowerCase().replace(/[^a-z0-9-]/g, '-') || 'lola-simon'; local.set({ ...local.get(), household: HOUSEHOLD }); sync.connect(); openSheet('settings') }
 function resetAll() { if (!confirm('Tout effacer et revenir aux produits de départ ?')) return; S = repo.seed(); repo.save(S); closeSheet(); showTab('prep') }
@@ -501,15 +522,21 @@ const sync = {
     if (!remote || typeof remote !== 'object') return
     this.applying = true
     try {
+      remote = dedupe(JSON.parse(JSON.stringify(remote)))
+      // Top de fin : la liste la plus récemment terminée/vidée l'emporte, les articles antérieurs disparaissent
+      const epoch = Math.max(S.epoch || 0, remote.epoch || 0)
+      if (epoch > (S.epoch || 0)) { S.list = S.list.filter(l => (l.createdAt || 0) > epoch); S.shopping = false }
+      S.epoch = epoch
       const byId = new Map(S.products.map(p => [p.id, p]))
       ;(remote.products || []).forEach(p => { const mine = byId.get(p.id); if (!mine) S.products.push(p); else if ((p.uses || 0) > (mine.uses || 0)) mine.uses = p.uses })
       const removed = { ...(remote.removed || {}), ...(S.removed || {}) }
       Object.entries(remote.removed || {}).forEach(([pid, t]) => { if (t > (S.removed?.[pid] || 0)) removed[pid] = t })
       const list = new Map(S.list.map(l => [l.pid, l]))
-      ;(remote.list || []).forEach(r => { const m = list.get(r.pid); if (!m || (r.updatedAt || 0) > (m.updatedAt || 0)) list.set(r.pid, r) })
+      ;(remote.list || []).filter(r => (r.createdAt || 0) > epoch || !epoch).forEach(r => { const m = list.get(r.pid); if (!m || (r.updatedAt || 0) > (m.updatedAt || 0)) list.set(r.pid, r) })
       S.list = [...list.values()].filter(l => !(removed[l.pid] > (l.updatedAt || 0)))
       S.removed = removed
-      if ((remote.rev || 0) > (S.rev || 0)) { S.shopping = !!remote.shopping; S.startedAt = remote.startedAt || S.startedAt; if (remote.categoryOrder) S.categoryOrder = remote.categoryOrder }
+      if ((remote.rev || 0) > (S.rev || 0)) { S.shopping = !!remote.shopping && S.list.length > 0; S.startedAt = remote.startedAt || S.startedAt; if (remote.categoryOrder) S.categoryOrder = remote.categoryOrder }
+      dedupe(S)
       S.presence = { ...(S.presence || {}), ...(remote.presence || {}) }
       Object.entries(remote.presence || {}).forEach(([k, v]) => { if (!S.presence[k] || v.at > S.presence[k].at) S.presence[k] = v })
       const hist = new Map((S.history || []).map(h => [h.id, h])); (remote.history || []).forEach(h => { if (!hist.has(h.id)) hist.set(h.id, h) })
