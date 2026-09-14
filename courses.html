@@ -177,6 +177,21 @@
   .profile-pick button { background: var(--card-2); border-radius: 16px; padding: 22px 10px; font-size: 18px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 2px solid transparent; }
   .profile-pick button.on { border-color: var(--accent); background: var(--accent-bg); }
   .profile-pick .avatar { width: 48px; height: 48px; border-radius: 24px; font-size: 20px; }
+  .seg { display: flex; background: var(--card-2); border-radius: 12px; padding: 3px; gap: 2px; }
+  .seg button { flex: 1; padding: 8px 10px; border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--muted); }
+  .seg button.on { background: var(--card); color: var(--text); box-shadow: var(--shadow); }
+  .seg button.on.lola { color: #c2417a; } .seg button.on.simon { color: #2f5fbf; }
+  .for-bar { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+  .for-bar .lbl { font-size: 13px; font-weight: 600; color: var(--muted); }
+  .tile.on.lola { background: rgba(194,65,122,.12); border-color: #c2417a; } .tile.on.lola .name { color: #c2417a; } .tile.on.lola .qty { background: #c2417a; }
+  .tile.on.simon { background: rgba(47,95,191,.12); border-color: #2f5fbf; } .tile.on.simon .name { color: #2f5fbf; } .tile.on.simon .qty { background: #2f5fbf; }
+  .asg { width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; background: var(--card-2); color: var(--muted); flex-shrink: 0; }
+  .asg.lola { background: rgba(194,65,122,.14); color: #c2417a; } .asg.simon { background: rgba(47,95,191,.14); color: #2f5fbf; }
+  .cat.other { color: var(--faint); margin-top: 26px; }
+  .item.other { opacity: .55; }
+  .item.other.done { opacity: .35; }
+  .split { display: flex; gap: 10px; font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .split b { font-weight: 700; } .split .lola b { color: #c2417a; } .split .simon b { color: #2f5fbf; }
   .toast { position: fixed; left: 50%; bottom: calc(var(--tab-h) + 84px); transform: translateX(-50%) translateY(10px); background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; opacity: 0; transition: .2s; z-index: 50; pointer-events: none; white-space: nowrap; }
   .toast.show { opacity: 1; transform: translateX(-50%); }
 </style>
@@ -187,6 +202,7 @@
 <section class="screen active" id="screen-prep">
   <div class="head"><div><h1>Préparer</h1><div class="sub" id="prep-sub">Touche un produit pour l'ajouter</div></div><button class="who" onclick="openSheet('settings')"><span class="sync" id="sync"><span class="dot"></span></span><span class="avatar" id="me-avatar">?</span></button></div>
   <div class="search"><span>🔍</span><input id="search" type="search" placeholder="Rechercher ou créer un produit…" autocomplete="off" autocapitalize="sentences"><button class="clear hidden" id="search-clear" onclick="clearSearch()">✕</button></div>
+  <div class="for-bar"><span class="lbl">Pour</span><div class="seg" id="for-seg"></div></div>
   <div id="catalog"></div>
 </section>
 <div class="float" id="float"><span><b id="float-n">0</b> <span id="float-lbl">article</span></span><button class="go" onclick="showTab('list')">Voir la liste →</button></div>
@@ -268,6 +284,7 @@ const PROFILES = { lola: { name: 'Lola', initial: 'L' }, simon: { name: 'Simon',
 const local = { get: () => { try { return JSON.parse(localStorage.getItem('courses_local')) || {} } catch { return {} } }, set: v => localStorage.setItem('courses_local', JSON.stringify(v)) }
 let ME = local.get().profile || null
 let HOUSEHOLD = local.get().household || 'lola-simon'
+let FOR = null // destinataire des prochains ajouts : 'lola' | 'simon' | null (les deux)
 const uid = () => Math.random().toString(36).slice(2, 10)
 const norm = s => String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 let S = repo.load() || repo.seed()
@@ -320,6 +337,11 @@ const icon = (e, cls = 'emoji') => {
   return `<span class="${cls}">${esc(e)}</span>`
 }
 const plural = (n, s) => `${n} ${s}${n > 1 ? 's' : ''}`
+const forOf = l => l.assignee || null
+const forLabel = a => a === 'lola' ? 'L' : a === 'simon' ? 'S' : '👥'
+const forName = a => a ? PROFILES[a].name : 'les deux'
+function setFor(a) { FOR = a; renderForSeg() }
+function renderForSeg() { const el = $('for-seg'); if (!el) return; el.innerHTML = [[null, '👥 Les deux'], ['lola', 'Lola'], ['simon', 'Simon']].map(([a, l]) => `<button class="${FOR === a ? 'on ' + (a || '') : ''}" onclick="setFor(${a ? `'${a}'` : 'null'})">${l}</button>`).join('') }
 const orderedCats = () => [...S.categoryOrder.map(cat), ...CATEGORIES.filter(c => !S.categoryOrder.includes(c.id))]
 
 /* ═════════ Onglets ═════════ */
@@ -338,7 +360,7 @@ function showTab(t) {
 function addToList(pid, qty = 1) {
   const l = inList(pid)
   if (l) { l.qty += qty; if (l.qty <= 0) removeFromList(pid) }
-  else { S.list.push({ pid, qty: 1, note: '', done: false, addedBy: ME, updatedAt: now(), createdAt: now() }); const p = product(pid); if (p) p.uses = (p.uses || 0) + 1 }
+  else { S.list.push({ pid, qty: 1, note: '', done: false, addedBy: ME, assignee: FOR, updatedAt: now(), createdAt: now() }); const p = product(pid); if (p) p.uses = (p.uses || 0) + 1 }
   if (l) touch(l)
   persist(); render(); buzz()
 }
@@ -353,7 +375,7 @@ function renderPrep() {
   $('search-clear').classList.toggle('hidden', !q)
   const wrap = $('catalog')
   let html = ''
-  const tile = p => { const l = inList(p.id); return `<button class="tile${l ? ' on' : ''}" data-pid="${p.id}" onclick="toggleTile('${p.id}', event)" oncontextmenu="event.preventDefault();openSheet('product','${p.id}')">${icon(p.emoji)}<span class="name">${esc(p.name)}</span><span class="qty">${l ? (l.qty > 1 ? '×' + l.qty : '✓') : ''}</span></button>` }
+  const tile = p => { const l = inList(p.id); return `<button class="tile${l ? ' on ' + (forOf(l) || '') : ''}" data-pid="${p.id}" onclick="toggleTile('${p.id}', event)" oncontextmenu="event.preventDefault();openSheet('product','${p.id}')">${icon(p.emoji)}<span class="name">${esc(p.name)}</span><span class="qty">${l ? (l.qty > 1 ? '×' + l.qty : '✓') : ''}</span></button>` }
   if (q) {
     const hits = S.products.filter(p => p.name.toLowerCase().includes(q))
     html += `<div class="section"><div class="section-title"><span>${hits.length ? plural(hits.length, 'résultat') : 'Aucun résultat'}</span></div><div class="grid">${hits.map(tile).join('')}<button class="tile add" onclick="openSheet('product',null,'${esc(q)}')"><span class="emoji">＋</span><span class="name">Créer « ${esc($('search').value.trim())} »</span></button></div></div>`
@@ -367,6 +389,7 @@ function renderPrep() {
     })
   }
   wrap.innerHTML = html
+  renderForSeg()
   const n = S.list.length
   $('float-n').textContent = n; $('float-lbl').textContent = n > 1 ? 'articles' : 'article'
   $('float').classList.toggle('show', tab === 'prep' && n > 0)
@@ -392,13 +415,14 @@ function renderList() {
     const ls = S.list.filter(l => product(l.pid)?.cat === c.id)
     if (!ls.length) return
     html += `<div class="cat">${c.emoji} ${esc(c.name)}</div>` + ls.map(l => { const p = product(l.pid); return `
-      <div class="row">${icon(p.emoji)}<div class="body"><div class="name">${esc(p.name)}</div><div class="note"><input placeholder="Note (2 L, x6, 500 g…)" value="${esc(l.note)}" onchange="setNote('${l.pid}', this.value)"></div></div>
+      <div class="row">${icon(p.emoji)}<button class="asg ${forOf(l) || ''}" onclick="cycleFor('${l.pid}')" title="Pour qui ?">${forLabel(forOf(l))}</button><div class="body"><div class="name">${esc(p.name)}</div><div class="note"><input placeholder="Note (2 L, x6, 500 g…)" value="${esc(l.note)}" onchange="setNote('${l.pid}', this.value)"></div></div>
       <div class="stepper"><button onclick="addToList('${l.pid}', -1)">−</button><span>${l.qty}</span><button onclick="addToList('${l.pid}', 1)">+</button></div>
       <button class="del" onclick="removeFromList('${l.pid}')">✕</button></div>` }).join('')
   })
   wrap.innerHTML = html
   $('list-cta').innerHTML = S.shopping ? `<button class="cta" onclick="showTab('shop')">🛒 Continuer les courses</button>` : `<button class="cta" onclick="startShopping()">🛒 Commencer les courses</button>`
 }
+function cycleFor(pid) { const l = inList(pid); if (!l) return; const order = [null, 'lola', 'simon']; l.assignee = order[(order.indexOf(forOf(l)) + 1) % 3]; touch(l); persist(); render(); buzz(8) }
 function setNote(pid, v) { const l = inList(pid); if (l) { l.note = v.trim(); touch(l); persist() } }
 function clearList() { if (!confirm('Vider la liste ?')) return; S.list = []; S.shopping = false; S.epoch = now(); persist(); render() }
 function resumeLast() { const h = S.history[0]; if (!h) return; S.list = h.items.map(i => ({ ...i, done: false, doneBy: null, updatedAt: now(), createdAt: now() })); S.shopping = false; persist(); render(); toast('Dernière liste reprise') }
@@ -423,11 +447,14 @@ function renderShop() {
   const done = S.list.filter(l => l.done), todo = S.list.filter(l => !l.done)
   $('shop-done').textContent = done.length; $('shop-total').textContent = S.list.length
   $('shop-fill').style.width = (done.length / S.list.length * 100) + '%'
-  const item = l => { const p = product(l.pid); const who = l.done && l.doneBy && PROFILES[l.doneBy]; return `<div class="item${l.done ? ' done' : ''}" data-pid="${l.pid}" onclick="toggleDone('${l.pid}')"><span class="box">${l.done ? '✓' : ''}</span>${icon(p.emoji)}<span class="label">${esc(p.name)}${l.qty > 1 ? `<small>×${l.qty}</small>` : ''}${l.note ? `<small>${esc(l.note)}</small>` : ''}${who ? `<span class="tag ${l.doneBy}">${who.initial}</span>` : ''}</span></div>` }
+  const item = l => { const p = product(l.pid); const who = l.done && l.doneBy && PROFILES[l.doneBy]; const a = forOf(l); return `<div class="item${l.done ? ' done' : ''}" data-pid="${l.pid}" onclick="toggleDone('${l.pid}')"><span class="box">${l.done ? '✓' : ''}</span>${icon(p.emoji)}<span class="label">${esc(p.name)}${l.qty > 1 ? `<small>×${l.qty}</small>` : ''}${l.note ? `<small>${esc(l.note)}</small>` : ''}${who ? `<span class="tag ${l.doneBy}">${who.initial}</span>` : (a && !l.done ? `<span class="tag ${a}">${PROFILES[a].initial}</span>` : '')}</span></div>` }
   renderPresence()
   let html = ''
   if (!todo.length) html += `<div class="all-done"><div class="big">🎉</div><h2>Tout est pris !</h2><p>Appuie sur Terminer pour archiver la course.</p></div>`
-  orderedCats().forEach(c => { const ls = todo.filter(l => product(l.pid)?.cat === c.id); if (ls.length) html += `<div class="cat">${c.emoji} ${esc(c.name)}</div>` + ls.map(item).join('') })
+  const other = ME === 'lola' ? 'simon' : ME === 'simon' ? 'lola' : null
+  const mine = todo.filter(l => !other || forOf(l) !== other), theirs = other ? todo.filter(l => forOf(l) === other) : []
+  orderedCats().forEach(c => { const ls = mine.filter(l => product(l.pid)?.cat === c.id); if (ls.length) html += `<div class="cat">${c.emoji} ${esc(c.name)}</div>` + ls.map(item).join('') })
+  if (theirs.length) { html += `<div class="cat other">Pour ${PROFILES[other].name} · ${theirs.length}</div>`; orderedCats().forEach(c => { const ls = theirs.filter(l => product(l.pid)?.cat === c.id); if (ls.length) html += ls.map(l => item(l).replace('class="item', 'class="item other')).join('') }) }
   if (done.length) html += `<div class="done-head"><span>Pris · ${done.length}</span><button onclick="uncheckAll()">Tout décocher</button></div>` + done.map(item).join('')
   wrap.innerHTML = html
 }
@@ -436,11 +463,13 @@ function renderPresence() {
   const el = $('presence'); if (!el) return
   if (!other || !S.shopping) { el.innerHTML = ''; return }
   const pr = S.presence[other]
+  const share = a => { const ls = S.list.filter(l => forOf(l) === a || !forOf(l)); return `${ls.filter(l => l.done).length}/${ls.length}` }
   const mine = S.list.filter(l => l.done && l.doneBy === other).length
-  if (!pr) { el.innerHTML = `<div class="presence"><span class="dot off"></span><span><b>${PROFILES[other].name}</b> n'a encore rien coché</span></div>`; return }
+  const split = `<div class="split"><span class="${ME}"><b>${ME ? PROFILES[ME].name : 'Moi'}</b> ${share(ME)}</span><span class="${other}"><b>${PROFILES[other].name}</b> ${share(other)}</span></div>`
+  if (!pr) { el.innerHTML = `<div class="presence" style="flex-wrap:wrap"><span class="dot off"></span><span><b>${PROFILES[other].name}</b> n'a encore rien coché</span><div style="flex-basis:100%">${split}</div></div>`; return }
   const ago = Math.round((now() - pr.at) / 60000)
   const where = pr.cat ? cat(pr.cat) : null
-  el.innerHTML = `<div class="presence"><span class="dot${ago > 10 ? ' off' : ''}"></span><span><b>${PROFILES[other].name}</b>${where ? ` est au rayon <b>${where.emoji} ${esc(where.name)}</b>` : ''} · ${mine} pris</span><span class="t">${ago < 1 ? 'à l\'instant' : `il y a ${ago} min`}</span></div>`
+  el.innerHTML = `<div class="presence" style="flex-wrap:wrap"><span class="dot${ago > 10 ? ' off' : ''}"></span><span><b>${PROFILES[other].name}</b>${where ? ` est au rayon <b>${where.emoji} ${esc(where.name)}</b>` : ''} · ${mine} pris</span><span class="t">${ago < 1 ? 'à l\'instant' : `il y a ${ago} min`}</span><div style="flex-basis:100%">${split}</div></div>`
 }
 function uncheckAll() { S.list.forEach(l => { l.done = false; l.doneBy = null; touch(l) }); persist(); render() }
 function finishShopping() {
@@ -456,7 +485,7 @@ $('quick').addEventListener('keydown', e => {
   const q = $('quick').value.trim(); if (!q) return
   let p = S.products.find(x => x.name.toLowerCase() === q.toLowerCase())
   if (!p) { p = { id: uid(), name: q, emoji: '🛒', cat: 'autres', uses: 0 }; S.products.push(p) }
-  if (!inList(p.id)) S.list.push({ pid: p.id, qty: 1, note: '', done: false, addedBy: ME, updatedAt: now(), createdAt: now() })
+  if (!inList(p.id)) S.list.push({ pid: p.id, qty: 1, note: '', done: false, addedBy: ME, assignee: null, updatedAt: now(), createdAt: now() })
   $('quick').value = ''; $('quick').blur(); persist(); render(); toast(`${p.emoji.startsWith('#') ? '' : p.emoji + ' '}${p.name} ajouté`)
 })
 
@@ -513,7 +542,7 @@ function pickCat(c) { sheetState.cat = c; document.querySelectorAll('#f-cats .ch
 function saveProduct() {
   const name = $('f-name').value.trim(); if (!name) { $('f-name').focus(); return }
   if (sheetState.pid) { const p = product(sheetState.pid); p.name = name; p.emoji = sheetState.emoji; p.cat = sheetState.cat }
-  else { const p = { id: uid(), name, emoji: sheetState.emoji, cat: sheetState.cat, uses: 0 }; S.products.push(p); S.list.push({ pid: p.id, qty: 1, note: '', done: false, addedBy: ME, updatedAt: now(), createdAt: now() }); p.uses = 1; toast(`${p.emoji.startsWith('#') ? '' : p.emoji + ' '}${p.name} ajouté`) }
+  else { const p = { id: uid(), name, emoji: sheetState.emoji, cat: sheetState.cat, uses: 0 }; S.products.push(p); S.list.push({ pid: p.id, qty: 1, note: '', done: false, addedBy: ME, assignee: FOR, updatedAt: now(), createdAt: now() }); p.uses = 1; toast(`${p.emoji.startsWith('#') ? '' : p.emoji + ' '}${p.name} ajouté`) }
   clearSearch(); persist(); closeSheet(); render()
 }
 function deleteProduct(pid) { if (!confirm('Supprimer ce produit de la bibliothèque ?')) return; S.products = S.products.filter(p => p.id !== pid); S.list = S.list.filter(l => l.pid !== pid); persist(); closeSheet(); render() }
