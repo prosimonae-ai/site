@@ -4,6 +4,8 @@ import { useAppStore, useRooms } from '../../store/useAppStore'
 import { useApartmentMetrics } from '../../hooks/useApartmentMetrics'
 import { fmtArea } from '../../three/units'
 import { FURNITURE_PRESETS, fromPreset } from '../../data/furnitureData'
+import { apartment as apartmentData } from '../../data/apartmentData'
+const CODE_ITEMS = apartmentData.configurations.flatMap(c => c.furniture)
 import { roomCenter } from '../../three/helpers/geometry'
 import { I } from './Icons'
 import { InfoPanel } from './InfoPanel'
@@ -59,6 +61,7 @@ export function Overlay() {
       if (mod && key === 'v') { if (st.clipboard.length) { e.preventDefault(); st.paste() } return }
       if (mod && key === 'd') { if (st.selectedFurnitureIds.length) { e.preventDefault(); st.duplicateSelected() } return }
       if (mod && key === 'a') { e.preventDefault(); st.selectAll(); return }
+      if (mod && key === 's') { e.preventDefault(); st.saveSnapshot(); return }
       if (mod) return
       if (e.key === 'Escape') { if (st.showShortcuts) { st.toggleShortcuts(); return } st.selectFurniture(null); st.selectRoom(null); st.setTool('select'); return }
       if (e.key === '?' || (e.shiftKey && e.key === '/')) { st.toggleShortcuts(); return }
@@ -80,6 +83,9 @@ export function Overlay() {
   const rooms = useRooms()
   const metrics = useApartmentMetrics()
   const selectedRoom = rooms.find(r => r.id === s.selectedRoomId)
+  // Retour visuel après une sauvegarde
+  const [justSaved, setJustSaved] = useState(false)
+  useEffect(() => { if (!s.lastSavedAt) return; setJustSaved(true); const t = setTimeout(() => setJustSaved(false), 2200); return () => clearTimeout(t) }, [s.lastSavedAt])
 
   const tools: { t: Tool; l: string; icon: ReactNode }[] = [
     { t: 'select', l: 'Sélection', icon: <I.cursor /> }, { t: 'move', l: 'Déplacer', icon: <I.move /> },
@@ -115,6 +121,7 @@ export function Overlay() {
           ))}
         </Popover>
         <span className="chip hidden sm:inline-flex">{fmtArea(metrics.area)} · {metrics.roomCount} pièce{metrics.roomCount > 1 ? 's' : ''}</span>
+        {s.autoSavedAt && <span className="chip hidden md:inline-flex text-ink-3" title="État conservé automatiquement dans ce navigateur">auto-enregistré {new Date(s.autoSavedAt).toLocaleTimeString('fr-FR')}</span>}
       </div>
 
       {/* Haut centre : modes */}
@@ -124,6 +131,9 @@ export function Overlay() {
 
       {/* Haut droite : éclairage / affichage / réglages / aide */}
       <div className="pointer-events-auto absolute right-3 top-3 flex gap-1.5">
+        <button onClick={() => s.saveSnapshot()} className={`glass h-9 px-3 rounded-full flex items-center gap-1.5 text-[12px] font-medium transition-colors ${justSaved ? 'bg-accent text-white' : 'text-ink-2 hover:text-ink'}`} title="Enregistrer une sauvegarde (⌘S)">
+          <I.save />{justSaved ? 'Enregistré ✓' : 'Enregistrer'}{!justSaved && s.snapshots.length > 0 && <span className="ml-0.5 rounded-full bg-black/[.08] px-1.5 text-[10px] text-ink-3">{s.snapshots.length}</span>}
+        </button>
         <button onClick={s.toggleShortcuts} className={`glass h-9 w-9 rounded-full flex items-center justify-center text-ink-2 hover:text-ink text-[13px] font-semibold ${s.showShortcuts ? 'text-ink' : ''}`} title="Raccourcis clavier (?)">?</button>
         <Popover button={(o) => <button className={`glass h-9 w-9 rounded-full flex items-center justify-center text-ink-2 hover:text-ink ${o ? 'text-ink' : ''}`} title="Éclairage"><I.sun /></button>}>
           <div className="px-2 py-1 label">Moment de la journée</div>
@@ -147,11 +157,38 @@ export function Overlay() {
         </Popover>
         <Popover button={(o) => <button className={`glass h-9 w-9 rounded-full flex items-center justify-center text-ink-2 hover:text-ink ${o ? 'text-ink' : ''}`} title="Réglages"><I.cog /></button>}>
           <Row label="Grille"><Seg<GridStep> value={s.gridStep} onChange={s.setGridStep} options={[{ v: 0, l: 'Off' }, { v: 1, l: '1' }, { v: 5, l: '5' }, { v: 10, l: '10' }, { v: 25, l: '25' }]} /></Row>
+          <div className="px-2 pt-2 pb-1 label">Sauvegardes</div>
+          <button onClick={() => s.saveSnapshot(prompt('Nom de la sauvegarde', '') || undefined)} className="w-full text-left px-2.5 py-1.5 rounded-lg text-[12px] font-medium text-ink hover:bg-black/[.05]">+ Enregistrer l'agencement actuel</button>
+          <div className="max-h-40 overflow-y-auto">
+            {s.snapshots.map(sn => (
+              <div key={sn.id} className="flex items-center justify-between gap-2 px-2.5 py-1 text-[12px]">
+                <span className="truncate text-ink-2">{sn.name}</span>
+                <span className="flex gap-2 shrink-0"><button onClick={() => { if (confirm(`Restaurer « ${sn.name} » ?`)) s.restoreSnapshot(sn.id) }} className="text-accent font-medium">Restaurer</button><button onClick={() => s.deleteSnapshot(sn.id)} className="text-ink-3 hover:text-red-700">✕</button></span>
+              </div>
+            ))}
+            {!s.snapshots.length && <p className="px-2.5 py-1 text-[11px] text-ink-3">Aucune sauvegarde nommée. L'état courant est conservé automatiquement dans ce navigateur.</p>}
+          </div>
+          <div className="flex gap-1.5 px-2 py-1.5">
+            <button onClick={() => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([s.exportJson()], { type: 'application/json' })); a.download = `maison-${new Date().toISOString().slice(0, 10)}.json`; a.click() }} className="tb-btn border border-line flex-1 text-[11px]">Exporter (.json)</button>
+            <label className="tb-btn border border-line flex-1 text-[11px] cursor-pointer">Importer<input type="file" accept="application/json" hidden onChange={async e => { const f = e.target.files?.[0]; if (!f) return; const ok = s.importJson(await f.text()); if (!ok) alert('Fichier invalide'); e.target.value = '' }} /></label>
+          </div>
+          <div className="border-t border-line my-1" />
           <div className="px-2 pt-2 pb-1 label">Configuration</div>
           {s.apartment.configurations.map(c => (
             <button key={c.id} onClick={() => s.setActiveConfig(c.id)} className={`w-full text-left px-2.5 py-1.5 rounded-lg text-[12px] hover:bg-black/[.05] ${s.activeConfigId === c.id ? 'font-semibold' : 'text-ink-2'}`}>{c.name} <span className="text-ink-3">· {c.furniture.length}</span></button>
           ))}
           <button onClick={() => { const n = prompt('Nom de la configuration', `Option ${String.fromCharCode(64 + s.apartment.configurations.length)}`); if (n) s.addConfiguration(n) }} className="w-full text-left px-2.5 py-1.5 rounded-lg text-[12px] text-ink-2 hover:bg-black/[.05]">+ Dupliquer en nouvelle option</button>
+          {s.deletedIds.length > 0 && (
+            <>
+              <div className="border-t border-line my-1" />
+              <div className="px-2 pt-1 pb-1 label">Objets supprimés</div>
+              <div className="max-h-36 overflow-y-auto">
+                {s.deletedIds.map(id => { const code = s.apartment.configurations.flatMap(c => c.furniture).find(f => f.id === id) ?? CODE_ITEMS.find(f => f.id === id); return code ? (
+                  <div key={id} className="flex items-center justify-between gap-2 px-2.5 py-1 text-[12px]"><span className="truncate text-ink-2">{code.name}</span><button onClick={() => s.restoreDeleted(id)} className="text-accent font-medium shrink-0">Remettre</button></div>
+                ) : null })}
+              </div>
+            </>
+          )}
           <div className="border-t border-line my-1" />
           <Row label="Mode développeur"><Toggle on={s.debug} onClick={() => s.toggle('debug')} /></Row>
           <button onClick={() => { if (confirm('Réinitialiser les meubles et configurations ?')) s.resetFurniture() }} className="w-full text-left px-2.5 py-1.5 rounded-lg text-[12px] text-red-700 hover:bg-red-50">Réinitialiser</button>
@@ -203,7 +240,7 @@ export function Overlay() {
               {([
                 ['⌘Z / ⌘⇧Z', 'Annuler / rétablir'], ['⌘C / ⌘V', 'Copier / coller la sélection'], ['⌘D', 'Dupliquer'], ['⌘A', 'Tout sélectionner (dans la pièce sélectionnée)'],
                 ['Maj + clic', 'Ajouter / retirer de la sélection'], ['Flèches', 'Déplacer la sélection (pas de la grille · Maj = 10 cm)'], ['R / Maj+R', 'Tourner 90° / −90°'], ['L', 'Verrouiller / déverrouiller'],
-                ['Suppr', 'Supprimer'], ['Échap', 'Désélectionner / quitter l\'outil'], ['1 · 2 · 3', 'Vue 3D · Plan · Visite'], ['V · M · F', 'Sélection · Mesurer · Meubles'], ['H', 'Cotations'],
+                ['⌘S', 'Enregistrer une sauvegarde'], ['Suppr', 'Supprimer'], ['Échap', 'Désélectionner / quitter l\'outil'], ['1 · 2 · 3', 'Vue 3D · Plan · Visite'], ['V · M · F', 'Sélection · Mesurer · Meubles'], ['H', 'Cotations'],
                 ['Z Q S D', 'Déplacer la caméra (sans sélection)'], ['Maj + glisser', 'Déplacer la vue'], ['?', 'Cette aide'],
               ] as [string, string][]).map(([k, d]) => <div key={k} className="contents"><span className="kbd whitespace-nowrap">{k}</span><span>{d}</span></div>)}
             </div>

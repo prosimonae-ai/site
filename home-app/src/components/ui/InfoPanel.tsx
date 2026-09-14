@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAppStore, useFurniture, useRooms } from '../../store/useAppStore'
 import { roomStats } from '../../hooks/useApartmentMetrics'
@@ -88,6 +88,7 @@ function RoomInfo({ room }: { room: Room }) {
 function FurnitureInfo({ item }: { item: Furniture }) {
   const s = useAppStore()
   const rooms = useRooms()
+  const all = useFurniture()
     const mark = { onFocus: () => s.beginChange() }
     return (
       <>
@@ -105,6 +106,12 @@ function FurnitureInfo({ item }: { item: Furniture }) {
         <select className="field" value={item.roomId ?? ''} onChange={e => { const r = rooms.find(x => x.id === e.target.value); if (!r) return; s.beginChange(); const c = roomCenter(r); s.updateFurniture(item.id, { roomId: r.id, position: { ...item.position, x: c.x, z: c.z } }) }}>
           {rooms.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
         </select>
+        <div className="label mt-3 mb-1">Lié à</div>
+        <select className="field" value={item.parentId ?? ''} onChange={e => { s.beginChange(); s.updateFurniture(item.id, { parentId: e.target.value || undefined }) }}>
+          <option value="">— aucun (indépendant) —</option>
+          {all.filter(f => f.id !== item.id && f.roomId === item.roomId && !isDescendant(all, f.id, item.id)).map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
+        </select>
+        {item.parentId && <p className="text-[11px] text-ink-3 mt-1">Suit les déplacements et rotations de son support ; reste réglable seul (hauteur, décalage).</p>}
         <div className="label mt-3 mb-1">Position (cm) · rotation · hauteur sol</div>
         <div className="grid grid-cols-3 gap-1.5">
           <label className="block"><span className="text-[10px] text-ink-3">X</span><NumField value={item.position.x} onCommit={v => s.updateFurniture(item.id, { position: { ...item.position, x: v } })} {...mark} /></label>
@@ -123,6 +130,16 @@ function FurnitureInfo({ item }: { item: Furniture }) {
             <input type="color" className="w-4 h-4 p-0 border-0 bg-transparent" value={item.color ?? MATERIAL_SPECS[item.material].color} onChange={e => s.updateFurniture(item.id, { color: e.target.value })} />Couleur
           </label>
         </div>
+        {item.model?.includes('raskog') && (
+          <label className="flex items-center justify-between mt-3 text-[12px] text-ink-2"><span>Couvercle bois sur le dessus</span>
+            <button onClick={() => { s.beginChange(); s.updateFurniture(item.id, { variant: item.variant === 'lid' ? undefined : 'lid' }) }} className={`w-8 h-[18px] rounded-full relative transition-colors ${item.variant === 'lid' ? 'bg-ink' : 'bg-black/15'}`}><span className={`absolute top-[2px] w-[14px] h-[14px] rounded-full bg-white transition-all ${item.variant === 'lid' ? 'left-[16px]' : 'left-[2px]'}`} /></button>
+          </label>
+        )}
+        {item.model?.includes('pinntorp_table') && (
+          <label className="flex items-center justify-between mt-3 text-[12px] text-ink-2"><span>Abattants dépliés (124 cm)</span>
+            <button onClick={() => { s.beginChange(); const open = item.variant !== 'dropleaf-open'; s.updateFurniture(item.id, { variant: open ? 'dropleaf-open' : undefined, width: open ? 124 : 69 }) }} className={`w-8 h-[18px] rounded-full relative transition-colors ${item.variant === 'dropleaf-open' ? 'bg-ink' : 'bg-black/15'}`}><span className={`absolute top-[2px] w-[14px] h-[14px] rounded-full bg-white transition-all ${item.variant === 'dropleaf-open' ? 'left-[16px]' : 'left-[2px]'}`} /></button>
+          </label>
+        )}
         {item.model && (
           <label className="flex items-center justify-between mt-3 text-[12px] text-ink-2"><span>Rendu mat (sans reflets)</span>
             <button onClick={() => s.updateFurniture(item.id, { matte: !item.matte })} className={`w-8 h-[18px] rounded-full relative transition-colors ${item.matte ? 'bg-ink' : 'bg-black/15'}`}><span className={`absolute top-[2px] w-[14px] h-[14px] rounded-full bg-white transition-all ${item.matte ? 'left-[16px]' : 'left-[2px]'}`} /></button>
@@ -144,12 +161,39 @@ function NumField({ value, min, onCommit, onFocus }: { value: number; min?: numb
   const [text, setText] = useState(String(value))
   useEffect(() => { setText(String(value)) }, [value])
   const commit = (t: string) => { const n = Number(t.replace(',', '.')); if (t.trim() === '' || Number.isNaN(n)) return false; const v = Math.round(min !== undefined ? Math.max(min, n) : n); if (v !== value) onCommit(v); return true }
+  // Poignée « scrub » : glisser horizontalement pour faire défiler la valeur (1 unité / 2 px ; Maj ×10 ; Alt ×0,1)
+  const scrub = useRef<{ x: number; start: number; acc: number } | null>(null)
+  const onScrubDown = (e: React.PointerEvent<HTMLSpanElement>) => {
+    e.preventDefault(); onFocus?.()
+    scrub.current = { x: e.clientX, start: value, acc: 0 }
+    ;(e.currentTarget as Element).setPointerCapture(e.pointerId)
+    document.body.style.cursor = 'ew-resize'
+  }
+  const onScrubMove = (e: React.PointerEvent<HTMLSpanElement>) => {
+    if (!scrub.current) return
+    const mult = e.shiftKey ? 10 : e.altKey ? 0.1 : 1
+    const delta = ((e.clientX - scrub.current.x) / 2) * mult
+    const v = Math.round(min !== undefined ? Math.max(min, scrub.current.start + delta) : scrub.current.start + delta)
+    if (v !== value) onCommit(v)
+  }
+  const onScrubUp = (e: React.PointerEvent<HTMLSpanElement>) => { scrub.current = null; (e.currentTarget as Element).releasePointerCapture(e.pointerId); document.body.style.cursor = '' }
   return (
-    <input type="text" inputMode="decimal" className="field" value={text} onFocus={onFocus}
-      onChange={e => { setText(e.target.value); commit(e.target.value) }}
-      onBlur={() => { if (!commit(text)) setText(String(value)) }}
-      onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }} />
+    <div className="flex items-center rounded-lg border border-line bg-white/80 focus-within:border-ink/40">
+      <span onPointerDown={onScrubDown} onPointerMove={onScrubMove} onPointerUp={onScrubUp} onPointerCancel={onScrubUp} title="Glisser pour faire varier (Maj ×10, Alt ×0,1)"
+        className="select-none cursor-ew-resize px-1.5 text-[10px] text-ink-3 hover:text-ink touch-none">⇔</span>
+      <input type="text" inputMode="decimal" className="w-full min-w-0 bg-transparent py-1.5 pr-2 text-[12px] text-ink outline-none" value={text} onFocus={onFocus}
+        onChange={e => { setText(e.target.value); commit(e.target.value) }}
+        onBlur={() => { if (!commit(text)) setText(String(value)) }}
+        onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') { e.preventDefault(); const d = (e.key === 'ArrowUp' ? 1 : -1) * (e.shiftKey ? 10 : 1); onCommit(Math.round(min !== undefined ? Math.max(min, value + d) : value + d)) } }} />
+    </div>
   )
+}
+
+/** vrai si `id` descend (directement ou non) de `ancestor` — pour interdire les liaisons circulaires */
+function isDescendant(all: Furniture[], id: string, ancestor: string): boolean {
+  let cur = all.find(f => f.id === id); let guard = 0
+  while (cur?.parentId && guard++ < 20) { if (cur.parentId === ancestor) return true; cur = all.find(f => f.id === cur!.parentId) }
+  return false
 }
 
 const Stat = ({ l, v }: { l: string; v: string }) => <div><div className="text-[10px] text-ink-3">{l}</div><div className="text-ink font-medium">{v}</div></div>

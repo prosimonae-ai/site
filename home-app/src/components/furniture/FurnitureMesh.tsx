@@ -1,4 +1,4 @@
-import { Suspense, useRef, useState } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { Edges, Html } from '@react-three/drei'
 import { useThree, type ThreeEvent } from '@react-three/fiber'
@@ -26,6 +26,12 @@ export function FurnitureMesh({ item }: { item: Furniture }) {
   const rot = useRef<{ start: number; startRot: number } | null>(null)
   const [rotating, setRotating] = useState(false)
   const soloSelected = useAppStore(s => s.selectedFurnitureIds.length === 1 && s.selectedFurnitureIds[0] === item.id)
+  const someoneDragging = useAppStore(s => s.isDragging)
+  const hitRef = useRef<THREE.Mesh>(null)
+  // Pendant un glisser, seul le meuble tenu (ou tourné) reçoit le pointeur : les autres sont transparents aux événements
+  const passive = someoneDragging && !drag.current && !rot.current
+  const noRaycast = useMemo(() => () => null, [])
+  useEffect(() => { const mesh = hitRef.current; if (!mesh) return; mesh.raycast = passive ? (noRaycast as unknown as THREE.Mesh['raycast']) : THREE.Mesh.prototype.raycast }, [passive, noRaycast])
 
   const canDrag = tool === 'select' || tool === 'move'
 
@@ -43,7 +49,7 @@ export function FurnitureMesh({ item }: { item: Furniture }) {
     const p = floorPoint()
     beginChange()
     const ids = useAppStore.getState().selectedFurnitureIds
-    const group = useAppStore.getState().furniture().filter(f => ids.includes(f.id) && f.id !== item.id && !f.locked).map(f => ({ id: f.id, x: f.position.x, z: f.position.z }))
+    const group = useAppStore.getState().furniture().filter(f => ids.includes(f.id) && f.id !== item.id && !f.locked && !(f.parentId && (ids.includes(f.parentId) || f.parentId === item.id))).map(f => ({ id: f.id, x: f.position.x, z: f.position.z }))
     drag.current = { dx: item.position.x - cm(p.x), dz: item.position.z - cm(p.z), group }
     ;(e.target as Element).setPointerCapture?.(e.pointerId)
     setDragging(true)
@@ -56,22 +62,29 @@ export function FurnitureMesh({ item }: { item: Furniture }) {
     // La pièce de référence : celle qui contient le meuble (sinon celle où il est déclaré)
     const room = rooms.find(r => pointInRoom(r, item.position.x, item.position.z)) ?? rooms.find(r => r.id === item.roomId)
     if (room) {
-      // Aimantation contre les murs (pièces rectangulaires)
-      if (!room.shape) {
-        const rot = ((item.rotation % 180) + 180) % 180
-        const hw = (rot === 90 ? item.depth : item.width) / 2, hd = (rot === 90 ? item.width : item.depth) / 2
-        const S = 8
-        if (Math.abs(x - hw - room.origin.x) < S) x = room.origin.x + hw
-        if (Math.abs(x + hw - (room.origin.x + room.width)) < S) x = room.origin.x + room.width - hw
-        if (Math.abs(z - hd - room.origin.z) < S) z = room.origin.z + hd
-        if (Math.abs(z + hd - (room.origin.z + room.depth)) < S) z = room.origin.z + room.depth - hd
-      }
-      // Murs solides : le meuble ne peut pas sortir de la pièce ; on glisse le long du mur sinon
+      // Murs solides : le meuble ne peut pas sortir de la pièce. S'il bute, il vient au CONTACT exact du mur
+      // (indépendamment du pas de grille) et glisse le long de l'autre axe.
       const ok = (px: number, pz: number) => rectInsideRoom(room, px, pz, item.width, item.depth, item.rotation)
+      const contact = (from: number, to: number, test: (v: number) => boolean) => { // plus grande valeur valide entre from (valide) et to (invalide), au dixième de cm
+        let lo = from, hi = to
+        for (let i = 0; i < 12; i++) { const mid = (lo + hi) / 2; if (test(mid)) lo = mid; else hi = mid }
+        return Math.round(lo * 10) / 10
+      }
       if (!ok(x, z)) {
-        if (ok(x, item.position.z)) z = item.position.z
-        else if (ok(item.position.x, z)) x = item.position.x
-        else { x = item.position.x; z = item.position.z }
+        const cx = item.position.x, cz = item.position.z
+        const zOk = ok(cx, z), xOk = ok(x, cz)
+        if (zOk) x = ok(cx, z) ? contact(cx, x, v => ok(v, z)) : cx
+        else if (xOk) z = contact(cz, z, v => ok(x, v))
+        else { x = ok(cx, cz) ? contact(cx, x, v => ok(v, cz)) : cx; z = contact(cz, z, v => ok(x, v)) }
+      }
+      // Aimantation « contact » : à moins de 4 cm d'un mur sur un axe, on colle au mur (uniquement si on s'en approche)
+      const SNAP = 4
+      for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+        const tx = x + dx * SNAP, tz = z + dz * SNAP
+        if (!ok(tx, tz)) { // un mur est proche dans cette direction
+          if (dx) { const c = contact(x, tx, v => ok(v, z)); if (Math.abs(c - x) < SNAP && Math.abs(c - x) <= Math.abs(c - item.position.x) + 0.01) x = c }
+          else { const c = contact(z, tz, v => ok(x, v)); if (Math.abs(c - z) < SNAP && Math.abs(c - z) <= Math.abs(c - item.position.z) + 0.01) z = c }
+        }
       }
     }
     if (x !== item.position.x || z !== item.position.z) {
@@ -145,7 +158,7 @@ export function FurnitureMesh({ item }: { item: Furniture }) {
         </group>
       )}
       {/* Volume de sélection / interaction (invisible) */}
-      <mesh position={[0, m(item.height / 2), 0]} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} onClick={e => { if (tool !== 'measure') e.stopPropagation() }}>
+      <mesh ref={hitRef} position={[0, m(item.height / 2), 0]} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} onClick={e => { if (tool !== 'measure') e.stopPropagation() }}>
         <boxGeometry args={[m(item.width), m(item.height), m(item.depth)]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
         {selected && <Edges color={SELECTION_COLOR} lineWidth={1.5} />}

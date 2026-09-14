@@ -32,7 +32,7 @@ export function ApartmentScene() {
       shadows
       dpr={isMobile ? [1, 1.5] : [1, 2]}
       camera={{ fov: 45, near: 0.05, far: 200, position: [6, 6, 8] }}
-      gl={{ antialias: true, powerPreference: 'high-performance' }}
+      gl={{ antialias: true, powerPreference: 'high-performance', localClippingEnabled: true }}
       onPointerMissed={(e) => { if (tool !== 'measure' && !e.shiftKey) selectRoom(null) }}
     >
       <Lighting />

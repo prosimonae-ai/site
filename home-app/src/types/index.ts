@@ -82,6 +82,8 @@ export interface Furniture {
   locked?: boolean
   /** rendu mat : les matériaux du modèle 3D ne reflètent pas l'environnement */
   matte?: boolean
+  /** lié à un autre meuble : suit ses déplacements et rotations (ex. TV sur son support) */
+  parentId?: string
   width: Cm
   depth: Cm
   height: Cm

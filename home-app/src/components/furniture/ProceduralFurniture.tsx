@@ -17,7 +17,7 @@ export function ProceduralFurniture({ item }: { item: Furniture }) {
   switch (kind) {
     case 'cabinet': return <Cabinet {...props} />
     case 'fridge': return <Fridge {...props} />
-    case 'sofa': return item.variant === 'play' ? <PlaySofa {...props} /> : <Sofa {...props} />
+    case 'sofa': return item.variant === 'play' ? <PlaySofa {...props} /> : item.variant === 'swivel' ? <SwivelArmchair {...props} /> : <Sofa {...props} />
     case 'bed': return <Bed {...props} />
     case 'table': return item.variant === 'dropleaf' ? <DropLeafTable {...props} /> : <Table {...props} legs={0.05} top={0.04} />
     case 'desk': return <Table {...props} legs={0.05} top={0.03} />
@@ -141,6 +141,31 @@ function PlaySofa({ w, d, h, mat, item }: P) {
   )
 }
 
+/** Fauteuil pivotant type DYVLINGE : piètement rond, assise galette, dossier enveloppant en demi-cercle */
+function SwivelArmchair({ w, d, h, mat, item }: P) {
+  const seatH = item.seatHeight ? m(item.seatHeight) : h * 0.63
+  const r = Math.min(w, d) / 2
+  const base = M('metal', '#111111')
+  const light = useMemo(() => new THREE.MeshStandardMaterial({ color: new THREE.Color((mat as THREE.MeshStandardMaterial).color).multiplyScalar(1.15), roughness: 1 }), [mat])
+  const seatT = 0.12
+  return (
+    <group>
+      <mesh position={[0, 0.02, 0]} material={base} castShadow receiveShadow><cylinderGeometry args={[r * 0.75, r * 0.8, 0.04, 32]} /></mesh>
+      <mesh position={[0, (seatH - seatT) / 2, 0]} material={base} castShadow><cylinderGeometry args={[0.035, 0.045, seatH - seatT, 16]} /></mesh>
+      {/* assise galette */}
+      <mesh position={[0, seatH - seatT / 2, d / 2 - r]} material={light} castShadow receiveShadow><cylinderGeometry args={[r, r * 0.95, seatT, 40]} /></mesh>
+      {/* dossier enveloppant : demi-anneau épais, du côté arrière */}
+      <mesh position={[0, seatH + (h - seatH) / 2 - 0.02, d / 2 - r]} rotation={[0, Math.PI / 2, 0]} material={mat} castShadow receiveShadow>
+        <cylinderGeometry args={[r, r, h - seatH + 0.02, 40, 1, true, 0, Math.PI]} />
+      </mesh>
+      <mesh position={[0, seatH + (h - seatH) / 2 - 0.02, d / 2 - r]} rotation={[0, Math.PI / 2, 0]} material={mat} castShadow receiveShadow>
+        <cylinderGeometry args={[r - 0.12, r - 0.12, h - seatH + 0.02, 40, 1, true, 0, Math.PI]} />
+      </mesh>
+      <mesh position={[0, h - 0.01, d / 2 - r]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} material={mat} castShadow><ringGeometry args={[r - 0.12, r, 40, 1, 0, Math.PI]} /></mesh>
+    </group>
+  )
+}
+
 function Bed({ w, d, h, mat }: P) {
   const frameH = Math.min(0.25, h * 0.5), mattH = h - frameH
   const sheet = M('fabric', '#ece7dd'), pillow = M('fabric', '#f7f5f0'), head = M('wood-dark')
@@ -222,8 +247,9 @@ function Plant({ w, d, h }: P) {
   )
 }
 
-function Tv({ w, d, h }: P) {
+function Tv({ w, d, h, item }: P) {
   const screen = M('metal', '#0e0e10'), stand = M('metal', '#5a5c60')
+  if (item.variant === 'flat') return <group><B y={h / 2} w={w} h={h} d={Math.max(0.015, d * 0.5)} mat={screen} /><B y={h / 2} z={-d / 4} w={w * 0.35} h={h * 0.35} d={d * 0.5} mat={stand} /></group>
   return (
     <group>
       <B y={h * 0.55} w={w} h={h * 0.9} d={Math.max(0.02, d * 0.4)} mat={screen} />

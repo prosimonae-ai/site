@@ -35,8 +35,8 @@ const rooms: Room[] = [
     notes: 'Contour à 10 côtés : décroché du mur des chambres au nord, mur est qui descend le long du dégagement/WC, une diagonale, puis verticale jusqu\'au mur sud (pas de renfoncement à l\'entrée).',
     shape: [
       { x: 0, z: 403 },    // 0  NO (angle balcon)
-      { x: 311, z: 403 },  // 1  fin du mur balcon
-      { x: 311, z: 433 },  // 2  décroché (mur des chambres, plus épais)
+      { x: 338, z: 403 },  // 1  fin du mur balcon (80 cm mesurés à droite de la porte-fenêtre)
+      { x: 338, z: 433 },  // 2  décroché (mur des chambres, plus épais)
       { x: 480, z: 433 },  // 3  NE (angle avec le dégagement)
       { x: 480, z: 753 },  // 4  bas du mur du dégagement / WC
       { x: 396, z: 848 },  // 5  fin de la 1re diagonale
@@ -60,7 +60,7 @@ const rooms: Room[] = [
   },
   {
     id: 'balcon', name: 'Balcon',
-    origin: { x: 0, z: 223 }, width: 311, depth: 159, height: H, floor: 'concrete',
+    origin: { x: 0, z: 223 }, width: 338, depth: 159, height: H, floor: 'concrete',
     notes: 'Garde-corps (pas de murs). Le mur sud est celui du séjour.',
     walls: { north: wall(PART, [], false), east: wall(PART, [], false), south: wall(PART, [], false), west: wall(PART, [], false) },
   },
@@ -116,8 +116,8 @@ const fixed: Furniture[] = [
   { id: 'radiateur-sejour', kind: 'radiator', name: 'Radiateur', width: 41, depth: 15, height: 106, position: { x: 285, y: 12, z: 411 }, rotation: 0, material: 'metal', color: '#f1f1ef', roomId: 'sejour', estimated: true },
   { id: 'compteur-elec', kind: 'cabinet', name: 'Gaine technique — compteur électrique', width: 60, depth: 42, height: 220, position: { x: 30, y: 0, z: 821 }, rotation: 0, material: 'paint', color: '#dedad2', roomId: 'sejour', estimated: true },
   { id: 'frigo', kind: 'fridge', name: 'Réfrigérateur', width: 60, depth: 65, height: 180, position: { x: 30, y: 0, z: 876 }, rotation: 0, material: 'metal', color: '#d3d5d7', roomId: 'sejour', estimated: true },
-  { id: 'lave-vaisselle', kind: 'washer', name: 'Lave-vaisselle', width: 60, depth: 60, height: 85, position: { x: 30, y: 0, z: 938 }, rotation: 0, material: 'ceramic', color: '#e6e3dd', roomId: 'sejour', estimated: true },
-  { id: 'plaques', kind: 'counter', name: 'Plan de travail — plaques', width: 60, depth: 60, height: 90, position: { x: 30, y: 0, z: 998 }, rotation: 0, material: 'ceramic', color: '#e6e3dd', roomId: 'sejour', estimated: true },
+  { id: 'lave-vaisselle', kind: 'washer', name: 'Lave-vaisselle', width: 60, depth: 60, height: 85, position: { x: 30, y: 0, z: 939 }, rotation: 0, material: 'ceramic', color: '#e6e3dd', roomId: 'sejour', estimated: true },
+  { id: 'plaques', kind: 'counter', name: 'Plan de travail — plaques', width: 60, depth: 60, height: 90, position: { x: 30, y: 0, z: 999 }, rotation: 0, material: 'ceramic', color: '#e6e3dd', roomId: 'sejour', estimated: true },
   { id: 'cuisine-evier', kind: 'counter', name: 'Plan de travail — évier', width: 129, depth: 60, height: 90, position: { x: 125, y: 0, z: 1062 }, rotation: 0, material: 'ceramic', color: '#e6e3dd', roomId: 'sejour', estimated: true },
   { id: 'cuisine-bloc', kind: 'cabinet', name: 'Meuble cuisine — bloc', width: 40, depth: 60, height: 90, position: { x: 212, y: 0, z: 1062 }, rotation: 0, material: 'ceramic', color: '#dad6cf', roomId: 'sejour', estimated: true },
   { id: 'wc-cuvette', kind: 'wc', name: 'WC', width: 41, depth: 67, height: 80, position: { x: 621, y: 0, z: 708 }, rotation: 0, material: 'ceramic', roomId: 'wc', estimated: true },
@@ -126,30 +126,29 @@ const fixed: Furniture[] = [
   { id: 'sde-ll', kind: 'washer', name: 'Lave-linge (placard)', width: 62, depth: 62, height: 85, position: { x: 745, y: 0, z: 722 }, rotation: 0, material: 'ceramic', color: '#f2f2f0', roomId: 'sde', estimated: true },
 ]
 
-// Meubles réels (dimensions catalogue). Position initiale : à déplacer dans l'app.
+// Meubles réels (dimensions catalogue). Positions de départ : à déplacer dans l'app (jamais écrasées ensuite).
 const BESTA = { brand: 'IKEA', kind: 'cabinet' as const, width: 60, depth: 42, material: 'wood' as const, color: '#dccbb0', roomId: 'sejour' }
-// Composition BESTÅ 240 cm contre le mur ouest du séjour (tournée de 90° : sa longueur suit le mur)
 const realFurniture: Furniture[] = [
   { id: 'besta-1', name: 'BESTÅ caisson bas 1', ...BESTA, height: 38, position: { x: 21, y: 0, z: 450 }, rotation: 90 },
   { id: 'besta-2', name: 'BESTÅ caisson bas 2', ...BESTA, height: 38, position: { x: 21, y: 0, z: 510 }, rotation: 90 },
   { id: 'besta-3', name: 'BESTÅ caisson haut',  ...BESTA, height: 64, position: { x: 21, y: 0, z: 570 }, rotation: 90 },
   { id: 'besta-4', name: 'BESTÅ caisson bas 3', ...BESTA, height: 38, position: { x: 21, y: 0, z: 630 }, rotation: 90 },
-  // Sweeek — îlot central Molene, plateau hévéa, corps MDF laqué noir (cotes officielles)
-  { id: 'ilot-molene', name: 'Îlot Molene', brand: 'Sweeek', kind: 'island', width: 120, depth: 75, height: 90, material: 'paint', color: '#151515', position: { x: 200, y: 0, z: 850 }, rotation: 0, roomId: 'sejour' },
-  // IKEA BISSA armoire à chaussures 2 casiers, motif chêne (vrai modèle 3D IKEA) — près de la porte palière
-  { id: 'bissa', name: 'BISSA armoire à chaussures', brand: 'IKEA', kind: 'cabinet', model: 'ikea/bissa.glb', width: 49, depth: 28, height: 93, material: 'wood', position: { x: 200, y: 0, z: 1051 }, rotation: 0, roomId: 'sejour' },
-  // IKEA PINNTORP : table à rabat (pas de modèle 3D chez IKEA → procédural, 67→124 cm) + 4 chaises (vrai modèle IKEA)
-  { id: 'pinntorp-table', name: 'PINNTORP table à rabat', brand: 'IKEA', kind: 'table', variant: 'dropleaf', width: 124, depth: 75, height: 75, material: 'wood', color: '#c99d63', position: { x: 380, y: 0, z: 520 }, rotation: 0, roomId: 'sejour' },
+  { id: 'canape-play', name: 'Canapé PLAY 2 places', brand: 'Maisons du Monde', kind: 'sofa', variant: 'play', width: 193, depth: 94, height: 74, seatHeight: 42, material: 'fabric', color: '#1e3c8f', position: { x: 240, y: 0, z: 620 }, rotation: 0, roomId: 'sejour' },
+  { id: 'holmerud', name: 'HOLMERUD table d\'appoint', brand: 'IKEA', kind: 'table', model: 'ikea/holmerud_appoint.glb', width: 81, depth: 31, height: 52, material: 'wood', position: { x: 360, y: 0, z: 620 }, rotation: 0, roomId: 'sejour' },
+  { id: 'lack-basse', name: 'LACK table basse', brand: 'IKEA', kind: 'table', model: 'ikea/lack_basse.glb', width: 90, depth: 55, height: 45, material: 'wood', position: { x: 240, y: 0, z: 730 }, rotation: 0, roomId: 'sejour' },
+  { id: 'yxstaby', name: 'YXSTABY support TV', brand: 'IKEA', kind: 'shelf', model: 'ikea/yxstaby.glb', matte: true, width: 137, depth: 60, height: 113, material: 'metal', position: { x: 300, y: 0, z: 900 }, rotation: 180, roomId: 'sejour' },
+  { id: 'tv-salon', name: 'TV 55"', kind: 'tv', variant: 'flat', parentId: 'yxstaby', width: 123, depth: 6, height: 71, material: 'metal', position: { x: 300, y: 50, z: 888 }, rotation: 180, roomId: 'sejour', estimated: true },
+  { id: 'pinntorp-table', name: 'PINNTORP table à rabat', brand: 'IKEA', kind: 'table', model: 'ikea/pinntorp_table.glb', variant: 'dropleaf-open', width: 124, depth: 75, height: 73, material: 'wood', position: { x: 380, y: 0, z: 520 }, rotation: 0, roomId: 'sejour' },
   { id: 'pinntorp-chaise-1', name: 'PINNTORP chaise', brand: 'IKEA', kind: 'chair', model: 'ikea/pinntorp_chaise.glb', width: 42, depth: 50, height: 90, material: 'wood', position: { x: 350, y: 0, z: 458 }, rotation: 0, roomId: 'sejour' },
   { id: 'pinntorp-chaise-2', name: 'PINNTORP chaise', brand: 'IKEA', kind: 'chair', model: 'ikea/pinntorp_chaise.glb', width: 42, depth: 50, height: 90, material: 'wood', position: { x: 410, y: 0, z: 458 }, rotation: 0, roomId: 'sejour' },
   { id: 'pinntorp-chaise-3', name: 'PINNTORP chaise', brand: 'IKEA', kind: 'chair', model: 'ikea/pinntorp_chaise.glb', width: 42, depth: 50, height: 90, material: 'wood', position: { x: 350, y: 0, z: 582 }, rotation: 180, roomId: 'sejour' },
   { id: 'pinntorp-chaise-4', name: 'PINNTORP chaise', brand: 'IKEA', kind: 'chair', model: 'ikea/pinntorp_chaise.glb', width: 42, depth: 50, height: 90, material: 'wood', position: { x: 410, y: 0, z: 582 }, rotation: 180, roomId: 'sejour' },
-  // IKEA HYLLIS étagère intérieur/extérieur (vrai modèle 3D IKEA)
+  // IKEA DYVLINGE fauteuil pivotant Kelinge noir (pas de modèle 3D IKEA → procédural, cotes officielles)
+  { id: 'dyvlinge', name: 'DYVLINGE fauteuil pivotant', brand: 'IKEA', kind: 'sofa', variant: 'swivel', model: 'ikea/dyvlinge.glb', width: 63, depth: 71, height: 69, seatHeight: 43, material: 'fabric', color: '#1a1a1c', position: { x: 120, y: 0, z: 480 }, rotation: 135, roomId: 'sejour' },
+  { id: 'ilot-molene', name: 'Îlot Molene', brand: 'Sweeek', kind: 'island', width: 120, depth: 75, height: 90, material: 'paint', color: '#151515', position: { x: 200, y: 0, z: 850 }, rotation: 0, roomId: 'sejour' },
+  { id: 'raskog', name: 'RÅSKOG desserte', brand: 'IKEA', kind: 'shelf', model: 'ikea/raskog.glb', matte: true, variant: 'lid', width: 45, depth: 35, height: 77, material: 'metal', position: { x: 100, y: 0, z: 720 }, rotation: 0, roomId: 'sejour' },
+  { id: 'bissa', name: 'BISSA armoire à chaussures', brand: 'IKEA', kind: 'cabinet', model: 'ikea/bissa.glb', width: 49, depth: 28, height: 93, material: 'wood', position: { x: 200, y: 0, z: 1051 }, rotation: 0, roomId: 'sejour' },
   { id: 'hyllis', name: 'HYLLIS étagère', brand: 'IKEA', kind: 'shelf', model: 'ikea/hyllis.glb', matte: true, width: 61, depth: 28, height: 74, material: 'metal', position: { x: 454, y: 0, z: 500 }, rotation: 90, roomId: 'sejour' },
-  // IKEA HOLMERUD table d'appoint (vrai modèle 3D IKEA)
-  { id: 'holmerud', name: 'HOLMERUD table d\'appoint', brand: 'IKEA', kind: 'table', model: 'ikea/holmerud_appoint.glb', width: 81, depth: 31, height: 52, material: 'wood', position: { x: 360, y: 0, z: 620 }, rotation: 0, roomId: 'sejour' },
-  // Maisons du Monde PLAY 2 places, bleu Majorelle — cotes officielles (193 × 94 × 74, assise 43)
-  { id: 'canape-play', name: 'Canapé PLAY 2 places', brand: 'Maisons du Monde', kind: 'sofa', variant: 'play', rev: 1, width: 193, depth: 94, height: 74, seatHeight: 42, material: 'fabric', color: '#1e3c8f', position: { x: 240, y: 0, z: 620 }, rotation: 0, roomId: 'sejour' },
 ]
 
 export const apartment: Apartment = {

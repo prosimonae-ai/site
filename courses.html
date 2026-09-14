@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#f6f5f2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111214" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Courses">
+<title>Courses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  :root {
+    --bg: #f6f5f2; --card: #ffffff; --card-2: #f0eeea; --line: rgba(20,20,18,.08);
+    --text: #141412; --muted: #7b7972; --faint: #b3b0a8;
+    --accent: #1d7a4a; --accent-bg: #e3f2ea; --accent-ink: #145a37;
+    --danger: #c0392b; --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.05);
+    --r: 16px; --tab-h: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #111214; --card: #1b1c1f; --card-2: #232428; --line: rgba(255,255,255,.08); --text: #f2f1ee; --muted: #9a9892; --faint: #5e5d58; --accent: #46c07a; --accent-bg: #1c3a2a; --accent-ink: #9fe3bd; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25); }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, system-ui, sans-serif; font-size: 16px; -webkit-font-smoothing: antialiased; overscroll-behavior-y: none; -webkit-user-select: none; user-select: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  input { font: inherit; color: inherit; }
+  .hidden { display: none !important; }
+
+  /* ── Écrans ── */
+  .screen { display: none; min-height: 100%; padding: calc(12px + env(safe-area-inset-top, 0px)) 16px calc(var(--tab-h) + 24px); }
+  .screen.active { display: block; }
+  .head { display: flex; align-items: flex-end; justify-content: space-between; padding: 8px 0 14px; }
+  .head h1 { font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+  .head .sub { color: var(--muted); font-size: 14px; margin-top: 2px; }
+
+  /* ── Recherche ── */
+  .search { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: 14px; padding: 12px 14px; box-shadow: var(--shadow); margin-bottom: 14px; }
+  .search input { flex: 1; border: 0; outline: 0; background: none; font-size: 16px; }
+  .search input::placeholder { color: var(--faint); }
+  .search .clear { color: var(--faint); font-size: 18px; padding: 4px; }
+
+  /* ── Tuiles produits ── */
+  .section { margin-bottom: 22px; }
+  .section-title { display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 4px 10px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  @media (min-width: 420px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+  .tile { position: relative; background: var(--card); border-radius: var(--r); padding: 12px 8px 10px; text-align: center; box-shadow: var(--shadow); border: 2px solid transparent; transition: transform .12s, background .15s, border-color .15s; min-height: 84px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+  .tile:active { transform: scale(.94); }
+  .tile .emoji { font-size: 26px; line-height: 1; }
+  .tile .name { font-size: 12.5px; font-weight: 500; line-height: 1.2; }
+  .tile.on { background: var(--accent-bg); border-color: var(--accent); }
+  .tile.on .name { color: var(--accent-ink); font-weight: 600; }
+  .tile .qty { position: absolute; top: -7px; right: -7px; min-width: 26px; height: 26px; border-radius: 13px; background: var(--accent); color: #fff; font-size: 13px; font-weight: 700; display: none; align-items: center; justify-content: center; padding: 0 7px; box-shadow: 0 2px 6px rgba(0,0,0,.2); }
+  .tile.on .qty { display: flex; }
+  .tile.add { border: 2px dashed var(--line); background: transparent; box-shadow: none; color: var(--muted); }
+  .tile.add .emoji { font-size: 22px; }
+  .tile.pop { animation: pop .25s ease; }
+  @keyframes pop { 0% { transform: scale(.9); } 60% { transform: scale(1.04); } 100% { transform: scale(1); } }
+
+  /* ── Barre flottante liste ── */
+  .float { position: fixed; left: 16px; right: 16px; bottom: calc(var(--tab-h) + 12px); background: var(--text); color: var(--bg); border-radius: 18px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,.25); transform: translateY(20px); opacity: 0; pointer-events: none; transition: transform .25s, opacity .25s; z-index: 20; }
+  .float.show { transform: none; opacity: 1; pointer-events: all; }
+  .float b { font-weight: 700; }
+  .float .go { background: var(--accent); color: #fff; border-radius: 12px; padding: 10px 14px; font-weight: 600; font-size: 14px; }
+
+  /* ── Liste ── */
+  .row { display: flex; align-items: center; gap: 12px; background: var(--card); border-radius: var(--r); padding: 12px 12px 12px 14px; box-shadow: var(--shadow); margin-bottom: 8px; }
+  .row .emoji { font-size: 24px; width: 32px; text-align: center; }
+  .row .body { flex: 1; min-width: 0; }
+  .row .name { font-weight: 600; font-size: 16px; }
+  .row .note { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .row .note input { width: 100%; border: 0; background: none; outline: 0; color: var(--muted); font-size: 13px; }
+  .row .note input::placeholder { color: var(--faint); }
+  .stepper { display: flex; align-items: center; background: var(--card-2); border-radius: 12px; overflow: hidden; }
+  .stepper button { width: 40px; height: 40px; font-size: 20px; font-weight: 600; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+  .stepper button:active { background: var(--line); }
+  .stepper span { min-width: 26px; text-align: center; font-weight: 700; }
+  .row .del { color: var(--faint); width: 36px; height: 40px; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+  .cta { display: flex; width: 100%; align-items: center; justify-content: center; gap: 8px; background: var(--accent); color: #fff; border-radius: 16px; padding: 18px; font-size: 17px; font-weight: 700; box-shadow: 0 8px 24px rgba(29,122,74,.3); }
+  .cta:active { transform: scale(.98); }
+  .cta.ghost { background: var(--card); color: var(--text); box-shadow: var(--shadow); font-weight: 600; }
+  .empty { text-align: center; color: var(--muted); padding: 60px 20px; line-height: 1.6; }
+  .empty .big { font-size: 44px; margin-bottom: 10px; }
+
+  /* ── Mode magasin ── */
+  #screen-shop { padding-bottom: calc(var(--tab-h) + 90px); }
+  .progress { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: calc(8px + env(safe-area-inset-top, 0px)) 0 12px; margin: calc(-12px - env(safe-area-inset-top, 0px)) 0 8px; }
+  .progress .top { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+  .progress h1 { font-size: 26px; font-weight: 700; letter-spacing: -.02em; }
+  .progress .count { color: var(--muted); font-size: 15px; font-weight: 500; }
+  .progress .count b { color: var(--text); font-size: 18px; }
+  .bar { height: 8px; background: var(--card-2); border-radius: 4px; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 4px; transition: width .35s ease; }
+  .cat { margin: 14px 4px 8px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .item { display: flex; align-items: center; gap: 14px; background: var(--card); border-radius: 18px; padding: 16px 16px; box-shadow: var(--shadow); margin-bottom: 8px; min-height: 64px; transition: transform .12s; }
+  .item:active { transform: scale(.985); }
+  .item .box { width: 30px; height: 30px; border-radius: 10px; border: 2.5px solid var(--faint); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; transition: background .15s, border-color .15s; }
+  .item .emoji { font-size: 24px; }
+  .item .label { flex: 1; font-size: 18px; font-weight: 600; }
+  .item .label small { color: var(--muted); font-weight: 500; font-size: 14px; margin-left: 6px; }
+  .item.done { opacity: .5; }
+  .item.done .box { background: var(--accent); border-color: var(--accent); }
+  .item.done .label { text-decoration: line-through; text-decoration-thickness: 2px; font-weight: 500; }
+  .item.leaving { animation: leave .3s ease forwards; }
+  @keyframes leave { to { opacity: 0; transform: translateX(24px) scale(.96); height: 0; } }
+  .done-head { display: flex; align-items: center; justify-content: space-between; margin: 26px 4px 8px; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .done-head button { color: var(--accent); font-size: 13px; letter-spacing: 0; text-transform: none; font-weight: 600; }
+  .shop-bar { position: fixed; left: 16px; right: 16px; bottom: calc(var(--tab-h) + 12px); display: flex; gap: 8px; z-index: 20; }
+  .shop-bar .quick { flex: 1; display: flex; align-items: center; gap: 8px; background: var(--card); border-radius: 16px; padding: 0 14px; box-shadow: var(--shadow); height: 52px; }
+  .shop-bar .quick input { flex: 1; border: 0; background: none; outline: 0; font-size: 16px; min-width: 0; }
+  .shop-bar .finish { background: var(--accent); color: #fff; border-radius: 16px; padding: 0 18px; font-weight: 700; height: 52px; box-shadow: 0 8px 24px rgba(29,122,74,.3); }
+  .all-done { text-align: center; padding: 40px 20px 10px; }
+  .all-done .big { font-size: 56px; margin-bottom: 8px; }
+  .all-done h2 { font-size: 22px; margin-bottom: 6px; }
+  .all-done p { color: var(--muted); }
+
+  /* ── Onglets ── */
+  .tabs { position: fixed; left: 0; right: 0; bottom: 0; height: var(--tab-h); padding-bottom: env(safe-area-inset-bottom, 0px); background: color-mix(in srgb, var(--card) 88%, transparent); backdrop-filter: blur(20px) saturate(1.4); -webkit-backdrop-filter: blur(20px) saturate(1.4); border-top: 1px solid var(--line); display: flex; z-index: 30; }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--muted); font-size: 11px; font-weight: 600; position: relative; }
+  .tab svg { width: 24px; height: 24px; }
+  .tab.active { color: var(--accent); }
+  .tab .badge { position: absolute; top: 8px; left: calc(50% + 6px); min-width: 18px; height: 18px; border-radius: 9px; background: var(--accent); color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 5px; }
+
+  /* ── Feuille (bottom sheet) ── */
+  .sheet-bg { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 40; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .sheet-bg.show { opacity: 1; pointer-events: all; }
+  .sheet { position: fixed; left: 0; right: 0; bottom: 0; background: var(--card); border-radius: 22px 22px 0 0; padding: 12px 20px calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 41; transform: translateY(100%); transition: transform .25s cubic-bezier(.2,.8,.2,1); max-height: 88vh; overflow-y: auto; }
+  .sheet.show { transform: none; }
+  .sheet .grip { width: 40px; height: 5px; border-radius: 3px; background: var(--line); margin: 0 auto 16px; }
+  .sheet h2 { font-size: 20px; font-weight: 700; margin-bottom: 14px; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .field label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .field input { background: var(--card-2); border: 0; border-radius: 12px; padding: 14px; font-size: 16px; outline: 0; }
+  .emoji-row { display: flex; gap: 8px; overflow-x: auto; padding: 2px; scrollbar-width: none; }
+  .emoji-row::-webkit-scrollbar { display: none; }
+  .emoji-row button { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 12px; background: var(--card-2); font-size: 22px; border: 2px solid transparent; }
+  .emoji-row button.on { border-color: var(--accent); background: var(--accent-bg); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { padding: 9px 13px; border-radius: 12px; background: var(--card-2); font-size: 14px; font-weight: 500; border: 2px solid transparent; }
+  .chip.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent-ink); font-weight: 600; }
+  .sheet .actions { display: flex; gap: 8px; margin-top: 8px; }
+  .sheet .actions .cta { padding: 15px; font-size: 16px; }
+  .sheet .danger { color: var(--danger); font-weight: 600; text-align: center; width: 100%; padding: 14px; }
+  .order-row { display: flex; align-items: center; gap: 10px; padding: 12px 4px; border-bottom: 1px solid var(--line); }
+  .order-row span { flex: 1; font-weight: 500; }
+  .order-row button { width: 40px; height: 40px; border-radius: 12px; background: var(--card-2); font-size: 18px; }
+  .hist { background: var(--card); border-radius: var(--r); padding: 14px 16px; box-shadow: var(--shadow); margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+  .hist .body { flex: 1; }
+  .hist .d { font-weight: 600; }
+  .hist .s { color: var(--muted); font-size: 13px; }
+  .hist button { color: var(--accent); font-weight: 600; font-size: 14px; }
+  .link { color: var(--accent); font-weight: 600; font-size: 14px; }
+  .who { display: flex; align-items: center; gap: 8px; }
+  .avatar { width: 34px; height: 34px; border-radius: 17px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #fff; }
+  .avatar.lola { background: #c2417a; } .avatar.simon { background: #2f5fbf; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 8px; margin-left: 6px; vertical-align: middle; }
+  .tag.lola { background: rgba(194,65,122,.14); color: #c2417a; } .tag.simon { background: rgba(47,95,191,.14); color: #2f5fbf; }
+  .presence { display: flex; align-items: center; gap: 8px; background: var(--card); border-radius: 14px; padding: 10px 12px; box-shadow: var(--shadow); margin: 0 0 10px; font-size: 14px; }
+  .presence .dot { width: 8px; height: 8px; border-radius: 4px; background: var(--accent); }
+  .presence .dot.off { background: var(--faint); }
+  .presence .t { color: var(--muted); font-size: 12px; margin-left: auto; }
+  .sync { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .sync .dot { width: 7px; height: 7px; border-radius: 4px; background: var(--faint); }
+  .sync .dot.on { background: var(--accent); }
+  .profile-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 6px 0 14px; }
+  .profile-pick button { background: var(--card-2); border-radius: 16px; padding: 22px 10px; font-size: 18px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 2px solid transparent; }
+  .profile-pick button.on { border-color: var(--accent); background: var(--accent-bg); }
+  .profile-pick .avatar { width: 48px; height: 48px; border-radius: 24px; font-size: 20px; }
+  .toast { position: fixed; left: 50%; bottom: calc(var(--tab-h) + 84px); transform: translateX(-50%) translateY(10px); background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; opacity: 0; transition: .2s; z-index: 50; pointer-events: none; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%); }
+</style>
+</head>
+<body>
+
+<!-- ═══ PRÉPARER ═══ -->
+<section class="screen active" id="screen-prep">
+  <div class="head"><div><h1>Préparer</h1><div class="sub" id="prep-sub">Touche un produit pour l'ajouter</div></div><button class="who" onclick="openSheet('settings')"><span class="sync" id="sync"><span class="dot"></span></span><span class="avatar" id="me-avatar">?</span></button></div>
+  <div class="search"><span>🔍</span><input id="search" type="search" placeholder="Rechercher ou créer un produit…" autocomplete="off" autocapitalize="sentences"><button class="clear hidden" id="search-clear" onclick="clearSearch()">✕</button></div>
+  <div id="catalog"></div>
+</section>
+<div class="float" id="float"><span><b id="float-n">0</b> <span id="float-lbl">article</span></span><button class="go" onclick="showTab('list')">Voir la liste →</button></div>
+
+<!-- ═══ LISTE ═══ -->
+<section class="screen" id="screen-list">
+  <div class="head"><div><h1>Liste</h1><div class="sub" id="list-sub"></div></div><button class="link" id="list-clear" onclick="clearList()">Vider</button></div>
+  <div id="list"></div>
+  <div id="list-cta" style="margin-top:18px"></div>
+</section>
+
+<!-- ═══ COURSES ═══ -->
+<section class="screen" id="screen-shop">
+  <div class="progress"><div class="top"><h1>Courses</h1><div class="count"><b id="shop-done">0</b> / <span id="shop-total">0</span> pris</div></div><div class="bar"><i id="shop-fill"></i></div></div>
+  <div id="presence"></div>
+  <div id="shop"></div>
+</section>
+<div class="shop-bar hidden" id="shop-bar">
+  <div class="quick"><span>＋</span><input id="quick" placeholder="Ajouter un article…" autocomplete="off"></div>
+  <button class="finish" onclick="finishShopping()">Terminer</button>
+</div>
+
+<!-- ═══ ONGLETS ═══ -->
+<nav class="tabs">
+  <button class="tab active" data-tab="prep" onclick="showTab('prep')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Préparer</button>
+  <button class="tab" data-tab="list" onclick="showTab('list')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Liste<span class="badge hidden" id="badge"></span></button>
+  <button class="tab" data-tab="shop" onclick="showTab('shop')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.5 11h11L21 7H6.5"/><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/></svg>Courses</button>
+</nav>
+
+<!-- ═══ FEUILLES ═══ -->
+<div class="sheet-bg" id="sheet-bg" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet"><div class="grip"></div><div id="sheet-body"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═════════════════════════════════════════════════════════════
+   DONNÉES — couche isolée. V1 : localStorage. Chaque méthode est
+   asynchrone-compatible pour brancher Supabase plus tard (même API).
+   ═════════════════════════════════════════════════════════════ */
+const CATEGORIES = [
+  { id: 'fruits', name: 'Fruits & légumes', emoji: '🥦' }, { id: 'viandes', name: 'Viandes', emoji: '🍗' }, { id: 'poissons', name: 'Poissons', emoji: '🐟' },
+  { id: 'frais', name: 'Produits frais', emoji: '🥛' }, { id: 'fromages', name: 'Fromages', emoji: '🧀' }, { id: 'charcuterie', name: 'Charcuterie', emoji: '🥓' },
+  { id: 'epicerie', name: 'Épicerie', emoji: '🥫' }, { id: 'feculents', name: 'Pâtes, riz & féculents', emoji: '🍝' }, { id: 'petitdej', name: 'Petit-déjeuner', emoji: '🥐' },
+  { id: 'boissons', name: 'Boissons', emoji: '🧃' }, { id: 'surgeles', name: 'Surgelés', emoji: '🧊' }, { id: 'hygiene', name: 'Hygiène', emoji: '🧴' },
+  { id: 'entretien', name: 'Entretien', emoji: '🧽' }, { id: 'maison', name: 'Maison', emoji: '🏠' }, { id: 'autres', name: 'Autres', emoji: '🛒' },
+];
+const SEED = [
+  ['fruits', '🍅 Tomates', '🥒 Concombre', '🥕 Carottes', '🥬 Salade', '🧅 Oignons', '🧄 Ail', '🍋 Citrons', '🍌 Bananes', '🍎 Pommes', '🥑 Avocats', '🍓 Fraises', '🥔 Pommes de terre', '🍄 Champignons', '🌶️ Poivrons', '🥦 Brocoli'],
+  ['viandes', '🍗 Poulet', '🥩 Steak haché', '🥓 Lardons', '🌭 Saucisses', '🍖 Escalopes de dinde'],
+  ['poissons', '🐟 Saumon', '🍤 Crevettes', '🥫 Thon en boîte', '🐠 Cabillaud'],
+  ['frais', '🥛 Lait', '🥚 Œufs', '🧈 Beurre', '🍶 Crème fraîche', '🥣 Yaourts', '🍮 Desserts', '🫓 Pâte à pizza', '🥟 Raviolis frais'],
+  ['fromages', '🧀 Emmental râpé', '🧀 Mozzarella', '🧀 Comté', '🧀 Feta', '🧀 Chèvre', '🧀 Parmesan'],
+  ['charcuterie', '🥓 Jambon', '🍖 Saucisson', '🌭 Knacks'],
+  ['epicerie', '🍝 Pesto', '🍅 Sauce tomate', '🫒 Huile d\'olive', '🧂 Sel', '🌿 Herbes', '🥫 Conserves', '🍫 Chocolat', '🍪 Biscuits', '🍯 Miel', '🥜 Cacahuètes', '🍿 Chips', '🧁 Farine', '🍬 Sucre'],
+  ['feculents', '🍝 Pâtes', '🍚 Riz', '🥔 Purée', '🌾 Semoule', '🫘 Lentilles', '🍞 Pain de mie'],
+  ['petitdej', '🥐 Croissants', '🥣 Céréales', '☕ Café', '🍵 Thé', '🍯 Confiture', '🧃 Jus d\'orange', '🥞 Brioche'],
+  ['boissons', '💧 Eau', '🥤 Coca', '🍺 Bière', '🍷 Vin', '🧃 Sirop', '🫧 Eau pétillante'],
+  ['surgeles', '🍕 Pizza', '🍟 Frites', '🥦 Légumes surgelés', '🍦 Glaces', '🐟 Poisson pané'],
+  ['hygiene', '🧻 Papier toilette', '🧴 Gel douche', '🪥 Dentifrice', '🧼 Savon', '🧴 Shampoing', '🪒 Rasoirs', '🧴 Déodorant', '🧻 Mouchoirs'],
+  ['entretien', '🧽 Éponges', '🧴 Liquide vaisselle', '🫧 Lessive', '🧹 Sacs poubelle', '🧴 Produit sols', '🧴 Tablettes lave-vaisselle', '🧻 Sopalin'],
+  ['maison', '🕯️ Bougies', '💡 Ampoules', '🔋 Piles', '🧺 Filtres à café'],
+];
+
+const repo = {
+  KEY: 'courses_v1',
+  load() {
+    try { const s = JSON.parse(localStorage.getItem(this.KEY)); if (s && s.products) return s } catch {}
+    return null
+  },
+  save(state) { try { localStorage.setItem(this.KEY, JSON.stringify(state)) } catch {} },
+  seed() {
+    const products = []
+    SEED.forEach(([cat, ...items]) => items.forEach(s => { const [emoji, ...rest] = s.split(' '); products.push({ id: uid(), name: rest.join(' '), emoji, cat, uses: 0 }) }))
+    return { products, categoryOrder: CATEGORIES.map(c => c.id), list: [], shopping: false, startedAt: null, history: [], presence: {}, rev: 0 }
+  },
+}
+const PROFILES = { lola: { name: 'Lola', initial: 'L' }, simon: { name: 'Simon', initial: 'S' } }
+// Préférences locales à CE téléphone (jamais synchronisées) : profil + code du foyer
+const local = { get: () => { try { return JSON.parse(localStorage.getItem('courses_local')) || {} } catch { return {} } }, set: v => localStorage.setItem('courses_local', JSON.stringify(v)) }
+let ME = local.get().profile || null
+let HOUSEHOLD = local.get().household || 'lola-simon'
+const uid = () => Math.random().toString(36).slice(2, 10)
+let S = repo.load() || repo.seed()
+if (!S.presence) S.presence = {}
+if (!S.rev) S.rev = 0
+S.list.forEach(l => { if (!l.updatedAt) l.updatedAt = 0 })
+let saveT = null
+const persist = () => { S.rev = (S.rev || 0) + 1; clearTimeout(saveT); saveT = setTimeout(() => { repo.save(S); sync.push() }, 120) }
+const now = () => Date.now()
+const touch = l => { l.updatedAt = now() }
+
+/* ═════════ Helpers ═════════ */
+const $ = id => document.getElementById(id)
+const cat = id => CATEGORIES.find(c => c.id === id) || CATEGORIES[CATEGORIES.length - 1]
+const inList = pid => S.list.find(l => l.pid === pid)
+const product = pid => S.products.find(p => p.id === pid)
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
+const buzz = (ms = 12) => { try { navigator.vibrate && navigator.vibrate(ms) } catch {} }
+let toastT = null
+const toast = msg => { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 1600) }
+const plural = (n, s) => `${n} ${s}${n > 1 ? 's' : ''}`
+const orderedCats = () => [...S.categoryOrder.map(cat), ...CATEGORIES.filter(c => !S.categoryOrder.includes(c.id))]
+
+/* ═════════ Onglets ═════════ */
+let tab = 'prep'
+function showTab(t) {
+  tab = t
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === 'screen-' + t))
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t))
+  $('float').classList.toggle('show', t === 'prep' && S.list.length > 0)
+  $('shop-bar').classList.toggle('hidden', !(t === 'shop' && S.shopping))
+  window.scrollTo(0, 0)
+  render()
+}
+
+/* ═════════ PRÉPARER ═════════ */
+function addToList(pid, qty = 1) {
+  const l = inList(pid)
+  if (l) { l.qty += qty; if (l.qty <= 0) removeFromList(pid) }
+  else { S.list.push({ pid, qty: 1, note: '', done: false, addedBy: ME, updatedAt: now() }); const p = product(pid); if (p) p.uses = (p.uses || 0) + 1 }
+  if (l) touch(l)
+  persist(); render(); buzz()
+}
+function removeFromList(pid) { S.list = S.list.filter(l => l.pid !== pid); S.removed = { ...(S.removed || {}), [pid]: now() }; persist(); render() }
+function toggleTile(pid, e) {
+  const l = inList(pid)
+  if (l && e && e.target.closest('.qty')) { l.qty += 1; persist(); render(); buzz(); return }
+  if (l) removeFromList(pid); else addToList(pid)
+}
+function renderPrep() {
+  const q = $('search').value.trim().toLowerCase()
+  $('search-clear').classList.toggle('hidden', !q)
+  const wrap = $('catalog')
+  let html = ''
+  const tile = p => { const l = inList(p.id); return `<button class="tile${l ? ' on' : ''}" data-pid="${p.id}" onclick="toggleTile('${p.id}', event)" oncontextmenu="event.preventDefault();openSheet('product','${p.id}')"><span class="emoji">${p.emoji}</span><span class="name">${esc(p.name)}</span><span class="qty">${l ? (l.qty > 1 ? '×' + l.qty : '✓') : ''}</span></button>` }
+  if (q) {
+    const hits = S.products.filter(p => p.name.toLowerCase().includes(q))
+    html += `<div class="section"><div class="section-title"><span>${hits.length ? plural(hits.length, 'résultat') : 'Aucun résultat'}</span></div><div class="grid">${hits.map(tile).join('')}<button class="tile add" onclick="openSheet('product',null,'${esc(q)}')"><span class="emoji">＋</span><span class="name">Créer « ${esc($('search').value.trim())} »</span></button></div></div>`
+  } else {
+    const freq = [...S.products].filter(p => p.uses > 0).sort((a, b) => b.uses - a.uses).slice(0, 12)
+    if (freq.length) html += `<div class="section"><div class="section-title"><span>⭐ Fréquents</span></div><div class="grid">${freq.map(tile).join('')}</div></div>`
+    orderedCats().forEach(c => {
+      const ps = S.products.filter(p => p.cat === c.id)
+      if (!ps.length) return
+      html += `<div class="section"><div class="section-title"><span>${c.emoji} ${esc(c.name)}</span></div><div class="grid">${ps.map(tile).join('')}<button class="tile add" onclick="openSheet('product',null,'','${c.id}')"><span class="emoji">＋</span><span class="name">Ajouter</span></button></div></div>`
+    })
+  }
+  wrap.innerHTML = html
+  const n = S.list.length
+  $('float-n').textContent = n; $('float-lbl').textContent = n > 1 ? 'articles' : 'article'
+  $('float').classList.toggle('show', tab === 'prep' && n > 0)
+  $('prep-sub').textContent = n ? `${plural(n, 'article')} dans la liste` : 'Touche un produit pour l\'ajouter'
+}
+$('search').addEventListener('input', renderPrep)
+$('search').addEventListener('keydown', e => { if (e.key === 'Enter') { const q = $('search').value.trim(); const hit = S.products.find(p => p.name.toLowerCase() === q.toLowerCase()); if (hit) { addToList(hit.id); clearSearch() } else if (q) openSheet('product', null, q) } })
+function clearSearch() { $('search').value = ''; renderPrep(); $('search').blur() }
+
+/* ═════════ LISTE ═════════ */
+function renderList() {
+  const wrap = $('list'), n = S.list.length, total = S.list.reduce((a, l) => a + l.qty, 0)
+  $('list-sub').textContent = n ? `${plural(n, 'article')}${total !== n ? ' · ' + total + ' unités' : ''}` : 'Rien pour l\'instant'
+  $('list-clear').classList.toggle('hidden', !n)
+  $('badge').classList.toggle('hidden', !n); $('badge').textContent = n
+  if (!n) {
+    wrap.innerHTML = `<div class="empty"><div class="big">🧺</div>Ta liste est vide.<br>Va dans <b>Préparer</b> pour choisir tes produits.</div>`
+    $('list-cta').innerHTML = S.history.length ? `<button class="cta ghost" onclick="resumeLast()">↩︎ Reprendre la dernière liste</button>` : ''
+    return
+  }
+  let html = ''
+  orderedCats().forEach(c => {
+    const ls = S.list.filter(l => product(l.pid)?.cat === c.id)
+    if (!ls.length) return
+    html += `<div class="cat">${c.emoji} ${esc(c.name)}</div>` + ls.map(l => { const p = product(l.pid); return `
+      <div class="row"><span class="emoji">${p.emoji}</span><div class="body"><div class="name">${esc(p.name)}</div><div class="note"><input placeholder="Note (2 L, x6, 500 g…)" value="${esc(l.note)}" onchange="setNote('${l.pid}', this.value)"></div></div>
+      <div class="stepper"><button onclick="addToList('${l.pid}', -1)">−</button><span>${l.qty}</span><button onclick="addToList('${l.pid}', 1)">+</button></div>
+      <button class="del" onclick="removeFromList('${l.pid}')">✕</button></div>` }).join('')
+  })
+  wrap.innerHTML = html
+  $('list-cta').innerHTML = S.shopping ? `<button class="cta" onclick="showTab('shop')">🛒 Continuer les courses</button>` : `<button class="cta" onclick="startShopping()">🛒 Commencer les courses</button>`
+}
+function setNote(pid, v) { const l = inList(pid); if (l) { l.note = v.trim(); touch(l); persist() } }
+function clearList() { if (!confirm('Vider la liste ?')) return; S.list = []; S.shopping = false; persist(); render() }
+function resumeLast() { const h = S.history[0]; if (!h) return; S.list = h.items.map(i => ({ ...i, done: false, doneBy: null, updatedAt: now() })); S.shopping = false; persist(); render(); toast('Dernière liste reprise') }
+
+/* ═════════ COURSES ═════════ */
+function startShopping() { if (!S.list.length) return; S.shopping = true; S.startedAt = Date.now(); S.list.forEach(l => { l.done = false; l.doneBy = null; touch(l) }); persist(); showTab('shop') }
+function toggleDone(pid) {
+  const l = inList(pid); if (!l) return
+  l.done = !l.done; l.doneBy = l.done ? ME : null; touch(l)
+  if (ME) S.presence[ME] = { cat: product(pid)?.cat || null, at: now() }
+  persist(); buzz(l.done ? 18 : 8)
+  if (l.done) { const el = document.querySelector(`.item[data-pid="${pid}"]`); if (el) { el.classList.add('done', 'leaving'); setTimeout(render, 280); return } }
+  render()
+}
+function renderShop() {
+  const wrap = $('shop')
+  $('shop-bar').classList.toggle('hidden', !(tab === 'shop' && S.shopping))
+  if (!S.shopping || !S.list.length) {
+    wrap.innerHTML = `<div class="empty"><div class="big">🛒</div>${S.list.length ? 'La liste est prête.<br><br><button class="cta" onclick="startShopping()">Commencer les courses</button>' : 'Prépare d\'abord une liste, puis lance le mode courses.'}</div>`
+    $('shop-done').textContent = 0; $('shop-total').textContent = S.list.length; $('shop-fill').style.width = '0%'; return
+  }
+  const done = S.list.filter(l => l.done), todo = S.list.filter(l => !l.done)
+  $('shop-done').textContent = done.length; $('shop-total').textContent = S.list.length
+  $('shop-fill').style.width = (done.length / S.list.length * 100) + '%'
+  const item = l => { const p = product(l.pid); const who = l.done && l.doneBy && PROFILES[l.doneBy]; return `<div class="item${l.done ? ' done' : ''}" data-pid="${l.pid}" onclick="toggleDone('${l.pid}')"><span class="box">${l.done ? '✓' : ''}</span><span class="emoji">${p.emoji}</span><span class="label">${esc(p.name)}${l.qty > 1 ? `<small>×${l.qty}</small>` : ''}${l.note ? `<small>${esc(l.note)}</small>` : ''}${who ? `<span class="tag ${l.doneBy}">${who.initial}</span>` : ''}</span></div>` }
+  renderPresence()
+  let html = ''
+  if (!todo.length) html += `<div class="all-done"><div class="big">🎉</div><h2>Tout est pris !</h2><p>Appuie sur Terminer pour archiver la course.</p></div>`
+  orderedCats().forEach(c => { const ls = todo.filter(l => product(l.pid)?.cat === c.id); if (ls.length) html += `<div class="cat">${c.emoji} ${esc(c.name)}</div>` + ls.map(item).join('') })
+  if (done.length) html += `<div class="done-head"><span>Pris · ${done.length}</span><button onclick="uncheckAll()">Tout décocher</button></div>` + done.map(item).join('')
+  wrap.innerHTML = html
+}
+function renderPresence() {
+  const other = ME === 'lola' ? 'simon' : ME === 'simon' ? 'lola' : null
+  const el = $('presence'); if (!el) return
+  if (!other || !S.shopping) { el.innerHTML = ''; return }
+  const pr = S.presence[other]
+  const mine = S.list.filter(l => l.done && l.doneBy === other).length
+  if (!pr) { el.innerHTML = `<div class="presence"><span class="dot off"></span><span><b>${PROFILES[other].name}</b> n'a encore rien coché</span></div>`; return }
+  const ago = Math.round((now() - pr.at) / 60000)
+  const where = pr.cat ? cat(pr.cat) : null
+  el.innerHTML = `<div class="presence"><span class="dot${ago > 10 ? ' off' : ''}"></span><span><b>${PROFILES[other].name}</b>${where ? ` est au rayon <b>${where.emoji} ${esc(where.name)}</b>` : ''} · ${mine} pris</span><span class="t">${ago < 1 ? 'à l\'instant' : `il y a ${ago} min`}</span></div>`
+}
+function uncheckAll() { S.list.forEach(l => { l.done = false; l.doneBy = null; touch(l) }); persist(); render() }
+function finishShopping() {
+  const todo = S.list.filter(l => !l.done).length
+  if (todo && !confirm(`Il reste ${plural(todo, 'article')} non pris. Terminer quand même ?`)) return
+  S.history.unshift({ id: uid(), at: Date.now(), items: S.list.map(l => ({ pid: l.pid, qty: l.qty, note: l.note })), taken: S.list.filter(l => l.done).length, by: ME })
+  S.presence = {}
+  S.history = S.history.slice(0, 20)
+  S.list = []; S.shopping = false; persist(); showTab('prep'); toast('Courses terminées 🎉')
+}
+$('quick').addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return
+  const q = $('quick').value.trim(); if (!q) return
+  let p = S.products.find(x => x.name.toLowerCase() === q.toLowerCase())
+  if (!p) { p = { id: uid(), name: q, emoji: '🛒', cat: 'autres', uses: 0 }; S.products.push(p) }
+  if (!inList(p.id)) S.list.push({ pid: p.id, qty: 1, note: '', done: false, addedBy: ME, updatedAt: now() })
+  $('quick').value = ''; $('quick').blur(); persist(); render(); toast(`${p.emoji} ${p.name} ajouté`)
+})
+
+/* ═════════ FEUILLES (produit, réglages) ═════════ */
+const EMOJIS = ['🛒', '🍅', '🥕', '🥬', '🍎', '🍌', '🍋', '🥑', '🍓', '🍇', '🍗', '🥩', '🐟', '🍤', '🥛', '🥚', '🧀', '🧈', '🥣', '🍞', '🥐', '🍝', '🍚', '🥫', '🍫', '🍪', '☕', '🧃', '💧', '🍺', '🍷', '🍕', '🍦', '🧻', '🧴', '🪥', '🧼', '🧽', '🫧', '🧹', '🕯️', '💡', '🔋', '🐶', '🐱', '🎁']
+let sheetState = {}
+function openSheet(kind, pid, presetName = '', presetCat = '') {
+  const body = $('sheet-body')
+  if (kind === 'product') {
+    const p = pid ? product(pid) : null
+    sheetState = { pid, emoji: p ? p.emoji : '🛒', cat: p ? p.cat : (presetCat || 'autres') }
+    body.innerHTML = `<h2>${p ? 'Modifier le produit' : 'Nouveau produit'}</h2>
+      <div class="field"><label>Nom</label><input id="f-name" value="${esc(p ? p.name : presetName)}" placeholder="Ex. Lait d'amande" autocapitalize="sentences"></div>
+      <div class="field"><label>Icône</label><div class="emoji-row" id="f-emojis">${EMOJIS.map(e => `<button class="${e === sheetState.emoji ? 'on' : ''}" onclick="pickEmoji('${e}')">${e}</button>`).join('')}</div></div>
+      <div class="field"><label>Rayon</label><div class="chips" id="f-cats">${orderedCats().map(c => `<button class="chip${c.id === sheetState.cat ? ' on' : ''}" onclick="pickCat('${c.id}')">${c.emoji} ${esc(c.name)}</button>`).join('')}</div></div>
+      <div class="actions"><button class="cta" onclick="saveProduct()">${p ? 'Enregistrer' : 'Créer et ajouter à la liste'}</button></div>
+      ${p ? `<button class="danger" onclick="deleteProduct('${p.id}')">Supprimer ce produit</button>` : ''}`
+    setTimeout(() => { if (!p) $('f-name').focus() }, 250)
+  } else if (kind === 'settings') {
+    body.innerHTML = `<h2>Réglages</h2>
+      <div class="field"><label>Qui utilise ce téléphone ?</label>
+        <div class="profile-pick">${Object.entries(PROFILES).map(([id, p]) => `<button class="${ME === id ? 'on' : ''}" onclick="setProfile('${id}')"><span class="avatar ${id}">${p.initial}</span>${p.name}</button>`).join('')}</div></div>
+      <div class="field"><label>Synchronisation (même code sur les deux téléphones)</label><input id="f-house" value="${esc(HOUSEHOLD)}" placeholder="ex. lola-simon" autocapitalize="none" onchange="setHousehold(this.value)"><div class="s" style="color:var(--muted);font-size:13px;line-height:1.5;margin-top:4px" id="sync-info">${sync.status()}</div></div>
+      <div class="field"><label>Ordre des rayons (parcours du magasin)</label>
+        ${orderedCats().map((c, i, arr) => `<div class="order-row"><span>${c.emoji} ${esc(c.name)}</span><button onclick="moveCat('${c.id}',-1)" ${i === 0 ? 'disabled style="opacity:.3"' : ''}>↑</button><button onclick="moveCat('${c.id}',1)" ${i === arr.length - 1 ? 'disabled style="opacity:.3"' : ''}>↓</button></div>`).join('')}</div>
+      <div class="field"><label>Historique</label>${S.history.length ? S.history.map(h => `<div class="hist"><div class="body"><div class="d">${new Date(h.at).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</div><div class="s">${plural(h.items.length, 'article')} · ${h.taken} pris</div></div><button onclick="reuse('${h.id}')">Reprendre</button></div>`).join('') : '<div class="s" style="color:var(--muted)">Aucune course terminée pour l\'instant.</div>'}</div>
+      <button class="danger" onclick="resetAll()">Réinitialiser l'application</button>`
+  }
+  $('sheet').classList.add('show'); $('sheet-bg').classList.add('show')
+}
+function closeSheet() { $('sheet').classList.remove('show'); $('sheet-bg').classList.remove('show'); document.activeElement && document.activeElement.blur() }
+function pickEmoji(e) { sheetState.emoji = e; document.querySelectorAll('#f-emojis button').forEach(b => b.classList.toggle('on', b.textContent === e)) }
+function pickCat(c) { sheetState.cat = c; document.querySelectorAll('#f-cats .chip').forEach(b => b.classList.toggle('on', b.getAttribute('onclick').includes(`'${c}'`))) }
+function saveProduct() {
+  const name = $('f-name').value.trim(); if (!name) { $('f-name').focus(); return }
+  if (sheetState.pid) { const p = product(sheetState.pid); p.name = name; p.emoji = sheetState.emoji; p.cat = sheetState.cat }
+  else { const p = { id: uid(), name, emoji: sheetState.emoji, cat: sheetState.cat, uses: 0 }; S.products.push(p); S.list.push({ pid: p.id, qty: 1, note: '', done: false, addedBy: ME, updatedAt: now() }); p.uses = 1; toast(`${p.emoji} ${p.name} ajouté`) }
+  clearSearch(); persist(); closeSheet(); render()
+}
+function deleteProduct(pid) { if (!confirm('Supprimer ce produit de la bibliothèque ?')) return; S.products = S.products.filter(p => p.id !== pid); S.list = S.list.filter(l => l.pid !== pid); persist(); closeSheet(); render() }
+function moveCat(id, dir) { const o = S.categoryOrder; const i = o.indexOf(id); const j = i + dir; if (i < 0 || j < 0 || j >= o.length) return; [o[i], o[j]] = [o[j], o[i]]; persist(); openSheet('settings'); render() }
+function reuse(hid) { const h = S.history.find(x => x.id === hid); if (!h) return; S.list = h.items.filter(i => product(i.pid)).map(i => ({ ...i, done: false, doneBy: null, updatedAt: now() })); S.shopping = false; persist(); closeSheet(); showTab('list'); toast('Liste reprise') }
+function setProfile(id) { ME = id; local.set({ ...local.get(), profile: id }); render(); openSheet('settings'); toast(`Salut ${PROFILES[id].name} 👋`) }
+function setHousehold(v) { HOUSEHOLD = (v || '').trim().toLowerCase().replace(/[^a-z0-9-]/g, '-') || 'lola-simon'; local.set({ ...local.get(), household: HOUSEHOLD }); sync.connect(); openSheet('settings') }
+function resetAll() { if (!confirm('Tout effacer et revenir aux produits de départ ?')) return; S = repo.seed(); repo.save(S); closeSheet(); showTab('prep') }
+
+/* ═════════ SYNCHRO — Supabase (table courses_state) ═════════
+   Une ligne par foyer : { id, state jsonb, updated_at }. Chaque téléphone pousse son état après chaque
+   modification et reçoit ceux de l'autre en temps réel ; la fusion se fait ARTICLE PAR ARTICLE (le plus
+   récent gagne), donc deux personnes peuvent cocher en même temps sans s'écraser. Hors connexion, tout
+   continue de marcher en local et se rattrape au retour du réseau.                                     */
+const SB_URL = 'https://vxzjfwjxgewdqvfdsxjm.supabase.co'
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4empmd2p4Z2V3ZHF2ZmRzeGptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4MTM1MDcsImV4cCI6MjEwNDM4OTUwN30.IuIcPXXrVozPDDreB-hkY1didQoboV0pEuH8-8GaWLo'
+const sync = {
+  db: null, channel: null, online: false, lastError: null, pushT: null, applying: false,
+  status() { return this.lastError ? '⚠️ ' + this.lastError : this.online ? '✓ Connecté · les deux téléphones se voient en direct' : 'Connexion…' },
+  ui() { const d = document.querySelector('#sync .dot'); if (d) d.classList.toggle('on', this.online); const i = $('sync-info'); if (i) i.textContent = this.status() },
+  async connect() {
+    try {
+      if (!window.supabase) throw new Error('librairie Supabase non chargée')
+      if (!this.db) this.db = window.supabase.createClient(SB_URL, SB_KEY)
+      if (this.channel) { this.db.removeChannel(this.channel); this.channel = null }
+      const { data, error } = await this.db.from('courses_state').select('state').eq('id', HOUSEHOLD).maybeSingle()
+      if (error) throw error
+      if (data && data.state) this.apply(data.state); else await this.pushNow()
+      this.channel = this.db.channel('courses-' + HOUSEHOLD)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'courses_state', filter: 'id=eq.' + HOUSEHOLD }, payload => { if (payload.new && payload.new.state) this.apply(payload.new.state) })
+        .subscribe(st => { this.online = st === 'SUBSCRIBED'; this.ui() })
+      this.lastError = null
+    } catch (e) { this.online = false; this.lastError = /relation|does not exist|schema cache/i.test(e.message) ? 'Table courses_state absente : exécute le SQL fourni dans Supabase' : e.message; this.ui() }
+    // Présence rafraîchie toutes les 30 s pendant les courses
+    clearInterval(this._tick); this._tick = setInterval(() => { if (tab === 'shop' && S.shopping) renderPresence() }, 30000)
+  },
+  push() { clearTimeout(this.pushT); this.pushT = setTimeout(() => this.pushNow(), 400) },
+  async pushNow() {
+    if (!this.db || this.applying) return
+    try { const { error } = await this.db.from('courses_state').upsert({ id: HOUSEHOLD, state: S, updated_at: new Date().toISOString() }); if (error) throw error; this.lastError = null } catch (e) { this.lastError = e.message } finally { this.ui() }
+  },
+  // Fusion : produits (union, le plus récent par id), liste (par article, updatedAt le plus récent), suppressions, présence, historique
+  apply(remote) {
+    if (!remote || typeof remote !== 'object') return
+    this.applying = true
+    try {
+      const byId = new Map(S.products.map(p => [p.id, p]))
+      ;(remote.products || []).forEach(p => { const mine = byId.get(p.id); if (!mine) S.products.push(p); else if ((p.uses || 0) > (mine.uses || 0)) mine.uses = p.uses })
+      const removed = { ...(remote.removed || {}), ...(S.removed || {}) }
+      Object.entries(remote.removed || {}).forEach(([pid, t]) => { if (t > (S.removed?.[pid] || 0)) removed[pid] = t })
+      const list = new Map(S.list.map(l => [l.pid, l]))
+      ;(remote.list || []).forEach(r => { const m = list.get(r.pid); if (!m || (r.updatedAt || 0) > (m.updatedAt || 0)) list.set(r.pid, r) })
+      S.list = [...list.values()].filter(l => !(removed[l.pid] > (l.updatedAt || 0)))
+      S.removed = removed
+      if ((remote.rev || 0) > (S.rev || 0)) { S.shopping = !!remote.shopping; S.startedAt = remote.startedAt || S.startedAt; if (remote.categoryOrder) S.categoryOrder = remote.categoryOrder }
+      S.presence = { ...(S.presence || {}), ...(remote.presence || {}) }
+      Object.entries(remote.presence || {}).forEach(([k, v]) => { if (!S.presence[k] || v.at > S.presence[k].at) S.presence[k] = v })
+      const hist = new Map((S.history || []).map(h => [h.id, h])); (remote.history || []).forEach(h => { if (!hist.has(h.id)) hist.set(h.id, h) })
+      S.history = [...hist.values()].sort((a, b) => b.at - a.at).slice(0, 20)
+      S.rev = Math.max(S.rev || 0, remote.rev || 0)
+      repo.save(S); render()
+    } finally { this.applying = false }
+  },
+}
+
+/* ═════════ Rendu global ═════════ */
+function render() { renderPrep(); renderList(); renderShop(); const a = $('me-avatar'); if (a) { a.textContent = ME ? PROFILES[ME].initial : '?'; a.className = 'avatar ' + (ME || '') } }
+render()
+if (!ME) { openSheet('settings'); setTimeout(() => toast('Choisis ton profil 👆'), 400) }
+sync.connect()
+// Ré-affiche la barre d'ajout rapide quand le clavier se ferme (iOS)
+window.addEventListener('resize', () => { if (tab === 'shop') $('shop-bar').classList.toggle('hidden', !S.shopping) })
+</script>
+</body>
+</html>
