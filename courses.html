@@ -289,6 +289,12 @@ function dedupe(state) {
   return state
 }
 dedupe(S)
+// Migration d'icônes (une fois) : les produits de départ prennent leurs nouvelles icônes distinctes
+if ((S.iconRev || 0) < 1) {
+  const seedIcons = {}; SEED.forEach(([, ...items]) => items.forEach(x => { const [emoji, ...rest] = x.split(' '); seedIcons['p-' + norm(rest.join(' '))] = emoji }))
+  S.products.forEach(pr => { if (seedIcons[pr.id]) pr.emoji = seedIcons[pr.id] })
+  S.iconRev = 1; repo.save(S)
+}
 let saveT = null
 const persist = () => { S.rev = (S.rev || 0) + 1; clearTimeout(saveT); saveT = setTimeout(() => { repo.save(S); sync.push() }, 120) }
 const now = () => Date.now()
