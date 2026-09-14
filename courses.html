@@ -137,6 +137,11 @@
   .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
   .field label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
   .field input { background: var(--card-2); border: 0; border-radius: 12px; padding: 14px; font-size: 16px; outline: 0; }
+  .bank { max-height: 34vh; overflow-y: auto; background: var(--card-2); border-radius: 12px; padding: 8px; margin-top: 8px; }
+  .bank-title { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 8px 4px 6px; }
+  .bank-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .bank-grid button { aspect-ratio: 1; border-radius: 10px; font-size: 24px; display: flex; align-items: center; justify-content: center; border: 2px solid transparent; background: var(--card); }
+  .bank-grid button.on { border-color: var(--accent); background: var(--accent-bg); }
   .emoji-row { display: flex; gap: 8px; overflow-x: auto; padding: 2px; scrollbar-width: none; }
   .emoji-row::-webkit-scrollbar { display: none; }
   .emoji-row button { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 12px; background: var(--card-2); font-size: 22px; border: 2px solid transparent; }
@@ -229,20 +234,20 @@ const CATEGORIES = [
   { id: 'entretien', name: 'Entretien', emoji: '🧽' }, { id: 'maison', name: 'Maison', emoji: '🏠' }, { id: 'autres', name: 'Autres', emoji: '🛒' },
 ];
 const SEED = [
-  ['fruits', '🍅 Tomates', '🥒 Concombre', '🥕 Carottes', '🥬 Salade', '🧅 Oignons', '🧄 Ail', '🍋 Citrons', '🍌 Bananes', '🍎 Pommes', '🥑 Avocats', '🍓 Fraises', '🥔 Pommes de terre', '🍄 Champignons', '🌶️ Poivrons', '🥦 Brocoli'],
-  ['viandes', '🍗 Poulet', '🥩 Steak haché', '#e8a1a1|Lrd Lardons', '🌭 Saucisses', '🍖 Escalopes de dinde'],
-  ['poissons', '🐟 Saumon', '🍤 Crevettes', '🥫 Thon en boîte', '🐠 Cabillaud'],
-  ['frais', '🥛 Lait', '🥚 Œufs', '🧈 Beurre', '🍶 Crème fraîche', '🥣 Yaourts', '🍮 Desserts', '🫓 Pâte à pizza', '🥟 Raviolis frais'],
-  ['fromages', '🧀 Emmental râpé', '#f4f1ea|Mz Mozzarella', '#e9b83a|Cté Comté', '#ffffff|Fe Feta', '#f2ede2|Chv Chèvre', '#d99f2b|Par Parmesan'],
-  ['charcuterie', '#f4b6c2|Jb Jambon', '🍖 Saucisson', '🌭 Knacks'],
-  ['epicerie', '#6db36d|Pst Pesto', '#d94a3a|Sce Sauce tomate', '🫒 Huile d\'olive', '🧂 Sel', '🌿 Herbes', '#9aa5b1|Cv Conserves', '🍫 Chocolat', '🍪 Biscuits', '🍯 Miel', '🥜 Cacahuètes', '🍿 Chips', '#f0e6d2|Far Farine', '#ffffff|Suc Sucre'],
-  ['feculents', '🍝 Pâtes', '🍚 Riz', '🥔 Purée', '🌾 Semoule', '🫘 Lentilles', '🍞 Pain de mie'],
-  ['petitdej', '🥐 Croissants', '#e3b25d|Cér Céréales', '☕ Café', '🍵 Thé', '#c0392b|Cfr Confiture', '🧃 Jus d\'orange', '🥞 Brioche'],
-  ['boissons', '💧 Eau', '🥤 Coca', '🍺 Bière', '🍷 Vin', '#e07a5f|Sir Sirop', '🫧 Eau pétillante'],
-  ['surgeles', '🍕 Pizza', '🍟 Frites', '#57a773|Lég Légumes surgelés', '🍦 Glaces', '#e9c46a|Pan Poisson pané'],
-  ['hygiene', '🧻 Papier toilette', '🚿 Gel douche', '🪥 Dentifrice', '🧼 Savon', '🧴 Shampoing', '🪒 Rasoirs', '#5aa9e6|Déo Déodorant', '#dfe7ef|Mch Mouchoirs'],
-  ['entretien', '🧽 Éponges', '#7fc8a9|Lqv Liquide vaisselle', '#a4c8f0|Les Lessive', '🗑️ Sacs poubelle', '🪣 Produit sols', '#3b82f6|LV Tablettes lave-vaisselle', '#f3efe6|Sop Sopalin'],
-  ['maison', '🕯️ Bougies', '💡 Ampoules', '🔋 Piles', '#c9a27e|Flt Filtres à café'],
+  ['fruits', '🍅 Tomates', '🥒 Concombre', '🥕 Carottes', '🥬 Salade', '🧅 Oignons', '🧄 Ail', '🍋 Citrons', '🍌 Bananes', '🍎 Pommes', '🥑 Avocats', '🍓 Fraises', '🥔 Pommes de terre', '🍄 Champignons', '🫑 Poivrons', '🥦 Brocoli'],
+  ['viandes', '🍗 Poulet', '🥩 Steak haché', '🥓 Lardons', '🌭 Saucisses', '🦃 Escalopes de dinde'],
+  ['poissons', '🍣 Saumon', '🍤 Crevettes', '🐟 Thon en boîte', '🐠 Cabillaud'],
+  ['frais', '🥛 Lait', '🥚 Œufs', '🧈 Beurre', '🫙 Crème fraîche', '🥣 Yaourts', '🍮 Desserts', '🫓 Pâte à pizza', '🥟 Raviolis frais'],
+  ['fromages', '🧀 Emmental râpé', '⚪ Mozzarella', '🟨 Comté', '🇬🇷 Feta', '🐐 Chèvre', '🇮🇹 Parmesan'],
+  ['charcuterie', '🐖 Jambon', '🍖 Saucisson', '🇩🇪 Knacks'],
+  ['epicerie', '🌿 Pesto', '🥫 Sauce tomate', '🫒 Huile d\'olive', '🧂 Sel', '🌱 Herbes', '🏺 Conserves', '🍫 Chocolat', '🍪 Biscuits', '🍯 Miel', '🥜 Cacahuètes', '🍘 Chips', '🌾 Farine', '🍬 Sucre'],
+  ['feculents', '🍝 Pâtes', '🍚 Riz', '🍠 Purée', '🍛 Semoule', '🫘 Lentilles', '🍞 Pain de mie'],
+  ['petitdej', '🥐 Croissants', '🌽 Céréales', '☕ Café', '🍵 Thé', '🍇 Confiture', '🍊 Jus d\'orange', '🥞 Brioche'],
+  ['boissons', '💧 Eau', '🥤 Coca', '🍺 Bière', '🍷 Vin', '🧃 Sirop', '🫧 Eau pétillante'],
+  ['surgeles', '🍕 Pizza', '🍟 Frites', '🥗 Légumes surgelés', '🍧 Glaces', '🐡 Poisson pané'],
+  ['hygiene', '🚽 Papier toilette', '🚿 Gel douche', '🪥 Dentifrice', '🧼 Savon', '🧴 Shampoing', '🪒 Rasoirs', '💨 Déodorant', '🤧 Mouchoirs'],
+  ['entretien', '🧽 Éponges', '🍽️ Liquide vaisselle', '👕 Lessive', '🗑️ Sacs poubelle', '🪣 Produit sols', '🔷 Tablettes lave-vaisselle', '🧻 Sopalin'],
+  ['maison', '🕯️ Bougies', '💡 Ampoules', '🔋 Piles', '🫖 Filtres à café'],
 ];
 
 const repo = {
@@ -290,10 +295,10 @@ function dedupe(state) {
 }
 dedupe(S)
 // Migration d'icônes (une fois) : les produits de départ prennent leurs nouvelles icônes distinctes
-if ((S.iconRev || 0) < 1) {
+if ((S.iconRev || 0) < 2) {
   const seedIcons = {}; SEED.forEach(([, ...items]) => items.forEach(x => { const [emoji, ...rest] = x.split(' '); seedIcons['p-' + norm(rest.join(' '))] = emoji }))
   S.products.forEach(pr => { if (seedIcons[pr.id]) pr.emoji = seedIcons[pr.id] })
-  S.iconRev = 1; repo.save(S)
+  S.iconRev = 2; repo.save(S)
 }
 let saveT = null
 const persist = () => { S.rev = (S.rev || 0) + 1; clearTimeout(saveT); saveT = setTimeout(() => { repo.save(S); sync.push() }, 120) }
@@ -456,7 +461,17 @@ $('quick').addEventListener('keydown', e => {
 })
 
 /* ═════════ FEUILLES (produit, réglages) ═════════ */
-const EMOJIS = ['🛒', '🍅', '🥕', '🥬', '🍎', '🍌', '🍋', '🥑', '🍓', '🍇', '🍗', '🥩', '🐟', '🍤', '🥛', '🥚', '🧀', '🧈', '🥣', '🍞', '🥐', '🍝', '🍚', '🥫', '🍫', '🍪', '☕', '🧃', '💧', '🍺', '🍷', '🍕', '🍦', '🧻', '🧴', '🪥', '🧼', '🧽', '🫧', '🧹', '🕯️', '💡', '🔋', '🐶', '🐱', '🎁']
+const EMOJI_BANK = [
+  ['Fruits & légumes', [['🍅','tomate'],['🥒','concombre'],['🥕','carotte'],['🥬','salade laitue chou'],['🧅','oignon'],['🧄','ail'],['🍋','citron'],['🍋‍🟩','citron vert lime'],['🍌','banane'],['🍎','pomme rouge'],['🍏','pomme verte'],['🍐','poire'],['🍊','orange mandarine clémentine'],['🍇','raisin'],['🍓','fraise'],['🫐','myrtille'],['🍒','cerise'],['🍑','pêche abricot'],['🥭','mangue'],['🍍','ananas'],['🥝','kiwi'],['🍈','melon'],['🍉','pastèque'],['🥥','coco'],['🥑','avocat'],['🍆','aubergine'],['🥔','pomme de terre patate'],['🍠','patate douce purée'],['🌽','maïs'],['🫑','poivron'],['🌶️','piment'],['🥦','brocoli'],['🥬','épinard'],['🍄','champignon'],['🫛','petits pois haricots verts'],['🫘','haricots lentilles'],['🌰','châtaigne marron'],['🥜','cacahuète arachide'],['🌿','herbes basilic persil pesto'],['🌱','pousse herbe'],['🫚','gingembre'],['🧆','falafel'],['🥗','salade composée légumes'],['🍃','feuille menthe']]],
+  ['Viandes & poissons', [['🍗','poulet cuisse'],['🥩','steak bœuf viande'],['🍖','côte saucisson viande'],['🥓','bacon lardons'],['🌭','saucisse knacks'],['🍔','burger'],['🐔','poulet volaille'],['🦃','dinde'],['🐖','porc jambon cochon'],['🐄','bœuf vache'],['🐑','agneau mouton'],['🐇','lapin'],['🦆','canard'],['🥚','œuf œufs'],['🐟','poisson thon'],['🐠','poisson cabillaud'],['🐡','poisson pané'],['🍣','saumon sushi'],['🍤','crevette'],['🦐','crevettes gambas'],['🦑','calamar'],['🦞','homard'],['🦀','crabe'],['🦪','huître'],['🐙','poulpe'],['🥫','conserve thon boîte']]],
+  ['Frais & fromages', [['🥛','lait'],['🧈','beurre'],['🫙','crème pot yaourt confiture'],['🥣','yaourt bol céréales'],['🍮','dessert flan crème'],['🍨','glace dessert'],['🧀','fromage emmental'],['🐐','chèvre'],['⚪','mozzarella boule'],['🟨','comté jaune'],['🟡','fromage rond'],['🇬🇷','feta grec'],['🇮🇹','parmesan italien'],['🇫🇷','français camembert'],['🇨🇭','gruyère suisse'],['🫓','pâte pizza galette'],['🥟','raviolis'],['🧆','boulettes'],['🍶','crème lait'],['🧊','glaçons surgelé']]],
+  ['Épicerie & féculents', [['🍝','pâtes spaghetti'],['🍚','riz'],['🍛','semoule curry'],['🍜','nouilles ramen'],['🥣','soupe'],['🍞','pain de mie'],['🥖','baguette pain'],['🥐','croissant'],['🥯','bagel'],['🥞','pancakes brioche'],['🧇','gaufres'],['🍕','pizza'],['🌮','tacos'],['🌯','wrap burrito'],['🥪','sandwich'],['🍟','frites'],['🍘','chips crackers'],['🍿','popcorn'],['🥨','bretzel'],['🍪','biscuits cookies'],['🍫','chocolat'],['🍬','bonbon sucre'],['🍭','sucette'],['🍯','miel'],['🥫','sauce tomate conserve'],['🏺','conserves bocal'],['🫒','huile olive'],['🧂','sel poivre'],['🌾','farine blé'],['🍩','donut'],['🎂','gâteau'],['🧁','cupcake muffin'],['🥧','tarte'],['🍰','pâtisserie'],['🍬','sucre']]],
+  ['Petit-déjeuner & boissons', [['☕','café'],['🍵','thé'],['🫖','théière filtres'],['🧋','bubble tea'],['🥤','soda coca'],['🧃','jus sirop'],['🍊','jus orange'],['💧','eau'],['🫧','eau pétillante bulles'],['🍺','bière'],['🍻','bières'],['🍷','vin rouge'],['🥂','champagne'],['🍾','bouteille'],['🥃','whisky'],['🍸','cocktail'],['🍹','cocktail'],['🧉','maté'],['🥛','lait'],['🍼','biberon'],['🌽','céréales maïs']]],
+  ['Surgelés', [['🍕','pizza surgelée'],['🍟','frites'],['🧊','glaçons'],['🍧','glaces sorbet'],['🍦','glace cornet'],['🥗','légumes surgelés'],['🐡','poisson pané'],['🥶','froid surgelé'],['❄️','surgelé']]],
+  ['Hygiène & beauté', [['🚽','papier toilette wc'],['🚿','gel douche'],['🛁','bain'],['🧴','shampoing lotion crème'],['🧼','savon'],['🪥','dentifrice brosse dents'],['🦷','dents'],['🪒','rasoir'],['💨','déodorant spray'],['🤧','mouchoirs rhume'],['🩹','pansements'],['💊','médicaments'],['🧴','crème solaire'],['💅','vernis ongles'],['💄','rouge lèvres maquillage'],['🪮','brosse peigne'],['🧽','éponge'],['🩸','tampons serviettes'],['🧷','épingle']]],
+  ['Entretien & maison', [['🧽','éponge'],['🍽️','liquide vaisselle assiette'],['🔷','tablettes lave-vaisselle'],['👕','lessive linge'],['🧺','panier linge'],['🫧','adoucissant'],['🗑️','sacs poubelle'],['🪣','seau produit sols'],['🧹','balai'],['🧻','sopalin essuie-tout'],['🧯','extincteur'],['🕯️','bougie'],['💡','ampoule'],['🔋','piles'],['🔌','prise câble'],['🪫','batterie'],['🧯','détergent'],['🧴','produit ménager'],['🪞','miroir'],['🧻','papier'],['📦','carton colis'],['🛒','courses'],['🧰','bricolage'],['🔧','outil'],['🪴','plante'],['💐','fleurs'],['🌹','rose'],['🐶','chien croquettes'],['🐱','chat croquettes'],['🐾','animaux'],['🍼','bébé'],['👶','bébé couches'],['🎁','cadeau'],['🎈','fête'],['🎂','anniversaire']]],
+]
+const EMOJIS = EMOJI_BANK.flatMap(([, list]) => list.map(([e]) => e))
 let sheetState = {}
 function openSheet(kind, pid, presetName = '', presetCat = '') {
   const body = $('sheet-body')
@@ -465,11 +480,13 @@ function openSheet(kind, pid, presetName = '', presetCat = '') {
     sheetState = { pid, emoji: p ? p.emoji : '🛒', cat: p ? p.cat : (presetCat || 'autres') }
     body.innerHTML = `<h2>${p ? 'Modifier le produit' : 'Nouveau produit'}</h2>
       <div class="field"><label>Nom</label><input id="f-name" value="${esc(p ? p.name : presetName)}" placeholder="Ex. Lait d'amande" autocapitalize="sentences"></div>
-      <div class="field"><label>Icône</label><div class="emoji-row" id="f-emojis">${EMOJIS.map(e => `<button class="${e === sheetState.emoji ? 'on' : ''}" onclick="pickEmoji('${e}')">${e}</button>`).join('')}</div>
-        <div style="display:flex;gap:8px;align-items:center;margin-top:8px"><span style="font-size:13px;color:var(--muted)">ou une pastille :</span><input id="f-mono" maxlength="3" placeholder="Cté" style="width:74px;background:var(--card-2);border:0;border-radius:10px;padding:10px;font-weight:700;text-align:center" value="${sheetState.emoji.startsWith('#') ? esc(sheetState.emoji.split('|')[1]) : ''}" oninput="pickMono()"><input id="f-color" type="color" value="${sheetState.emoji.startsWith('#') ? sheetState.emoji.split('|')[0] : '#e9b83a'}" style="width:44px;height:40px;border:0;background:none;padding:0" oninput="pickMono()"><span id="f-preview">${sheetState.emoji.startsWith('#') ? icon(sheetState.emoji) : ''}</span></div></div>
+      <div class="field"><label>Icône <span id="f-emoji-cur" style="font-size:18px;margin-left:6px;vertical-align:middle">${sheetState.emoji}</span></label>
+        <input id="f-emoji-search" placeholder="Rechercher un emoji (fromage, poulet, lessive…)" autocomplete="off" oninput="renderEmojiBank()">
+        <div id="f-bank" class="bank"></div></div>
       <div class="field"><label>Rayon</label><div class="chips" id="f-cats">${orderedCats().map(c => `<button class="chip${c.id === sheetState.cat ? ' on' : ''}" onclick="pickCat('${c.id}')">${c.emoji} ${esc(c.name)}</button>`).join('')}</div></div>
       <div class="actions"><button class="cta" onclick="saveProduct()">${p ? 'Enregistrer' : 'Créer et ajouter à la liste'}</button></div>
       ${p ? `<button class="danger" onclick="deleteProduct('${p.id}')">Supprimer ce produit</button>` : ''}`
+    renderEmojiBank()
     setTimeout(() => { if (!p) $('f-name').focus() }, 250)
   } else if (kind === 'settings') {
     body.innerHTML = `<h2>Réglages</h2>
@@ -484,8 +501,14 @@ function openSheet(kind, pid, presetName = '', presetCat = '') {
   $('sheet').classList.add('show'); $('sheet-bg').classList.add('show')
 }
 function closeSheet() { $('sheet').classList.remove('show'); $('sheet-bg').classList.remove('show'); document.activeElement && document.activeElement.blur() }
-function pickEmoji(e) { sheetState.emoji = e; document.querySelectorAll('#f-emojis button').forEach(b => b.classList.toggle('on', b.textContent === e)); const m = $('f-mono'); if (m) m.value = ''; const pv = $('f-preview'); if (pv) pv.innerHTML = '' }
-function pickMono() { const t = ($('f-mono').value || '').trim().slice(0, 3); if (!t) return; sheetState.emoji = $('f-color').value + '|' + t; document.querySelectorAll('#f-emojis button').forEach(b => b.classList.remove('on')); $('f-preview').innerHTML = icon(sheetState.emoji) }
+function pickEmoji(e) { sheetState.emoji = e; $('f-emoji-cur').textContent = e; document.querySelectorAll('#f-bank button').forEach(b => b.classList.toggle('on', b.textContent === e)) }
+function renderEmojiBank() {
+  const q = norm($('f-emoji-search')?.value || '')
+  const el = $('f-bank'); if (!el) return
+  const btn = ([e]) => `<button class="${e === sheetState.emoji ? 'on' : ''}" onclick="pickEmoji('${e}')">${e}</button>`
+  if (q) { const seen = new Set(); const hits = EMOJI_BANK.flatMap(([, l]) => l).filter(([e, k]) => norm(k).includes(q) && !seen.has(e) && seen.add(e)); el.innerHTML = hits.length ? `<div class="bank-grid">${hits.map(btn).join('')}</div>` : `<div class="s" style="color:var(--muted);font-size:13px;padding:6px 2px">Aucun emoji pour « ${esc($('f-emoji-search').value)} »</div>`; return }
+  el.innerHTML = EMOJI_BANK.map(([title, l]) => { const seen = new Set(); return `<div class="bank-title">${title}</div><div class="bank-grid">${l.filter(([e]) => !seen.has(e) && seen.add(e)).map(btn).join('')}</div>` }).join('')
+}
 function pickCat(c) { sheetState.cat = c; document.querySelectorAll('#f-cats .chip').forEach(b => b.classList.toggle('on', b.getAttribute('onclick').includes(`'${c}'`))) }
 function saveProduct() {
   const name = $('f-name').value.trim(); if (!name) { $('f-name').focus(); return }
