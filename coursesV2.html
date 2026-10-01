@@ -220,6 +220,7 @@
   .cal .slot.viande.on { background: rgba(217,83,79,.12); border-color: #d9534f; }
   .cal .slot.poisson.on { background: rgba(47,95,191,.12); border-color: #2f5fbf; }
   .cal .rowlbl { grid-column: 1 / -1; font-size: 10px; font-weight: 600; color: var(--faint); text-transform: uppercase; letter-spacing: .06em; margin: 6px 2px 2px; }
+  .cal .slot .nm { display: none; }
   .cal .hint { text-align: center; margin-top: 8px; }
   .pick { display: flex; align-items: center; gap: 12px; padding: 10px 4px; border-bottom: 1px solid var(--line); width: 100%; text-align: left; }
   .pick:last-child { border-bottom: 0; }
@@ -263,6 +264,50 @@
   .portions .stepper { background: var(--card); }
   textarea.ta { background: var(--card-2); border: 0; border-radius: 12px; padding: 14px; font: inherit; font-size: 15px; outline: 0; min-height: 120px; resize: vertical; width: 100%; color: inherit; line-height: 1.5; }
   .hint { color: var(--muted); font-size: 12px; line-height: 1.5; }
+  /* ── Tablette & ordinateur : barre d'onglets en haut, contenu centré, calendrier large, feuilles en fenêtre ── */
+  @media (min-width: 768px) {
+    .screen { max-width: 1120px; margin: 0 auto; padding: 88px 32px 48px; }
+    .tabs { top: 0; bottom: auto; height: 64px; padding: 0 24px; justify-content: center; gap: 6px; border-top: 0; border-bottom: 1px solid var(--line); }
+    .tab { flex: 0 0 auto; flex-direction: row; gap: 8px; padding: 0 18px; height: 42px; border-radius: 12px; font-size: 14px; }
+    .tab svg { width: 20px; height: 20px; }
+    .tab.active { background: var(--blue-bg); }
+    .tab .badge { position: static; margin-left: 4px; }
+    .float, .shop-bar { left: auto; right: 32px; bottom: 32px; width: 420px; }
+    .toast { bottom: 40px; }
+    .progress { top: 64px; margin-top: -24px; padding-top: 16px; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); }
+    .tile:hover, .meal:hover, .cal .slot:hover, .row:hover, .menu-row:hover { border-color: var(--blue); }
+    .meals { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+    .meal { min-height: 150px; }
+    .meal .big { font-size: 40px; }
+    .cal { padding: 18px 16px 14px; }
+    .cal .grid7 { gap: 8px; }
+    .cal .day { font-size: 13px; padding-bottom: 8px; }
+    .cal .day small { font-size: 12px; }
+    .cal .rowlbl { font-size: 12px; margin: 10px 2px 4px; }
+    .cal .slot { aspect-ratio: auto; min-height: 96px; flex-direction: column; gap: 6px; font-size: 32px; padding: 8px 6px; }
+    .cal .slot .nm { display: block; font-size: 12px; font-weight: 600; line-height: 1.2; color: var(--text); text-align: center; }
+    .cal .slot.on .nm { color: inherit; }
+    .cal .slot.viande.on .nm { color: #c0392b; } .cal .slot.poisson.on .nm { color: var(--blue-ink); } .cal .slot.vege.on .nm { color: var(--accent-ink); }
+    .goal .top b { font-size: 17px; }
+    .menu-row { padding: 12px 12px 12px 16px; }
+    #list, #shop, #list-cta, #presence { max-width: 760px; margin-left: auto; margin-right: auto; }
+    #screen-list .head, #screen-shop .progress { max-width: 760px; margin-left: auto; margin-right: auto; }
+    .sheet { left: 50%; right: auto; bottom: auto; top: 50%; width: min(600px, 92vw); max-height: 86vh; border-radius: 22px; padding: 24px 28px 28px; transform: translate(-50%, -50%) scale(.96); opacity: 0; transition: transform .2s, opacity .2s; box-shadow: 0 30px 80px rgba(22,48,92,.25); }
+    .sheet.show { transform: translate(-50%, -50%); opacity: 1; }
+    .sheet .grip { display: none; }
+    .bank { max-height: 40vh; }
+    .pick-list { max-height: 56vh; }
+  }
+  @media (min-width: 1024px) {
+    #screen-meals { display: grid; grid-template-columns: 380px 1fr; grid-template-rows: auto auto auto 1fr; gap: 0 28px; align-items: start; }
+    #screen-meals .head, #screen-meals #cal { grid-column: 1 / -1; }
+    #screen-meals #meals-goal { grid-column: 1; grid-row: 3; }
+    #screen-meals #menu { grid-column: 1; grid-row: 4; margin-top: 0 !important; }
+    #screen-meals #meals-filters { grid-column: 2; grid-row: 3; }
+    #screen-meals #meals { grid-column: 2; grid-row: 4; }
+    .cal .slot { min-height: 110px; }
+  }
   .toast { position: fixed; left: 50%; bottom: calc(var(--tab-h) + 84px); transform: translateX(-50%) translateY(10px); background: var(--blue-ink); color: #fff; padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; opacity: 0; transition: .2s; z-index: 50; pointer-events: none; white-space: nowrap; }
   .toast.show { opacity: 1; transform: translateX(-50%); }
 </style>
@@ -742,7 +787,7 @@ function renderCal() {
   const today = (new Date().getDay() + 6) % 7
   const mon = new Date(); mon.setDate(mon.getDate() - today)
   const dates = DAYS.map((_, i) => { const d = new Date(mon); d.setDate(mon.getDate() + i); return d.getDate() })
-  const cell = (d, t) => { const key = `${d}-${t}`, id = S.plan.slots[key], m = id && meal(id); return `<button class="slot${m ? ' on ' + m.type : ''}" onclick="openSheet('slot', '${key}')" title="${DAYS[d]} ${t}">${m ? esc(m.emoji) : '<span style="font-size:16px">＋</span>'}</button>` }
+  const cell = (d, t) => { const key = `${d}-${t}`, id = S.plan.slots[key], m = id && meal(id); return `<button class="slot${m ? ' on ' + m.type : ''}" onclick="openSheet('slot', '${key}')" title="${DAYS[d]} ${t}">${m ? `${esc(m.emoji)}<span class="nm">${esc(m.name)}</span>` : '<span style="font-size:16px">＋</span>'}</button>` }
   const filled = Object.keys(S.plan.slots).length
   $('cal').innerHTML = `<div class="cal"><div class="grid7">${DAYS.map((d, i) => `<div class="day${i === today ? ' today' : ''}">${d}<small>${dates[i]}</small></div>`).join('')}
     <div class="rowlbl">Midi</div>${DAYS.map((_, i) => cell(i, 'midi')).join('')}
