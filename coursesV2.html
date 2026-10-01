@@ -207,7 +207,7 @@
   .goal .pips i.on { background: #d9534f; }
   .goal .pips i.over { background: #8e1b14; }
   .goal.over .top b { color: var(--danger); }
-  .goal .stats { display: flex; gap: 14px; margin-top: 10px; font-size: 13px; color: var(--muted); }
+  .goal .stats { display: flex; gap: 14px; justify-content: space-around; font-size: 13px; color: var(--muted); }
   .goal .stats b { color: var(--text); font-weight: 700; }
   .cal { background: var(--card); border: 1.5px solid var(--line); border-radius: var(--r); padding: 12px 10px 10px; margin-bottom: 14px; }
   .cal .grid7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
@@ -719,8 +719,8 @@ function resetAll() { if (!confirm('Tout effacer et revenir aux produits de dép
 /* ═════════ PLATS — batch cooking diet pour 2 ═════════
    Chaque plat liste ses ingrédients pour 4 portions (2 personnes × 2 repas, à préparer d'avance
    dans des boîtes). Les quantités sont mises à l'échelle selon les portions choisies.
-   Ingrédient : [emoji, nom, quantité, unité, rayon]. Objectif : 3 repas viande max par semaine.   */
-const MEAT_MAX = 3, PEOPLE = 2
+   Ingrédient : [emoji, nom, quantité, unité, rayon].                                                */
+const PEOPLE = 2
 const TYPES = { vege: { name: 'Végé', emoji: '🥦' }, poisson: { name: 'Poisson', emoji: '🐟' }, viande: { name: 'Viande', emoji: '🍗' } }
 const MEALS = [
   // Les plats sont ajoutés à la main ici : { id, name, emoji, type: 'vege'|'poisson'|'viande', kcal, time, ing: [[emoji, nom, quantité pour 4 portions, unité ('g','kg','ml','cl','l','boîte','pot','sachet','pavé','cube' ou '' pour « à la pièce »), rayon]] }
@@ -730,7 +730,6 @@ const meal = id => allMeals().find(m => m.id === id)
 const planned = id => S.plan.items[id]
 const mealsPlanned = () => Object.keys(S.plan.items).map(meal).filter(Boolean)
 const repasOf = m => Math.round((planned(m.id)?.portions || 0) / PEOPLE)   // repas par personne
-const meatCount = () => mealsPlanned().filter(m => m.type === 'viande').reduce((a, m) => a + repasOf(m), 0)
 const touchPlan = () => { S.plan.updatedAt = now() }
 let mealFilter = 'all'
 const fmtQty = (q, u) => {
@@ -746,14 +745,12 @@ const scaled = (m, portions) => m.ing.map(([e, n, q, u, c]) => [e, n, q * portio
 
 function renderMeals() {
   renderCal()
-  const sel = mealsPlanned(), meat = meatCount(), over = meat > MEAT_MAX
+  const sel = mealsPlanned()
   const repas = sel.reduce((a, m) => a + repasOf(m), 0)
   const kcal = sel.length ? Math.round(sel.reduce((a, m) => a + m.kcal * repasOf(m), 0) / Math.max(1, repas)) : 0
   $('badge-meals').classList.toggle('hidden', !sel.length); $('badge-meals').textContent = sel.length
   $('meals-sub').textContent = sel.length ? `${plural(sel.length, 'plat')} · ${plural(repas, 'repas')} par personne` : 'Choisis tes plats de la semaine'
-  $('meals-goal').innerHTML = `<div class="goal${over ? ' over' : ''}"><div class="top"><b>🍗 Viande : ${meat} / ${MEAT_MAX} repas</b><span>${over ? 'Trop de viande cette semaine' : meat === MEAT_MAX ? 'Objectif atteint' : 'par personne et par semaine'}</span></div>
-    <div class="pips">${Array.from({ length: Math.max(MEAT_MAX, meat) }, (_, i) => `<i class="${i < meat ? (i < MEAT_MAX ? 'on' : 'over') : ''}"></i>`).join('')}</div>
-    <div class="stats"><span><b>${repas}</b> / 14 repas</span><span><b>${kcal || '–'}</b> kcal / portion</span><span><b>${sel.filter(m => m.type !== 'viande').length}</b> sans viande</span></div></div>`
+  $('meals-goal').innerHTML = sel.length ? `<div class="goal"><div class="stats"><span><b>${repas}</b> / 14 repas</span><span><b>${kcal || '–'}</b> kcal / portion</span><span><b>${sel.length}</b> plats</span></div></div>` : ''
   const filters = [['all', 'Tous'], ['vege', '🥦 Végé'], ['poisson', '🐟 Poisson'], ['viande', '🍗 Viande'], ['mine', '⭐ Mes plats']]
   $('meals-filters').innerHTML = filters.map(([k, l]) => `<button class="chip${mealFilter === k ? ' on' : ''}" onclick="setMealFilter('${k}')">${l}</button>`).join('')
   const list = allMeals().filter(m => mealFilter === 'all' || (mealFilter === 'mine' ? m.custom : m.type === mealFilter))
@@ -781,7 +778,6 @@ function assignSlot(key, id) {
   if (id) { S.plan.slots[key] = id; if (!S.plan.items[id]) S.plan.items[id] = { addedBy: ME, at: now(), portions: 0, fromCal: true } } else delete S.plan.slots[key]
   syncPortions(prev); syncPortions(id)
   touchPlan(); persist(); closeSheet(); render(); buzz()
-  if (id && meal(id)?.type === 'viande' && meatCount() > MEAT_MAX) toast(`⚠️ ${meatCount()} repas viande, objectif ${MEAT_MAX}`)
 }
 function renderCal() {
   const today = (new Date().getDay() + 6) % 7
@@ -800,11 +796,10 @@ function setPortions(id, d) {
   p.portions += d
   if (p.portions <= 0) delete S.plan.items[id]
   touchPlan(); persist(); render(); buzz()
-  if (d > 0 && meal(id)?.type === 'viande' && meatCount() > MEAT_MAX) toast(`⚠️ ${meatCount()} repas viande, objectif ${MEAT_MAX}`)
 }
 function togglePlan(id, portions = 4) {
   if (planned(id)) { delete S.plan.items[id]; slotsOf(id).forEach(k => delete S.plan.slots[k]) }
-  else { S.plan.items[id] = { portions, addedBy: ME, at: now() }; if (meal(id)?.type === 'viande' && meatCount() > MEAT_MAX) toast(`⚠️ ${meatCount()} repas viande, objectif ${MEAT_MAX}`) }
+  else S.plan.items[id] = { portions, addedBy: ME, at: now() }
   touchPlan(); persist(); closeSheet(); render(); buzz()
 }
 function clearPlan() { if (!confirm('Vider le menu de la semaine ?')) return; S.plan.items = {}; S.plan.slots = {}; touchPlan(); persist(); render() }
