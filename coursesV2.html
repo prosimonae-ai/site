@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#f6f5f2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111214" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Courses V2">
+<title>Courses V2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  :root {
+    --bg: #f6f5f2; --card: #ffffff; --card-2: #f0eeea; --line: rgba(20,20,18,.08);
+    --text: #141412; --muted: #7b7972; --faint: #b3b0a8;
+    --accent: #1d7a4a; --accent-bg: #e3f2ea; --accent-ink: #145a37;
+    --danger: #c0392b; --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.05);
+    --r: 16px; --tab-h: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #111214; --card: #1b1c1f; --card-2: #232428; --line: rgba(255,255,255,.08); --text: #f2f1ee; --muted: #9a9892; --faint: #5e5d58; --accent: #46c07a; --accent-bg: #1c3a2a; --accent-ink: #9fe3bd; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25); }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, system-ui, sans-serif; font-size: 16px; -webkit-font-smoothing: antialiased; overscroll-behavior-y: none; -webkit-user-select: none; user-select: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  input { font: inherit; color: inherit; }
+  .hidden { display: none !important; }
+
+  /* ── Écrans ── */
+  .screen { display: none; min-height: 100%; padding: calc(12px + env(safe-area-inset-top, 0px)) 16px calc(var(--tab-h) + 24px); }
+  .screen.active { display: block; }
+  .head { display: flex; align-items: flex-end; justify-content: space-between; padding: 8px 0 14px; }
+  .head h1 { font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+  .head .sub { color: var(--muted); font-size: 14px; margin-top: 2px; }
+
+  /* ── Recherche ── */
+  .search { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: 14px; padding: 12px 14px; box-shadow: var(--shadow); margin-bottom: 14px; }
+  .search input { flex: 1; border: 0; outline: 0; background: none; font-size: 16px; }
+  .search input::placeholder { color: var(--faint); }
+  .search .clear { color: var(--faint); font-size: 18px; padding: 4px; }
+
+  /* ── Tuiles produits ── */
+  .section { margin-bottom: 22px; }
+  .section-title { display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 4px 10px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  @media (min-width: 420px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+  .tile { position: relative; background: var(--card); border-radius: var(--r); padding: 12px 8px 10px; text-align: center; box-shadow: var(--shadow); border: 2px solid transparent; transition: transform .12s, background .15s, border-color .15s; min-height: 84px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+  .tile:active { transform: scale(.94); }
+  .tile .emoji { font-size: 26px; line-height: 1; }
+  .mono { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 10px; font-size: 12px !important; font-weight: 800; letter-spacing: -.01em; border: 1px solid rgba(0,0,0,.08); font-family: 'Inter', sans-serif; line-height: 1; }
+  .row .mono, .item .mono { width: 30px; height: 30px; font-size: 11px !important; }
+  .tile .name { font-size: 12.5px; font-weight: 500; line-height: 1.2; }
+  .tile.on { background: var(--accent-bg); border-color: var(--accent); }
+  .tile.on .name { color: var(--accent-ink); font-weight: 600; }
+  .tile .qty { position: absolute; top: -7px; right: -7px; min-width: 26px; height: 26px; border-radius: 13px; background: var(--accent); color: #fff; font-size: 13px; font-weight: 700; display: none; align-items: center; justify-content: center; padding: 0 7px; box-shadow: 0 2px 6px rgba(0,0,0,.2); }
+  .tile.on .qty { display: flex; }
+  .tile.add { border: 2px dashed var(--line); background: transparent; box-shadow: none; color: var(--muted); }
+  .tile.add .emoji { font-size: 22px; }
+  .tile.pop { animation: pop .25s ease; }
+  @keyframes pop { 0% { transform: scale(.9); } 60% { transform: scale(1.04); } 100% { transform: scale(1); } }
+
+  /* ── Barre flottante liste ── */
+  .float { position: fixed; left: 16px; right: 16px; bottom: calc(var(--tab-h) + 12px); background: var(--text); color: var(--bg); border-radius: 18px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,.25); transform: translateY(20px); opacity: 0; pointer-events: none; transition: transform .25s, opacity .25s; z-index: 20; }
+  .float.show { transform: none; opacity: 1; pointer-events: all; }
+  .float b { font-weight: 700; }
+  .float .go { background: var(--accent); color: #fff; border-radius: 12px; padding: 10px 14px; font-weight: 600; font-size: 14px; }
+
+  /* ── Liste ── */
+  .row { display: flex; align-items: center; gap: 12px; background: var(--card); border-radius: var(--r); padding: 12px 12px 12px 14px; box-shadow: var(--shadow); margin-bottom: 8px; }
+  .row .emoji { font-size: 24px; width: 32px; text-align: center; }
+  .row .body { flex: 1; min-width: 0; }
+  .row .name { font-weight: 600; font-size: 16px; }
+  .row .note { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .row .note input { width: 100%; border: 0; background: none; outline: 0; color: var(--muted); font-size: 13px; }
+  .row .note input::placeholder { color: var(--faint); }
+  .stepper { display: flex; align-items: center; background: var(--card-2); border-radius: 12px; overflow: hidden; }
+  .stepper button { width: 40px; height: 40px; font-size: 20px; font-weight: 600; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+  .stepper button:active { background: var(--line); }
+  .stepper span { min-width: 26px; text-align: center; font-weight: 700; }
+  .row .del { color: var(--faint); width: 36px; height: 40px; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+  .cta { display: flex; width: 100%; align-items: center; justify-content: center; gap: 8px; background: var(--accent); color: #fff; border-radius: 16px; padding: 18px; font-size: 17px; font-weight: 700; box-shadow: 0 8px 24px rgba(29,122,74,.3); }
+  .cta:active { transform: scale(.98); }
+  .cta.ghost { background: var(--card); color: var(--text); box-shadow: var(--shadow); font-weight: 600; }
+  .empty { text-align: center; color: var(--muted); padding: 60px 20px; line-height: 1.6; }
+  .empty .big { font-size: 44px; margin-bottom: 10px; }
+
+  /* ── Mode magasin ── */
+  #screen-shop { padding-bottom: calc(var(--tab-h) + 90px); }
+  .progress { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: calc(8px + env(safe-area-inset-top, 0px)) 0 12px; margin: calc(-12px - env(safe-area-inset-top, 0px)) 0 8px; }
+  .progress .top { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+  .progress h1 { font-size: 26px; font-weight: 700; letter-spacing: -.02em; }
+  .progress .count { color: var(--muted); font-size: 15px; font-weight: 500; }
+  .progress .count b { color: var(--text); font-size: 18px; }
+  .bar { height: 8px; background: var(--card-2); border-radius: 4px; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 4px; transition: width .35s ease; }
+  .cat { margin: 14px 4px 8px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .item { display: flex; align-items: center; gap: 14px; background: var(--card); border-radius: 18px; padding: 16px 16px; box-shadow: var(--shadow); margin-bottom: 8px; min-height: 64px; transition: transform .12s; }
+  .item:active { transform: scale(.985); }
+  .item .box { width: 30px; height: 30px; border-radius: 10px; border: 2.5px solid var(--faint); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; transition: background .15s, border-color .15s; }
+  .item .emoji { font-size: 24px; }
+  .item .label { flex: 1; font-size: 18px; font-weight: 600; }
+  .item .label small { color: var(--muted); font-weight: 500; font-size: 14px; margin-left: 6px; }
+  .item.done { opacity: .5; }
+  .item.done .box { background: var(--accent); border-color: var(--accent); }
+  .item.done .label { text-decoration: line-through; text-decoration-thickness: 2px; font-weight: 500; }
+  .item.leaving { animation: leave .3s ease forwards; }
+  @keyframes leave { to { opacity: 0; transform: translateX(24px) scale(.96); height: 0; } }
+  .done-head { display: flex; align-items: center; justify-content: space-between; margin: 26px 4px 8px; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .done-head button { color: var(--accent); font-size: 13px; letter-spacing: 0; text-transform: none; font-weight: 600; }
+  .shop-bar { position: fixed; left: 16px; right: 16px; bottom: calc(var(--tab-h) + 12px); display: flex; gap: 8px; z-index: 20; }
+  .shop-bar .quick { flex: 1; display: flex; align-items: center; gap: 8px; background: var(--card); border-radius: 16px; padding: 0 14px; box-shadow: var(--shadow); height: 52px; }
+  .shop-bar .quick input { flex: 1; border: 0; background: none; outline: 0; font-size: 16px; min-width: 0; }
+  .shop-bar .finish { background: var(--accent); color: #fff; border-radius: 16px; padding: 0 18px; font-weight: 700; height: 52px; box-shadow: 0 8px 24px rgba(29,122,74,.3); }
+  .all-done { text-align: center; padding: 40px 20px 10px; }
+  .all-done .big { font-size: 56px; margin-bottom: 8px; }
+  .all-done h2 { font-size: 22px; margin-bottom: 6px; }
+  .all-done p { color: var(--muted); }
+
+  /* ── Onglets ── */
+  .tabs { position: fixed; left: 0; right: 0; bottom: 0; height: var(--tab-h); padding-bottom: env(safe-area-inset-bottom, 0px); background: color-mix(in srgb, var(--card) 88%, transparent); backdrop-filter: blur(20px) saturate(1.4); -webkit-backdrop-filter: blur(20px) saturate(1.4); border-top: 1px solid var(--line); display: flex; z-index: 30; }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--muted); font-size: 11px; font-weight: 600; position: relative; }
+  .tab svg { width: 24px; height: 24px; }
+  .tab.active { color: var(--accent); }
+  .tab .badge { position: absolute; top: 8px; left: calc(50% + 6px); min-width: 18px; height: 18px; border-radius: 9px; background: var(--accent); color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 5px; }
+
+  /* ── Feuille (bottom sheet) ── */
+  .sheet-bg { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 40; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .sheet-bg.show { opacity: 1; pointer-events: all; }
+  .sheet { position: fixed; left: 0; right: 0; bottom: 0; background: var(--card); border-radius: 22px 22px 0 0; padding: 12px 20px calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 41; transform: translateY(100%); transition: transform .25s cubic-bezier(.2,.8,.2,1); max-height: 88vh; overflow-y: auto; }
+  .sheet.show { transform: none; }
+  .sheet .grip { width: 40px; height: 5px; border-radius: 3px; background: var(--line); margin: 0 auto 16px; }
+  .sheet h2 { font-size: 20px; font-weight: 700; margin-bottom: 14px; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .field label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .field input { background: var(--card-2); border: 0; border-radius: 12px; padding: 14px; font-size: 16px; outline: 0; }
+  .bank { max-height: 34vh; overflow-y: auto; background: var(--card-2); border-radius: 12px; padding: 8px; margin-top: 8px; }
+  .bank-title { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 8px 4px 6px; }
+  .bank-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .bank-grid button { aspect-ratio: 1; border-radius: 10px; font-size: 24px; display: flex; align-items: center; justify-content: center; border: 2px solid transparent; background: var(--card); }
+  .bank-grid button.on { border-color: var(--accent); background: var(--accent-bg); }
+  .emoji-row { display: flex; gap: 8px; overflow-x: auto; padding: 2px; scrollbar-width: none; }
+  .emoji-row::-webkit-scrollbar { display: none; }
+  .emoji-row button { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 12px; background: var(--card-2); font-size: 22px; border: 2px solid transparent; }
+  .emoji-row button.on { border-color: var(--accent); background: var(--accent-bg); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { padding: 9px 13px; border-radius: 12px; background: var(--card-2); font-size: 14px; font-weight: 500; border: 2px solid transparent; }
+  .chip.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent-ink); font-weight: 600; }
+  .sheet .actions { display: flex; gap: 8px; margin-top: 8px; }
+  .sheet .actions .cta { padding: 15px; font-size: 16px; }
+  .sheet .danger { color: var(--danger); font-weight: 600; text-align: center; width: 100%; padding: 14px; }
+  .order-row { display: flex; align-items: center; gap: 10px; padding: 12px 4px; border-bottom: 1px solid var(--line); }
+  .order-row span { flex: 1; font-weight: 500; }
+  .order-row button { width: 40px; height: 40px; border-radius: 12px; background: var(--card-2); font-size: 18px; }
+  .hist { background: var(--card); border-radius: var(--r); padding: 14px 16px; box-shadow: var(--shadow); margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+  .hist .body { flex: 1; }
+  .hist .d { font-weight: 600; }
+  .hist .s { color: var(--muted); font-size: 13px; }
+  .hist button { color: var(--accent); font-weight: 600; font-size: 14px; }
+  .link { color: var(--accent); font-weight: 600; font-size: 14px; }
+  .who { display: flex; align-items: center; gap: 8px; }
+  .avatar { width: 34px; height: 34px; border-radius: 17px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #fff; }
+  .avatar.lola { background: #c2417a; } .avatar.simon { background: #2f5fbf; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 8px; margin-left: 6px; vertical-align: middle; }
+  .tag.lola { background: rgba(194,65,122,.14); color: #c2417a; } .tag.simon { background: rgba(47,95,191,.14); color: #2f5fbf; }
+  .presence { display: flex; align-items: center; gap: 8px; background: var(--card); border-radius: 14px; padding: 10px 12px; box-shadow: var(--shadow); margin: 0 0 10px; font-size: 14px; }
+  .presence .dot { width: 8px; height: 8px; border-radius: 4px; background: var(--accent); }
+  .presence .dot.off { background: var(--faint); }
+  .presence .t { color: var(--muted); font-size: 12px; margin-left: auto; }
+  .sync { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .sync .dot { width: 7px; height: 7px; border-radius: 4px; background: var(--faint); }
+  .sync .dot.on { background: var(--accent); }
+  .profile-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 6px 0 14px; }
+  .profile-pick button { background: var(--card-2); border-radius: 16px; padding: 22px 10px; font-size: 18px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 2px solid transparent; }
+  .profile-pick button.on { border-color: var(--accent); background: var(--accent-bg); }
+  .profile-pick .avatar { width: 48px; height: 48px; border-radius: 24px; font-size: 20px; }
+  .seg { display: flex; background: var(--card-2); border-radius: 12px; padding: 3px; gap: 2px; }
+  .seg button { flex: 1; padding: 8px 10px; border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--muted); }
+  .seg button.on { background: var(--card); color: var(--text); box-shadow: var(--shadow); }
+  .seg button.on.lola { color: #c2417a; } .seg button.on.simon { color: #2f5fbf; }
+  .for-bar { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+  .for-bar .lbl { font-size: 13px; font-weight: 600; color: var(--muted); }
+  .tile.on.lola { background: rgba(194,65,122,.12); border-color: #c2417a; } .tile.on.lola .name { color: #c2417a; } .tile.on.lola .qty { background: #c2417a; }
+  .tile.on.simon { background: rgba(47,95,191,.12); border-color: #2f5fbf; } .tile.on.simon .name { color: #2f5fbf; } .tile.on.simon .qty { background: #2f5fbf; }
+  .asg { width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; background: var(--card-2); color: var(--muted); flex-shrink: 0; }
+  .asg.lola { background: rgba(194,65,122,.14); color: #c2417a; } .asg.simon { background: rgba(47,95,191,.14); color: #2f5fbf; }
+  .cat.other { color: var(--faint); margin-top: 26px; }
+  .item.other { opacity: .55; }
+  .item.other.done { opacity: .35; }
+  .split { display: flex; gap: 10px; font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .split b { font-weight: 700; } .split .lola b { color: #c2417a; } .split .simon b { color: #2f5fbf; }
+  /* ── Plats ── */
+  .goal { background: var(--card); border-radius: var(--r); padding: 14px 16px; box-shadow: var(--shadow); margin-bottom: 14px; }
+  .goal .top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .goal .top b { font-size: 15px; }
+  .goal .top span { color: var(--muted); font-size: 13px; }
+  .goal .pips { display: flex; gap: 6px; }
+  .goal .pips i { flex: 1; height: 8px; border-radius: 4px; background: var(--card-2); }
+  .goal .pips i.on { background: #d9534f; }
+  .goal .pips i.over { background: #8e1b14; }
+  .goal.over .top b { color: var(--danger); }
+  .goal .stats { display: flex; gap: 14px; margin-top: 10px; font-size: 13px; color: var(--muted); }
+  .goal .stats b { color: var(--text); font-weight: 700; }
+  .filters { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-bottom: 14px; padding: 2px; }
+  .filters::-webkit-scrollbar { display: none; }
+  .filters .chip { flex: 0 0 auto; }
+  .meals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .meal { position: relative; background: var(--card); border-radius: var(--r); padding: 14px 12px 12px; box-shadow: var(--shadow); border: 2px solid transparent; text-align: left; display: flex; flex-direction: column; gap: 6px; min-height: 120px; transition: transform .12s, border-color .15s, background .15s; }
+  .meal:active { transform: scale(.96); }
+  .meal .big { font-size: 34px; line-height: 1; }
+  .meal .name { font-size: 14px; font-weight: 600; line-height: 1.25; flex: 1; }
+  .meal .meta { display: flex; gap: 6px; flex-wrap: wrap; font-size: 11px; color: var(--muted); font-weight: 500; }
+  .meal .meta .ty { padding: 2px 7px; border-radius: 7px; font-weight: 700; }
+  .ty.viande { background: rgba(217,83,79,.14); color: #c0392b; } .ty.poisson { background: rgba(47,95,191,.14); color: #2f5fbf; } .ty.vege { background: var(--accent-bg); color: var(--accent-ink); }
+  .meal.on { background: var(--accent-bg); border-color: var(--accent); }
+  .meal.on .name { color: var(--accent-ink); }
+  .meal .n { position: absolute; top: -8px; right: -8px; min-width: 28px; height: 28px; border-radius: 14px; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 8px; box-shadow: 0 2px 6px rgba(0,0,0,.2); }
+  .meal.add { border: 2px dashed var(--line); background: transparent; box-shadow: none; color: var(--muted); align-items: center; justify-content: center; text-align: center; }
+  .meal.add .big { font-size: 26px; }
+  .menu-row { display: flex; align-items: center; gap: 12px; background: var(--card); border-radius: var(--r); padding: 10px 10px 10px 14px; box-shadow: var(--shadow); margin-bottom: 8px; }
+  .menu-row .emoji { font-size: 26px; width: 34px; text-align: center; }
+  .menu-row .body { flex: 1; min-width: 0; }
+  .menu-row .name { font-weight: 600; font-size: 15px; }
+  .menu-row .sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .menu-row .stepper button { width: 36px; height: 36px; }
+  .ing { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+  .ing:last-child { border-bottom: 0; }
+  .ing .q { color: var(--muted); font-weight: 600; font-size: 14px; white-space: nowrap; margin-left: 12px; }
+  .ing-list { max-height: 36vh; overflow-y: auto; margin-bottom: 8px; }
+  .sheet .hero { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+  .sheet .hero .big { font-size: 48px; line-height: 1; }
+  .sheet .hero h2 { margin-bottom: 4px; }
+  .sheet .hero .meta { display: flex; gap: 6px; flex-wrap: wrap; font-size: 12px; color: var(--muted); font-weight: 500; }
+  .portions { display: flex; align-items: center; justify-content: space-between; background: var(--card-2); border-radius: 14px; padding: 10px 10px 10px 14px; margin-bottom: 14px; }
+  .portions .lbl { font-size: 14px; font-weight: 600; }
+  .portions .lbl small { display: block; color: var(--muted); font-weight: 500; font-size: 12px; margin-top: 2px; }
+  .portions .stepper { background: var(--card); }
+  textarea.ta { background: var(--card-2); border: 0; border-radius: 12px; padding: 14px; font: inherit; font-size: 15px; outline: 0; min-height: 120px; resize: vertical; width: 100%; color: inherit; line-height: 1.5; }
+  .hint { color: var(--muted); font-size: 12px; line-height: 1.5; }
+  .toast { position: fixed; left: 50%; bottom: calc(var(--tab-h) + 84px); transform: translateX(-50%) translateY(10px); background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; opacity: 0; transition: .2s; z-index: 50; pointer-events: none; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%); }
+</style>
+</head>
+<body>
+
+<!-- ═══ PLATS ═══ -->
+<section class="screen active" id="screen-meals">
+  <div class="head"><div><h1>Plats</h1><div class="sub" id="meals-sub">Choisis tes plats de la semaine</div></div><button class="who" onclick="openSheet('settings')"><span class="sync" id="sync2"><span class="dot"></span></span><span class="avatar" id="me-avatar2">?</span></button></div>
+  <div id="meals-goal"></div>
+  <div class="filters" id="meals-filters"></div>
+  <div id="meals"></div>
+  <div id="menu" style="margin-top:22px"></div>
+</section>
+
+<!-- ═══ PRÉPARER ═══ -->
+<section class="screen" id="screen-prep">
+  <div class="head"><div><h1>Préparer</h1><div class="sub" id="prep-sub">Touche un produit pour l'ajouter</div></div><button class="who" onclick="openSheet('settings')"><span class="sync" id="sync"><span class="dot"></span></span><span class="avatar" id="me-avatar">?</span></button></div>
+  <div class="search"><span>🔍</span><input id="search" type="search" placeholder="Rechercher ou créer un produit…" autocomplete="off" autocapitalize="sentences"><button class="clear hidden" id="search-clear" onclick="clearSearch()">✕</button></div>
+  <div class="for-bar"><span class="lbl">Pour</span><div class="seg" id="for-seg"></div></div>
+  <div id="catalog"></div>
+</section>
+<div class="float" id="float"><span><b id="float-n">0</b> <span id="float-lbl">article</span></span><button class="go" onclick="showTab('list')">Voir la liste →</button></div>
+
+<!-- ═══ LISTE ═══ -->
+<section class="screen" id="screen-list">
+  <div class="head"><div><h1>Liste</h1><div class="sub" id="list-sub"></div></div><button class="link" id="list-clear" onclick="clearList()">Vider</button></div>
+  <div id="list"></div>
+  <div id="list-cta" style="margin-top:18px"></div>
+</section>
+
+<!-- ═══ COURSES ═══ -->
+<section class="screen" id="screen-shop">
+  <div class="progress"><div class="top"><h1>Courses</h1><div class="count"><b id="shop-done">0</b> / <span id="shop-total">0</span> pris</div></div><div class="bar"><i id="shop-fill"></i></div></div>
+  <div id="presence"></div>
+  <div id="shop"></div>
+</section>
+<div class="shop-bar hidden" id="shop-bar">
+  <div class="quick"><span>＋</span><input id="quick" placeholder="Ajouter un article…" autocomplete="off"></div>
+  <button class="finish" onclick="finishShopping()">Terminer</button>
+</div>
+
+<!-- ═══ ONGLETS ═══ -->
+<nav class="tabs">
+  <button class="tab active" data-tab="meals" onclick="showTab('meals')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18"/><path d="M4 11a8 8 0 0 1 16 0"/><path d="M2 15h20"/><path d="M12 3v1"/></svg>Plats<span class="badge hidden" id="badge-meals"></span></button>
+  <button class="tab" data-tab="prep" onclick="showTab('prep')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Préparer</button>
+  <button class="tab" data-tab="list" onclick="showTab('list')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Liste<span class="badge hidden" id="badge"></span></button>
+  <button class="tab" data-tab="shop" onclick="showTab('shop')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.5 11h11L21 7H6.5"/><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/></svg>Courses</button>
+</nav>
+
+<!-- ═══ FEUILLES ═══ -->
+<div class="sheet-bg" id="sheet-bg" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet"><div class="grip"></div><div id="sheet-body"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═════════════════════════════════════════════════════════════
+   DONNÉES — couche isolée. V1 : localStorage. Chaque méthode est
+   asynchrone-compatible pour brancher Supabase plus tard (même API).
+   ═════════════════════════════════════════════════════════════ */
+const CATEGORIES = [
+  { id: 'fruits', name: 'Fruits & légumes', emoji: '🥦' }, { id: 'viandes', name: 'Viandes', emoji: '🍗' }, { id: 'poissons', name: 'Poissons', emoji: '🐟' },
+  { id: 'frais', name: 'Produits frais', emoji: '🥛' }, { id: 'fromages', name: 'Fromages', emoji: '🧀' }, { id: 'charcuterie', name: 'Charcuterie', emoji: '🥓' },
+  { id: 'epicerie', name: 'Épicerie', emoji: '🥫' }, { id: 'feculents', name: 'Pâtes, riz & féculents', emoji: '🍝' }, { id: 'petitdej', name: 'Petit-déjeuner', emoji: '🥐' },
+  { id: 'boissons', name: 'Boissons', emoji: '🧃' }, { id: 'surgeles', name: 'Surgelés', emoji: '🧊' }, { id: 'hygiene', name: 'Hygiène', emoji: '🧴' },
+  { id: 'entretien', name: 'Entretien', emoji: '🧽' }, { id: 'maison', name: 'Maison', emoji: '🏠' }, { id: 'autres', name: 'Autres', emoji: '🛒' },
+];
+const SEED = [
+  ['fruits', '🍅 Tomates', '🥒 Concombre', '🥕 Carottes', '🥬 Salade', '🧅 Oignons', '🧄 Ail', '🍋 Citrons', '🍌 Bananes', '🍎 Pommes', '🥑 Avocats', '🍓 Fraises', '🥔 Pommes de terre', '🍄 Champignons', '🫑 Poivrons', '🥦 Brocoli'],
+  ['viandes', '🍗 Poulet', '🥩 Steak haché', '🥓 Lardons', '🌭 Saucisses', '🦃 Escalopes de dinde'],
+  ['poissons', '🍣 Saumon', '🍤 Crevettes', '🐟 Thon en boîte', '🐠 Cabillaud'],
+  ['frais', '🥛 Lait', '🥚 Œufs', '🧈 Beurre', '🫙 Crème fraîche', '🥣 Yaourts', '🍮 Desserts', '🫓 Pâte à pizza', '🥟 Raviolis frais'],
+  ['fromages', '🧀 Emmental râpé', '⚪ Mozzarella', '🟨 Comté', '🇬🇷 Feta', '🐐 Chèvre', '🇮🇹 Parmesan'],
+  ['charcuterie', '🐖 Jambon', '🍖 Saucisson', '🇩🇪 Knacks'],
+  ['epicerie', '🌿 Pesto', '🥫 Sauce tomate', '🫒 Huile d\'olive', '🧂 Sel', '🌱 Herbes', '🏺 Conserves', '🍫 Chocolat', '🍪 Biscuits', '🍯 Miel', '🥜 Cacahuètes', '🍘 Chips', '🌾 Farine', '🍬 Sucre'],
+  ['feculents', '🍝 Pâtes', '🍚 Riz', '🍠 Purée', '🍛 Semoule', '🫘 Lentilles', '🍞 Pain de mie'],
+  ['petitdej', '🥐 Croissants', '🌽 Céréales', '☕ Café', '🍵 Thé', '🍇 Confiture', '🍊 Jus d\'orange', '🥞 Brioche'],
+  ['boissons', '💧 Eau', '🥤 Coca', '🍺 Bière', '🍷 Vin', '🧃 Sirop', '🫧 Eau pétillante'],
+  ['surgeles', '🍕 Pizza', '🍟 Frites', '🥗 Légumes surgelés', '🍧 Glaces', '🐡 Poisson pané'],
+  ['hygiene', '🚽 Papier toilette', '🚿 Gel douche', '🪥 Dentifrice', '🧼 Savon', '🧴 Shampoing', '🪒 Rasoirs', '💨 Déodorant', '🤧 Mouchoirs'],
+  ['entretien', '🧽 Éponges', '🍽️ Liquide vaisselle', '👕 Lessive', '🗑️ Sacs poubelle', '🪣 Produit sols', '🔷 Tablettes lave-vaisselle', '🧻 Sopalin'],
+  ['maison', '🕯️ Bougies', '💡 Ampoules', '🔋 Piles', '🫖 Filtres à café'],
+];
+
+const repo = {
+  KEY: 'courses_v2',
+  load() {
+    try { const s = JSON.parse(localStorage.getItem(this.KEY)); if (s && s.products) return s } catch {}
+    return null
+  },
+  save(state) { try { localStorage.setItem(this.KEY, JSON.stringify(state)) } catch {} },
+  seed() {
+    const products = []
+    SEED.forEach(([cat, ...items]) => items.forEach(s => { const [emoji, ...rest] = s.split(' '); const name = rest.join(' '); products.push({ id: 'p-' + norm(name), name, emoji, cat, uses: 0 }) }))
+    return { products, categoryOrder: CATEGORIES.map(c => c.id), list: [], shopping: false, startedAt: null, history: [], presence: {}, rev: 0, epoch: 0, plan: { items: {}, updatedAt: 0 }, customMeals: [] }
+  },
+}
+const PROFILES = { lola: { name: 'Lola', initial: 'L' }, simon: { name: 'Simon', initial: 'S' } }
+// Préférences locales à CE téléphone (jamais synchronisées) : profil + code du foyer
+const local = { get: () => { try { return JSON.parse(localStorage.getItem('courses_local_v2')) || {} } catch { return {} } }, set: v => localStorage.setItem('courses_local_v2', JSON.stringify(v)) }
+let ME = local.get().profile || null
+let HOUSEHOLD = local.get().household || 'lola-simon-v2'
+let FOR = null // destinataire des prochains ajouts : 'lola' | 'simon' | null (les deux)
+const uid = () => Math.random().toString(36).slice(2, 10)
+const norm = s => String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+let S = repo.load() || repo.seed()
+if (!S.presence) S.presence = {}
+if (!S.rev) S.rev = 0
+if (!S.epoch) S.epoch = 0
+if (!S.plan) S.plan = { items: {}, updatedAt: 0 }
+if (!S.customMeals) S.customMeals = []
+S.list.forEach(l => { if (!l.updatedAt) l.updatedAt = 0 })
+// Dédoublonnage : un seul produit par nom (les anciens identifiants aléatoires sont remplacés par 'p-<nom>')
+function dedupe(state) {
+  const keep = new Map(), remap = {}
+  state.products.forEach(p => {
+    const key = norm(p.name)
+    const id = 'p-' + key
+    const ex = keep.get(key)
+    if (ex) { ex.uses = Math.max(ex.uses || 0, p.uses || 0); remap[p.id] = ex.id }
+    else { if (p.id !== id) remap[p.id] = id; p.id = id; keep.set(key, p) }
+  })
+  state.products = [...keep.values()]
+  const fix = pid => remap[pid] || pid
+  const byPid = new Map()
+  ;(state.list || []).map(l => ({ ...l, pid: fix(l.pid) })).forEach(l => { const ex = byPid.get(l.pid); if (!ex || (l.updatedAt || 0) > (ex.updatedAt || 0)) byPid.set(l.pid, l) })
+  state.list = [...byPid.values()]
+  ;(state.history || []).forEach(h => { h.items = h.items.map(i => ({ ...i, pid: fix(i.pid) })) })
+  return state
+}
+dedupe(S)
+// Migration d'icônes (une fois) : les produits de départ prennent leurs nouvelles icônes distinctes
+if ((S.iconRev || 0) < 2) {
+  const seedIcons = {}; SEED.forEach(([, ...items]) => items.forEach(x => { const [emoji, ...rest] = x.split(' '); seedIcons['p-' + norm(rest.join(' '))] = emoji }))
+  S.products.forEach(pr => { if (seedIcons[pr.id]) pr.emoji = seedIcons[pr.id] })
+  S.iconRev = 2; repo.save(S)
+}
+let saveT = null
+const persist = () => { S.rev = (S.rev || 0) + 1; clearTimeout(saveT); saveT = setTimeout(() => { repo.save(S); sync.push() }, 120) }
+const now = () => Date.now()
+const touch = l => { l.updatedAt = now() }
+
+/* ═════════ Helpers ═════════ */
+const $ = id => document.getElementById(id)
+const cat = id => CATEGORIES.find(c => c.id === id) || CATEGORIES[CATEGORIES.length - 1]
+const inList = pid => S.list.find(l => l.pid === pid)
+const product = pid => S.products.find(p => p.id === pid)
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
+const buzz = (ms = 12) => { try { navigator.vibrate && navigator.vibrate(ms) } catch {} }
+let toastT = null
+const toast = msg => { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 1600) }
+// Icône = emoji, ou pastille « #couleur|TXT » (2-3 lettres sur fond coloré) quand aucun emoji ne convient
+const icon = (e, cls = 'emoji') => {
+  if (typeof e === 'string' && e.startsWith('#') && e.includes('|')) { const [bg, txt] = e.split('|'); const dark = parseInt(bg.slice(1, 3), 16) * .299 + parseInt(bg.slice(3, 5), 16) * .587 + parseInt(bg.slice(5, 7), 16) * .114 > 160; return `<span class="${cls} mono" style="background:${esc(bg)};color:${dark ? '#141412' : '#fff'}">${esc(txt.slice(0, 3))}</span>` }
+  return `<span class="${cls}">${esc(e)}</span>`
+}
+const plural = (n, s) => `${n} ${s}${n > 1 ? 's' : ''}`
+const forOf = l => l.assignee || null
+const forLabel = a => a === 'lola' ? 'L' : a === 'simon' ? 'S' : '👥'
+const forName = a => a ? PROFILES[a].name : 'les deux'
+function setFor(a) { FOR = a; renderForSeg() }
+function renderForSeg() { const el = $('for-seg'); if (!el) return; el.innerHTML = [[null, '👥 Les deux'], ['lola', 'Lola'], ['simon', 'Simon']].map(([a, l]) => `<button class="${FOR === a ? 'on ' + (a || '') : ''}" onclick="setFor(${a ? `'${a}'` : 'null'})">${l}</button>`).join('') }
+const orderedCats = () => [...S.categoryOrder.map(cat), ...CATEGORIES.filter(c => !S.categoryOrder.includes(c.id))]
+
+/* ═════════ Onglets ═════════ */
+let tab = 'meals'
+function showTab(t) {
+  tab = t
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === 'screen-' + t))
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t))
+  $('float').classList.toggle('show', t === 'prep' && S.list.length > 0)
+  $('shop-bar').classList.toggle('hidden', !(t === 'shop' && S.shopping))
+  window.scrollTo(0, 0)
+  render()
+}
+
+/* ═════════ PRÉPARER ═════════ */
+function addToList(pid, qty = 1) {
+  const l = inList(pid)
+  if (l) { l.qty += qty; if (l.qty <= 0) removeFromList(pid) }
+  else { S.list.push({ pid, qty: 1, note: '', done: false, addedBy: ME, assignee: FOR, updatedAt: now(), createdAt: now() }); const p = product(pid); if (p) p.uses = (p.uses || 0) + 1 }
+  if (l) touch(l)
+  persist(); render(); buzz()
+}
+function removeFromList(pid) { S.list = S.list.filter(l => l.pid !== pid); S.removed = { ...(S.removed || {}), [pid]: now() }; persist(); render() }
+function toggleTile(pid, e) {
+  const l = inList(pid)
+  if (l && e && e.target.closest('.qty')) { l.qty += 1; persist(); render(); buzz(); return }
+  if (l) removeFromList(pid); else addToList(pid)
+}
+function renderPrep() {
+  const q = $('search').value.trim().toLowerCase()
+  $('search-clear').classList.toggle('hidden', !q)
+  const wrap = $('catalog')
+  let html = ''
+  const tile = p => { const l = inList(p.id); return `<button class="tile${l ? ' on ' + (forOf(l) || '') : ''}" data-pid="${p.id}" onclick="toggleTile('${p.id}', event)" oncontextmenu="event.preventDefault();openSheet('product','${p.id}')">${icon(p.emoji)}<span class="name">${esc(p.name)}</span><span class="qty">${l ? (l.qty > 1 ? '×' + l.qty : '✓') : ''}</span></button>` }
+  if (q) {
+    const hits = S.products.filter(p => p.name.toLowerCase().includes(q))
+    html += `<div class="section"><div class="section-title"><span>${hits.length ? plural(hits.length, 'résultat') : 'Aucun résultat'}</span></div><div class="grid">${hits.map(tile).join('')}<button class="tile add" onclick="openSheet('product',null,'${esc(q)}')"><span class="emoji">＋</span><span class="name">Créer « ${esc($('search').value.trim())} »</span></button></div></div>`
+  } else {
+    const freq = [...S.products].filter(p => p.uses > 0).sort((a, b) => b.uses - a.uses).slice(0, 12)
+    if (freq.length) html += `<div class="section"><div class="section-title"><span>⭐ Fréquents</span></div><div class="grid">${freq.map(tile).join('')}</div></div>`
+    orderedCats().forEach(c => {
+      const ps = S.products.filter(p => p.cat === c.id)
+      if (!ps.length) return
+      html += `<div class="section"><div class="section-title"><span>${c.emoji} ${esc(c.name)}</span></div><div class="grid">${ps.map(tile).join('')}<button class="tile add" onclick="openSheet('product',null,'','${c.id}')"><span class="emoji">＋</span><span class="name">Ajouter</span></button></div></div>`
+    })
+  }
+  wrap.innerHTML = html
+  renderForSeg()
+  const n = S.list.length
+  $('float-n').textContent = n; $('float-lbl').textContent = n > 1 ? 'articles' : 'article'
+  $('float').classList.toggle('show', tab === 'prep' && n > 0)
+  $('prep-sub').textContent = n ? `${plural(n, 'article')} dans la liste` : 'Touche un produit pour l\'ajouter'
+}
+$('search').addEventListener('input', renderPrep)
+$('search').addEventListener('keydown', e => { if (e.key === 'Enter') { const q = $('search').value.trim(); const hit = S.products.find(p => p.name.toLowerCase() === q.toLowerCase()); if (hit) { addToList(hit.id); clearSearch() } else if (q) openSheet('product', null, q) } })
+function clearSearch() { $('search').value = ''; renderPrep(); $('search').blur() }
+
+/* ═════════ LISTE ═════════ */
+function renderList() {
+  const wrap = $('list'), n = S.list.length, total = S.list.reduce((a, l) => a + l.qty, 0)
+  $('list-sub').textContent = n ? `${plural(n, 'article')}${total !== n ? ' · ' + total + ' unités' : ''}` : 'Rien pour l\'instant'
+  $('list-clear').classList.toggle('hidden', !n)
+  $('badge').classList.toggle('hidden', !n); $('badge').textContent = n
+  if (!n) {
+    wrap.innerHTML = `<div class="empty"><div class="big">🧺</div>Ta liste est vide.<br>Choisis des <b>Plats</b> ou va dans <b>Préparer</b>.</div>`
+    $('list-cta').innerHTML = S.history.length ? `<button class="cta ghost" onclick="resumeLast()">↩︎ Reprendre la dernière liste</button>` : ''
+    return
+  }
+  let html = ''
+  orderedCats().forEach(c => {
+    const ls = S.list.filter(l => product(l.pid)?.cat === c.id)
+    if (!ls.length) return
+    html += `<div class="cat">${c.emoji} ${esc(c.name)}</div>` + ls.map(l => { const p = product(l.pid); return `
+      <div class="row">${icon(p.emoji)}<button class="asg ${forOf(l) || ''}" onclick="cycleFor('${l.pid}')" title="Pour qui ?">${forLabel(forOf(l))}</button><div class="body"><div class="name">${esc(p.name)}</div><div class="note"><input placeholder="Note (2 L, x6, 500 g…)" value="${esc(l.note)}" onchange="setNote('${l.pid}', this.value)"></div></div>
+      <div class="stepper"><button onclick="addToList('${l.pid}', -1)">−</button><span>${l.qty}</span><button onclick="addToList('${l.pid}', 1)">+</button></div>
+      <button class="del" onclick="removeFromList('${l.pid}')">✕</button></div>` }).join('')
+  })
+  wrap.innerHTML = html
+  $('list-cta').innerHTML = S.shopping ? `<button class="cta" onclick="showTab('shop')">🛒 Continuer les courses</button>` : `<button class="cta" onclick="startShopping()">🛒 Commencer les courses</button>`
+}
+function cycleFor(pid) { const l = inList(pid); if (!l) return; const order = [null, 'lola', 'simon']; l.assignee = order[(order.indexOf(forOf(l)) + 1) % 3]; touch(l); persist(); render(); buzz(8) }
+function setNote(pid, v) { const l = inList(pid); if (l) { l.note = v.trim(); touch(l); persist() } }
+function clearList() { if (!confirm('Vider la liste ?')) return; S.list = []; S.shopping = false; S.epoch = now(); persist(); render() }
+function resumeLast() { const h = S.history[0]; if (!h) return; S.list = h.items.map(i => ({ ...i, done: false, doneBy: null, updatedAt: now(), createdAt: now() })); S.shopping = false; persist(); render(); toast('Dernière liste reprise') }
+
+/* ═════════ COURSES ═════════ */
+function startShopping() { if (!S.list.length) return; S.shopping = true; S.startedAt = Date.now(); S.list.forEach(l => { l.done = false; l.doneBy = null; touch(l) }); persist(); showTab('shop') }
+function toggleDone(pid) {
+  const l = inList(pid); if (!l) return
+  l.done = !l.done; l.doneBy = l.done ? ME : null; touch(l)
+  if (ME) S.presence[ME] = { cat: product(pid)?.cat || null, at: now() }
+  persist(); buzz(l.done ? 18 : 8)
+  if (l.done) { const el = document.querySelector(`.item[data-pid="${pid}"]`); if (el) { el.classList.add('done', 'leaving'); setTimeout(render, 280); return } }
+  render()
+}
+function renderShop() {
+  const wrap = $('shop')
+  $('shop-bar').classList.toggle('hidden', !(tab === 'shop' && S.shopping))
+  if (!S.shopping || !S.list.length) {
+    wrap.innerHTML = `<div class="empty"><div class="big">🛒</div>${S.list.length ? 'La liste est prête.<br><br><button class="cta" onclick="startShopping()">Commencer les courses</button>' : 'Prépare d\'abord une liste, puis lance le mode courses.'}</div>`
+    $('shop-done').textContent = 0; $('shop-total').textContent = S.list.length; $('shop-fill').style.width = '0%'; return
+  }
+  const done = S.list.filter(l => l.done), todo = S.list.filter(l => !l.done)
+  $('shop-done').textContent = done.length; $('shop-total').textContent = S.list.length
+  $('shop-fill').style.width = (done.length / S.list.length * 100) + '%'
+  const item = l => { const p = product(l.pid); const who = l.done && l.doneBy && PROFILES[l.doneBy]; const a = forOf(l); return `<div class="item${l.done ? ' done' : ''}" data-pid="${l.pid}" onclick="toggleDone('${l.pid}')"><span class="box">${l.done ? '✓' : ''}</span>${icon(p.emoji)}<span class="label">${esc(p.name)}${l.qty > 1 ? `<small>×${l.qty}</small>` : ''}${l.note ? `<small>${esc(l.note)}</small>` : ''}${who ? `<span class="tag ${l.doneBy}">${who.initial}</span>` : (a && !l.done ? `<span class="tag ${a}">${PROFILES[a].initial}</span>` : '')}</span></div>` }
+  renderPresence()
+  let html = ''
+  if (!todo.length) html += `<div class="all-done"><div class="big">🎉</div><h2>Tout est pris !</h2><p>Appuie sur Terminer pour archiver la course.</p></div>`
+  const other = ME === 'lola' ? 'simon' : ME === 'simon' ? 'lola' : null
+  const mine = todo.filter(l => !other || forOf(l) !== other), theirs = other ? todo.filter(l => forOf(l) === other) : []
+  orderedCats().forEach(c => { const ls = mine.filter(l => product(l.pid)?.cat === c.id); if (ls.length) html += `<div class="cat">${c.emoji} ${esc(c.name)}</div>` + ls.map(item).join('') })
+  if (theirs.length) { html += `<div class="cat other">Pour ${PROFILES[other].name} · ${theirs.length}</div>`; orderedCats().forEach(c => { const ls = theirs.filter(l => product(l.pid)?.cat === c.id); if (ls.length) html += ls.map(l => item(l).replace('class="item', 'class="item other')).join('') }) }
+  if (done.length) html += `<div class="done-head"><span>Pris · ${done.length}</span><button onclick="uncheckAll()">Tout décocher</button></div>` + done.map(item).join('')
+  wrap.innerHTML = html
+}
+function renderPresence() {
+  const other = ME === 'lola' ? 'simon' : ME === 'simon' ? 'lola' : null
+  const el = $('presence'); if (!el) return
+  if (!other || !S.shopping) { el.innerHTML = ''; return }
+  const pr = S.presence[other]
+  const share = a => { const ls = S.list.filter(l => forOf(l) === a || !forOf(l)); return `${ls.filter(l => l.done).length}/${ls.length}` }
+  const mine = S.list.filter(l => l.done && l.doneBy === other).length
+  const split = `<div class="split"><span class="${ME}"><b>${ME ? PROFILES[ME].name : 'Moi'}</b> ${share(ME)}</span><span class="${other}"><b>${PROFILES[other].name}</b> ${share(other)}</span></div>`
+  if (!pr) { el.innerHTML = `<div class="presence" style="flex-wrap:wrap"><span class="dot off"></span><span><b>${PROFILES[other].name}</b> n'a encore rien coché</span><div style="flex-basis:100%">${split}</div></div>`; return }
+  const ago = Math.round((now() - pr.at) / 60000)
+  const where = pr.cat ? cat(pr.cat) : null
+  el.innerHTML = `<div class="presence" style="flex-wrap:wrap"><span class="dot${ago > 10 ? ' off' : ''}"></span><span><b>${PROFILES[other].name}</b>${where ? ` est au rayon <b>${where.emoji} ${esc(where.name)}</b>` : ''} · ${mine} pris</span><span class="t">${ago < 1 ? 'à l\'instant' : `il y a ${ago} min`}</span><div style="flex-basis:100%">${split}</div></div>`
+}
+function uncheckAll() { S.list.forEach(l => { l.done = false; l.doneBy = null; touch(l) }); persist(); render() }
+function finishShopping() {
+  const todo = S.list.filter(l => !l.done).length
+  if (todo && !confirm(`Il reste ${plural(todo, 'article')} non pris. Terminer quand même ?`)) return
+  S.history.unshift({ id: uid(), at: Date.now(), items: S.list.map(l => ({ pid: l.pid, qty: l.qty, note: l.note })), taken: S.list.filter(l => l.done).length, by: ME })
+  S.presence = {}
+  S.history = S.history.slice(0, 20)
+  S.list = []; S.shopping = false; S.epoch = now(); persist(); showTab('meals'); toast('Courses terminées 🎉')
+}
+$('quick').addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return
+  const q = $('quick').value.trim(); if (!q) return
+  let p = S.products.find(x => x.name.toLowerCase() === q.toLowerCase())
+  if (!p) { p = { id: uid(), name: q, emoji: '🛒', cat: 'autres', uses: 0 }; S.products.push(p) }
+  if (!inList(p.id)) S.list.push({ pid: p.id, qty: 1, note: '', done: false, addedBy: ME, assignee: null, updatedAt: now(), createdAt: now() })
+  $('quick').value = ''; $('quick').blur(); persist(); render(); toast(`${p.emoji.startsWith('#') ? '' : p.emoji + ' '}${p.name} ajouté`)
+})
+
+/* ═════════ FEUILLES (produit, réglages) ═════════ */
+const EMOJI_BANK = [
+  ['Fruits & légumes', [['🍅','tomate'],['🥒','concombre'],['🥕','carotte'],['🥬','salade laitue chou'],['🧅','oignon'],['🧄','ail'],['🍋','citron'],['🍋‍🟩','citron vert lime'],['🍌','banane'],['🍎','pomme rouge'],['🍏','pomme verte'],['🍐','poire'],['🍊','orange mandarine clémentine'],['🍇','raisin'],['🍓','fraise'],['🫐','myrtille'],['🍒','cerise'],['🍑','pêche abricot'],['🥭','mangue'],['🍍','ananas'],['🥝','kiwi'],['🍈','melon'],['🍉','pastèque'],['🥥','coco'],['🥑','avocat'],['🍆','aubergine'],['🥔','pomme de terre patate'],['🍠','patate douce purée'],['🌽','maïs'],['🫑','poivron'],['🌶️','piment'],['🥦','brocoli'],['🥬','épinard'],['🍄','champignon'],['🫛','petits pois haricots verts'],['🫘','haricots lentilles'],['🌰','châtaigne marron'],['🥜','cacahuète arachide'],['🌿','herbes basilic persil pesto'],['🌱','pousse herbe'],['🫚','gingembre'],['🧆','falafel'],['🥗','salade composée légumes'],['🍃','feuille menthe']]],
+  ['Viandes & poissons', [['🍗','poulet cuisse'],['🥩','steak bœuf viande'],['🍖','côte saucisson viande'],['🥓','bacon lardons'],['🌭','saucisse knacks'],['🍔','burger'],['🐔','poulet volaille'],['🦃','dinde'],['🐖','porc jambon cochon'],['🐄','bœuf vache'],['🐑','agneau mouton'],['🐇','lapin'],['🦆','canard'],['🥚','œuf œufs'],['🐟','poisson thon'],['🐠','poisson cabillaud'],['🐡','poisson pané'],['🍣','saumon sushi'],['🍤','crevette'],['🦐','crevettes gambas'],['🦑','calamar'],['🦞','homard'],['🦀','crabe'],['🦪','huître'],['🐙','poulpe'],['🥫','conserve thon boîte']]],
+  ['Frais & fromages', [['🥛','lait'],['🧈','beurre'],['🫙','crème pot yaourt confiture'],['🥣','yaourt bol céréales'],['🍮','dessert flan crème'],['🍨','glace dessert'],['🧀','fromage emmental'],['🐐','chèvre'],['⚪','mozzarella boule'],['🟨','comté jaune'],['🟡','fromage rond'],['🇬🇷','feta grec'],['🇮🇹','parmesan italien'],['🇫🇷','français camembert'],['🇨🇭','gruyère suisse'],['🫓','pâte pizza galette'],['🥟','raviolis'],['🧆','boulettes'],['🍶','crème lait'],['🧊','glaçons surgelé']]],
+  ['Épicerie & féculents', [['🍝','pâtes spaghetti'],['🍚','riz'],['🍛','semoule curry'],['🍜','nouilles ramen'],['🥣','soupe'],['🍞','pain de mie'],['🥖','baguette pain'],['🥐','croissant'],['🥯','bagel'],['🥞','pancakes brioche'],['🧇','gaufres'],['🍕','pizza'],['🌮','tacos'],['🌯','wrap burrito'],['🥪','sandwich'],['🍟','frites'],['🍘','chips crackers'],['🍿','popcorn'],['🥨','bretzel'],['🍪','biscuits cookies'],['🍫','chocolat'],['🍬','bonbon sucre'],['🍭','sucette'],['🍯','miel'],['🥫','sauce tomate conserve'],['🏺','conserves bocal'],['🫒','huile olive'],['🧂','sel poivre'],['🌾','farine blé'],['🍩','donut'],['🎂','gâteau'],['🧁','cupcake muffin'],['🥧','tarte'],['🍰','pâtisserie'],['🍬','sucre']]],
+  ['Petit-déjeuner & boissons', [['☕','café'],['🍵','thé'],['🫖','théière filtres'],['🧋','bubble tea'],['🥤','soda coca'],['🧃','jus sirop'],['🍊','jus orange'],['💧','eau'],['🫧','eau pétillante bulles'],['🍺','bière'],['🍻','bières'],['🍷','vin rouge'],['🥂','champagne'],['🍾','bouteille'],['🥃','whisky'],['🍸','cocktail'],['🍹','cocktail'],['🧉','maté'],['🥛','lait'],['🍼','biberon'],['🌽','céréales maïs']]],
+  ['Surgelés', [['🍕','pizza surgelée'],['🍟','frites'],['🧊','glaçons'],['🍧','glaces sorbet'],['🍦','glace cornet'],['🥗','légumes surgelés'],['🐡','poisson pané'],['🥶','froid surgelé'],['❄️','surgelé']]],
+  ['Hygiène & beauté', [['🚽','papier toilette wc'],['🚿','gel douche'],['🛁','bain'],['🧴','shampoing lotion crème'],['🧼','savon'],['🪥','dentifrice brosse dents'],['🦷','dents'],['🪒','rasoir'],['💨','déodorant spray'],['🤧','mouchoirs rhume'],['🩹','pansements'],['💊','médicaments'],['🧴','crème solaire'],['💅','vernis ongles'],['💄','rouge lèvres maquillage'],['🪮','brosse peigne'],['🧽','éponge'],['🩸','tampons serviettes'],['🧷','épingle']]],
+  ['Entretien & maison', [['🧽','éponge'],['🍽️','liquide vaisselle assiette'],['🔷','tablettes lave-vaisselle'],['👕','lessive linge'],['🧺','panier linge'],['🫧','adoucissant'],['🗑️','sacs poubelle'],['🪣','seau produit sols'],['🧹','balai'],['🧻','sopalin essuie-tout'],['🧯','extincteur'],['🕯️','bougie'],['💡','ampoule'],['🔋','piles'],['🔌','prise câble'],['🪫','batterie'],['🧯','détergent'],['🧴','produit ménager'],['🪞','miroir'],['🧻','papier'],['📦','carton colis'],['🛒','courses'],['🧰','bricolage'],['🔧','outil'],['🪴','plante'],['💐','fleurs'],['🌹','rose'],['🐶','chien croquettes'],['🐱','chat croquettes'],['🐾','animaux'],['🍼','bébé'],['👶','bébé couches'],['🎁','cadeau'],['🎈','fête'],['🎂','anniversaire']]],
+]
+const EMOJIS = EMOJI_BANK.flatMap(([, list]) => list.map(([e]) => e))
+let sheetState = {}
+function openSheet(kind, pid, presetName = '', presetCat = '') {
+  const body = $('sheet-body')
+  if (kind === 'product') {
+    const p = pid ? product(pid) : null
+    sheetState = { pid, emoji: p ? p.emoji : '🛒', cat: p ? p.cat : (presetCat || 'autres') }
+    body.innerHTML = `<h2>${p ? 'Modifier le produit' : 'Nouveau produit'}</h2>
+      <div class="field"><label>Nom</label><input id="f-name" value="${esc(p ? p.name : presetName)}" placeholder="Ex. Lait d'amande" autocapitalize="sentences"></div>
+      <div class="field"><label>Icône <span id="f-emoji-cur" style="font-size:18px;margin-left:6px;vertical-align:middle">${sheetState.emoji}</span></label>
+        <input id="f-emoji-search" placeholder="Rechercher un emoji (fromage, poulet, lessive…)" autocomplete="off" oninput="renderEmojiBank()">
+        <div id="f-bank" class="bank"></div></div>
+      <div class="field"><label>Rayon</label><div class="chips" id="f-cats">${orderedCats().map(c => `<button class="chip${c.id === sheetState.cat ? ' on' : ''}" onclick="pickCat('${c.id}')">${c.emoji} ${esc(c.name)}</button>`).join('')}</div></div>
+      <div class="actions"><button class="cta" onclick="saveProduct()">${p ? 'Enregistrer' : 'Créer et ajouter à la liste'}</button></div>
+      ${p ? `<button class="danger" onclick="deleteProduct('${p.id}')">Supprimer ce produit</button>` : ''}`
+    renderEmojiBank()
+    setTimeout(() => { if (!p) $('f-name').focus() }, 250)
+  } else if (kind === 'meal') {
+    const m = meal(pid); if (!m) return
+    const p = planned(m.id)
+    if (!sheetState || sheetState.mealId !== m.id) sheetState = { mealId: m.id, portions: p ? p.portions : 4 }
+    const portions = sheetState.portions, repas = Math.round(portions / PEOPLE)
+    body.innerHTML = `<div class="hero"><span class="big">${esc(m.emoji)}</span><div><h2>${esc(m.name)}</h2><div class="meta"><span class="ty ${m.type}">${TYPES[m.type].name}</span><span>${m.kcal} kcal / portion</span><span>⏱ ${m.time} min</span>${m.custom ? '<span>⭐ perso</span>' : ''}</div></div></div>
+      <div class="portions"><div class="lbl">${portions} portions<small>${PEOPLE} personnes × ${plural(repas, 'repas')} · à préparer d'avance</small></div><div class="stepper"><button onclick="setSheetPortions('${m.id}', -${PEOPLE})">−</button><span>${portions}</span><button onclick="setSheetPortions('${m.id}', ${PEOPLE})">+</button></div></div>
+      <div class="ing-list">${scaled(m, portions).map(([e, n, q, u]) => `<div class="ing"><span>${icon(e)} ${esc(n)}</span><span class="q">${fmtQty(q, u)}</span></div>`).join('')}</div>
+      <div class="actions">${p ? `<button class="cta ghost" onclick="togglePlan('${m.id}')">Retirer du menu</button>${p.portions !== portions ? `<button class="cta" onclick="setPortions('${m.id}', ${portions - p.portions}); closeSheet()">Mettre ${portions} portions</button>` : ''}` : `<button class="cta" onclick="togglePlan('${m.id}', ${portions})">＋ Ajouter au menu</button>`}</div>
+      ${m.custom ? `<div class="actions" style="margin-top:6px"><button class="cta ghost" onclick="openSheet('newmeal', '${m.id}')">Modifier</button></div><button class="danger" onclick="deleteMeal('${m.id}')">Supprimer ce plat</button>` : ''}`
+  } else if (kind === 'newmeal') {
+    const m = pid ? meal(pid) : null
+    sheetState = { mealId: m ? m.id : null, emoji: m ? m.emoji : '🍲', type: m ? m.type : 'vege' }
+    body.innerHTML = `<h2>${m ? 'Modifier le plat' : 'Nouveau plat'}</h2>
+      <div class="field"><label>Nom</label><input id="f-name" value="${esc(m ? m.name : '')}" placeholder="Ex. Poulet basquaise light" autocapitalize="sentences"></div>
+      <div class="field"><label>Type</label><div class="chips" id="f-types">${Object.entries(TYPES).map(([t, v]) => `<button class="chip${sheetState.type === t ? ' on' : ''}" data-t="${t}" onclick="pickType('${t}')">${v.emoji} ${v.name}</button>`).join('')}</div></div>
+      <div style="display:flex;gap:10px"><div class="field" style="flex:1"><label>kcal / portion</label><input id="f-kcal" type="number" inputmode="numeric" value="${m ? m.kcal : ''}" placeholder="450"></div><div class="field" style="flex:1"><label>Temps (min)</label><input id="f-time" type="number" inputmode="numeric" value="${m ? m.time : ''}" placeholder="30"></div></div>
+      <div class="field"><label>Ingrédients pour 4 portions (1 par ligne)</label><textarea class="ta" id="f-ing" placeholder="400 g poulet&#10;2 courgettes&#10;1 boîte tomates concassées&#10;250 g riz">${m ? esc(m.ing.map(([, n, q, u]) => `${q}${u ? ' ' + u : ''} ${n}`).join('\n')) : ''}</textarea><div class="hint">Le rayon et l'icône sont devinés automatiquement, tu pourras les corriger dans Préparer.</div></div>
+      <div class="field"><label>Icône <span id="f-emoji-cur" style="font-size:18px;margin-left:6px;vertical-align:middle">${sheetState.emoji}</span></label>
+        <input id="f-emoji-search" placeholder="Rechercher un emoji" autocomplete="off" oninput="renderEmojiBank()">
+        <div id="f-bank" class="bank"></div></div>
+      <div class="actions"><button class="cta" onclick="saveMeal()">${m ? 'Enregistrer' : 'Créer le plat'}</button></div>`
+    renderEmojiBank()
+    setTimeout(() => { if (!m) $('f-name').focus() }, 250)
+  } else if (kind === 'settings') {
+    body.innerHTML = `<h2>Réglages</h2>
+      <div class="field"><label>Qui utilise ce téléphone ?</label>
+        <div class="profile-pick">${Object.entries(PROFILES).map(([id, p]) => `<button class="${ME === id ? 'on' : ''}" onclick="setProfile('${id}')"><span class="avatar ${id}">${p.initial}</span>${p.name}</button>`).join('')}</div></div>
+      <div class="field"><label>Synchronisation (même code sur les deux téléphones)</label><input id="f-house" value="${esc(HOUSEHOLD)}" placeholder="ex. lola-simon-v2" autocapitalize="none" onchange="setHousehold(this.value)"><div class="s" style="color:var(--muted);font-size:13px;line-height:1.5;margin-top:4px" id="sync-info">${sync.status()}</div></div>
+      <div class="field"><label>Ordre des rayons (parcours du magasin)</label>
+        ${orderedCats().map((c, i, arr) => `<div class="order-row"><span>${c.emoji} ${esc(c.name)}</span><button onclick="moveCat('${c.id}',-1)" ${i === 0 ? 'disabled style="opacity:.3"' : ''}>↑</button><button onclick="moveCat('${c.id}',1)" ${i === arr.length - 1 ? 'disabled style="opacity:.3"' : ''}>↓</button></div>`).join('')}</div>
+      <div class="field"><label>Historique</label>${S.history.length ? S.history.map(h => `<div class="hist"><div class="body"><div class="d">${new Date(h.at).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</div><div class="s">${plural(h.items.length, 'article')} · ${h.taken} pris</div></div><button onclick="reuse('${h.id}')">Reprendre</button></div>`).join('') : '<div class="s" style="color:var(--muted)">Aucune course terminée pour l\'instant.</div>'}</div>
+      <button class="danger" onclick="resetAll()">Réinitialiser l'application</button>`
+  }
+  $('sheet').classList.add('show'); $('sheet-bg').classList.add('show')
+}
+function closeSheet() { sheetState = null; $('sheet').classList.remove('show'); $('sheet-bg').classList.remove('show'); document.activeElement && document.activeElement.blur() }
+function pickEmoji(e) { sheetState.emoji = e; $('f-emoji-cur').textContent = e; document.querySelectorAll('#f-bank button').forEach(b => b.classList.toggle('on', b.textContent === e)) }
+function renderEmojiBank() {
+  const q = norm($('f-emoji-search')?.value || '')
+  const el = $('f-bank'); if (!el) return
+  const btn = ([e]) => `<button class="${e === sheetState.emoji ? 'on' : ''}" onclick="pickEmoji('${e}')">${e}</button>`
+  if (q) { const seen = new Set(); const hits = EMOJI_BANK.flatMap(([, l]) => l).filter(([e, k]) => norm(k).includes(q) && !seen.has(e) && seen.add(e)); el.innerHTML = hits.length ? `<div class="bank-grid">${hits.map(btn).join('')}</div>` : `<div class="s" style="color:var(--muted);font-size:13px;padding:6px 2px">Aucun emoji pour « ${esc($('f-emoji-search').value)} »</div>`; return }
+  el.innerHTML = EMOJI_BANK.map(([title, l]) => { const seen = new Set(); return `<div class="bank-title">${title}</div><div class="bank-grid">${l.filter(([e]) => !seen.has(e) && seen.add(e)).map(btn).join('')}</div>` }).join('')
+}
+function pickCat(c) { sheetState.cat = c; document.querySelectorAll('#f-cats .chip').forEach(b => b.classList.toggle('on', b.getAttribute('onclick').includes(`'${c}'`))) }
+function saveProduct() {
+  const name = $('f-name').value.trim(); if (!name) { $('f-name').focus(); return }
+  if (sheetState.pid) { const p = product(sheetState.pid); p.name = name; p.emoji = sheetState.emoji; p.cat = sheetState.cat }
+  else { const p = { id: uid(), name, emoji: sheetState.emoji, cat: sheetState.cat, uses: 0 }; S.products.push(p); S.list.push({ pid: p.id, qty: 1, note: '', done: false, addedBy: ME, assignee: FOR, updatedAt: now(), createdAt: now() }); p.uses = 1; toast(`${p.emoji.startsWith('#') ? '' : p.emoji + ' '}${p.name} ajouté`) }
+  clearSearch(); persist(); closeSheet(); render()
+}
+function deleteProduct(pid) { if (!confirm('Supprimer ce produit de la bibliothèque ?')) return; S.products = S.products.filter(p => p.id !== pid); S.list = S.list.filter(l => l.pid !== pid); persist(); closeSheet(); render() }
+function moveCat(id, dir) { const o = S.categoryOrder; const i = o.indexOf(id); const j = i + dir; if (i < 0 || j < 0 || j >= o.length) return; [o[i], o[j]] = [o[j], o[i]]; persist(); openSheet('settings'); render() }
+function reuse(hid) { const h = S.history.find(x => x.id === hid); if (!h) return; S.list = h.items.filter(i => product(i.pid)).map(i => ({ ...i, done: false, doneBy: null, updatedAt: now(), createdAt: now() })); S.shopping = false; persist(); closeSheet(); showTab('list'); toast('Liste reprise') }
+function setProfile(id) { ME = id; local.set({ ...local.get(), profile: id }); render(); openSheet('settings'); toast(`Salut ${PROFILES[id].name} 👋`) }
+function setHousehold(v) { HOUSEHOLD = (v || '').trim().toLowerCase().replace(/[^a-z0-9-]/g, '-') || 'lola-simon-v2'; local.set({ ...local.get(), household: HOUSEHOLD }); sync.connect(); openSheet('settings') }
+function resetAll() { if (!confirm('Tout effacer et revenir aux produits de départ ?')) return; S = repo.seed(); repo.save(S); closeSheet(); showTab('meals') }
+
+/* ═════════ PLATS — batch cooking diet pour 2 ═════════
+   Chaque plat liste ses ingrédients pour 4 portions (2 personnes × 2 repas, à préparer d'avance
+   dans des boîtes). Les quantités sont mises à l'échelle selon les portions choisies.
+   Ingrédient : [emoji, nom, quantité, unité, rayon]. Objectif : 3 repas viande max par semaine.   */
+const MEAT_MAX = 3, PEOPLE = 2
+const TYPES = { vege: { name: 'Végé', emoji: '🥦' }, poisson: { name: 'Poisson', emoji: '🐟' }, viande: { name: 'Viande', emoji: '🍗' } }
+const MEALS = [
+  // ── Végé ──
+  { id: 'chili-sin-carne', name: 'Chili sin carne', emoji: '🌶️', type: 'vege', kcal: 480, time: 35, ing: [['🫘', 'Haricots rouges', 2, 'boîte', 'epicerie'], ['🥫', 'Tomates concassées', 2, 'boîte', 'epicerie'], ['🧅', 'Oignons', 2, '', 'fruits'], ['🫑', 'Poivrons', 2, '', 'fruits'], ['🌽', 'Maïs', 1, 'boîte', 'epicerie'], ['🍚', 'Riz', 300, 'g', 'feculents'], ['🌶️', 'Épices chili', 1, 'sachet', 'epicerie']] },
+  { id: 'curry-lentilles', name: 'Curry de lentilles corail', emoji: '🍛', type: 'vege', kcal: 450, time: 30, ing: [['🫘', 'Lentilles corail', 300, 'g', 'feculents'], ['🥥', 'Lait de coco', 1, 'boîte', 'epicerie'], ['🥫', 'Tomates concassées', 1, 'boîte', 'epicerie'], ['🧅', 'Oignons', 1, '', 'fruits'], ['🥬', 'Épinards', 200, 'g', 'fruits'], ['🍚', 'Riz basmati', 250, 'g', 'feculents'], ['🍛', 'Curry en poudre', 1, 'sachet', 'epicerie'], ['🧄', 'Ail', 1, '', 'fruits']] },
+  { id: 'buddha-bowl', name: 'Buddha bowl quinoa & patate douce', emoji: '🥗', type: 'vege', kcal: 430, time: 35, ing: [['🌾', 'Quinoa', 250, 'g', 'feculents'], ['🫘', 'Pois chiches', 1, 'boîte', 'epicerie'], ['🍠', 'Patates douces', 2, '', 'fruits'], ['🥑', 'Avocats', 2, '', 'fruits'], ['🥦', 'Brocoli', 1, '', 'fruits'], ['🍋', 'Citrons', 1, '', 'fruits'], ['🌱', 'Graines (sésame, courge)', 1, 'sachet', 'epicerie']] },
+  { id: 'shakshuka', name: 'Shakshuka', emoji: '🍳', type: 'vege', kcal: 380, time: 25, ing: [['🥚', 'Œufs', 8, '', 'frais'], ['🥫', 'Tomates concassées', 2, 'boîte', 'epicerie'], ['🫑', 'Poivrons', 2, '', 'fruits'], ['🧅', 'Oignons', 1, '', 'fruits'], ['🇬🇷', 'Feta', 100, 'g', 'fromages'], ['🍞', 'Pain complet', 1, '', 'petitdej'], ['🌶️', 'Cumin / paprika', 1, 'sachet', 'epicerie']] },
+  { id: 'soupe-lentilles', name: 'Soupe lentilles & carottes', emoji: '🍲', type: 'vege', kcal: 350, time: 40, ing: [['🫘', 'Lentilles vertes', 300, 'g', 'feculents'], ['🥕', 'Carottes', 500, 'g', 'fruits'], ['🧅', 'Oignons', 1, '', 'fruits'], ['🧂', 'Bouillon de légumes', 2, 'cube', 'epicerie'], ['🌶️', 'Cumin / paprika', 1, 'sachet', 'epicerie']] },
+  { id: 'gratin-courgettes', name: 'Gratin de courgettes light', emoji: '🥒', type: 'vege', kcal: 390, time: 45, ing: [['🥒', 'Courgettes', 1, 'kg', 'fruits'], ['🥚', 'Œufs', 4, '', 'frais'], ['🥣', 'Fromage blanc 0%', 300, 'g', 'frais'], ['🧀', 'Emmental râpé', 80, 'g', 'fromages'], ['🧄', 'Ail', 1, '', 'fruits']] },
+  { id: 'poelee-tofu', name: 'Poêlée tofu & légumes', emoji: '🍢', type: 'vege', kcal: 420, time: 25, ing: [['🧊', 'Tofu ferme', 400, 'g', 'frais'], ['🥦', 'Brocoli', 1, '', 'fruits'], ['🫑', 'Poivrons', 2, '', 'fruits'], ['🥕', 'Carottes', 2, '', 'fruits'], ['🫙', 'Sauce soja', 1, '', 'epicerie'], ['🍚', 'Riz complet', 250, 'g', 'feculents'], ['🫚', 'Gingembre', 1, '', 'fruits']] },
+  { id: 'dahl-epinards', name: 'Dahl épinards & pois chiches', emoji: '🥘', type: 'vege', kcal: 440, time: 30, ing: [['🫘', 'Pois chiches', 2, 'boîte', 'epicerie'], ['🥬', 'Épinards', 400, 'g', 'fruits'], ['🥫', 'Tomates concassées', 1, 'boîte', 'epicerie'], ['🥥', 'Lait de coco', 1, 'boîte', 'epicerie'], ['🧅', 'Oignons', 1, '', 'fruits'], ['🍚', 'Riz', 250, 'g', 'feculents'], ['🍛', 'Curry en poudre', 1, 'sachet', 'epicerie']] },
+  { id: 'ratatouille-oeufs', name: 'Ratatouille & œufs pochés', emoji: '🍆', type: 'vege', kcal: 360, time: 45, ing: [['🍆', 'Aubergines', 2, '', 'fruits'], ['🥒', 'Courgettes', 2, '', 'fruits'], ['🫑', 'Poivrons', 2, '', 'fruits'], ['🍅', 'Tomates', 500, 'g', 'fruits'], ['🧅', 'Oignons', 1, '', 'fruits'], ['🥚', 'Œufs', 8, '', 'frais'], ['🌱', 'Herbes', 1, '', 'epicerie']] },
+  { id: 'salade-pates', name: 'Salade de pâtes complètes', emoji: '🍝', type: 'vege', kcal: 450, time: 20, ing: [['🍝', 'Pâtes complètes', 300, 'g', 'feculents'], ['🍅', 'Tomates cerises', 250, 'g', 'fruits'], ['⚪', 'Mozzarella', 2, '', 'fromages'], ['🥒', 'Concombre', 1, '', 'fruits'], ['🥬', 'Roquette', 100, 'g', 'fruits'], ['🌿', 'Pesto', 1, 'pot', 'epicerie']] },
+  { id: 'omelette-champignons', name: 'Omelette champignons & salade', emoji: '🍄', type: 'vege', kcal: 340, time: 15, ing: [['🥚', 'Œufs', 8, '', 'frais'], ['🍄', 'Champignons', 400, 'g', 'fruits'], ['🥬', 'Salade', 1, '', 'fruits'], ['🧅', 'Oignons', 1, '', 'fruits'], ['🧀', 'Emmental râpé', 60, 'g', 'fromages']] },
+  // ── Poisson ──
+  { id: 'saumon-brocoli', name: 'Saumon rôti & brocoli', emoji: '🍣', type: 'poisson', kcal: 480, time: 30, ing: [['🍣', 'Saumon', 4, 'pavé', 'poissons'], ['🥦', 'Brocoli', 2, '', 'fruits'], ['🥔', 'Pommes de terre', 600, 'g', 'fruits'], ['🍋', 'Citrons', 1, '', 'fruits'], ['🌱', 'Aneth', 1, '', 'fruits']] },
+  { id: 'cabillaud-four', name: 'Cabillaud au four & légumes', emoji: '🐠', type: 'poisson', kcal: 400, time: 30, ing: [['🐠', 'Cabillaud', 600, 'g', 'poissons'], ['🥒', 'Courgettes', 2, '', 'fruits'], ['🍅', 'Tomates cerises', 250, 'g', 'fruits'], ['🍚', 'Riz', 250, 'g', 'feculents'], ['🍋', 'Citrons', 1, '', 'fruits']] },
+  { id: 'thon-haricots', name: 'Thon, haricots blancs & tomates', emoji: '🥫', type: 'poisson', kcal: 420, time: 15, ing: [['🐟', 'Thon en boîte', 3, 'boîte', 'poissons'], ['🫘', 'Haricots blancs', 2, 'boîte', 'epicerie'], ['🍅', 'Tomates', 400, 'g', 'fruits'], ['🧅', 'Oignons rouges', 1, '', 'fruits'], ['🍋', 'Citrons', 1, '', 'fruits'], ['🌱', 'Persil', 1, '', 'fruits']] },
+  { id: 'wok-crevettes', name: 'Wok de crevettes', emoji: '🍤', type: 'poisson', kcal: 410, time: 20, ing: [['🍤', 'Crevettes', 500, 'g', 'poissons'], ['🍜', 'Nouilles de riz', 250, 'g', 'feculents'], ['🫑', 'Poivrons', 2, '', 'fruits'], ['🥕', 'Carottes', 2, '', 'fruits'], ['🫙', 'Sauce soja', 1, '', 'epicerie'], ['🧄', 'Ail', 1, '', 'fruits'], ['🫚', 'Gingembre', 1, '', 'fruits']] },
+  { id: 'poke-saumon', name: 'Poké bowl saumon', emoji: '🍱', type: 'poisson', kcal: 500, time: 20, ing: [['🍣', 'Saumon', 400, 'g', 'poissons'], ['🍚', 'Riz', 300, 'g', 'feculents'], ['🥑', 'Avocats', 2, '', 'fruits'], ['🥒', 'Concombre', 1, '', 'fruits'], ['🫛', 'Edamame', 200, 'g', 'surgeles'], ['🫙', 'Sauce soja', 1, '', 'epicerie'], ['🌱', 'Graines (sésame, courge)', 1, 'sachet', 'epicerie']] },
+  { id: 'papillote-colin', name: 'Papillotes de colin', emoji: '🐟', type: 'poisson', kcal: 370, time: 30, ing: [['🐟', 'Colin', 600, 'g', 'poissons'], ['🥕', 'Carottes', 3, '', 'fruits'], ['🥬', 'Poireaux', 2, '', 'fruits'], ['🍋', 'Citrons', 1, '', 'fruits'], ['🍛', 'Semoule', 250, 'g', 'feculents']] },
+  { id: 'nicoise', name: 'Salade niçoise light', emoji: '🥗', type: 'poisson', kcal: 390, time: 20, ing: [['🐟', 'Thon en boîte', 2, 'boîte', 'poissons'], ['🥚', 'Œufs', 4, '', 'frais'], ['🫛', 'Haricots verts', 400, 'g', 'surgeles'], ['🍅', 'Tomates', 400, 'g', 'fruits'], ['🫒', 'Olives', 1, 'pot', 'epicerie'], ['🥬', 'Salade', 1, '', 'fruits']] },
+  { id: 'pates-thon', name: 'Pâtes au thon & courgettes', emoji: '🍝', type: 'poisson', kcal: 460, time: 20, ing: [['🍝', 'Pâtes complètes', 300, 'g', 'feculents'], ['🐟', 'Thon en boîte', 2, 'boîte', 'poissons'], ['🥒', 'Courgettes', 2, '', 'fruits'], ['🥫', 'Tomates concassées', 1, 'boîte', 'epicerie'], ['🇮🇹', 'Parmesan', 50, 'g', 'fromages']] },
+  // ── Viande ──
+  { id: 'poulet-patate-douce', name: 'Poulet rôti épicé & patates douces', emoji: '🍗', type: 'viande', kcal: 490, time: 40, ing: [['🍗', 'Poulet', 800, 'g', 'viandes'], ['🍠', 'Patates douces', 800, 'g', 'fruits'], ['🥦', 'Brocoli', 1, '', 'fruits'], ['🌶️', 'Cumin / paprika', 1, 'sachet', 'epicerie']] },
+  { id: 'boeuf-brocolis', name: 'Bœuf sauté aux brocolis', emoji: '🥩', type: 'viande', kcal: 470, time: 25, ing: [['🥩', 'Bœuf à sauter', 500, 'g', 'viandes'], ['🥦', 'Brocoli', 2, '', 'fruits'], ['🧅', 'Oignons', 1, '', 'fruits'], ['🫙', 'Sauce soja', 1, '', 'epicerie'], ['🍚', 'Riz', 250, 'g', 'feculents'], ['🧄', 'Ail', 1, '', 'fruits'], ['🫚', 'Gingembre', 1, '', 'fruits']] },
+  { id: 'curry-poulet', name: 'Curry de poulet léger', emoji: '🍛', type: 'viande', kcal: 480, time: 30, ing: [['🍗', 'Poulet', 600, 'g', 'viandes'], ['🥥', 'Lait de coco', 1, 'boîte', 'epicerie'], ['🥫', 'Tomates concassées', 1, 'boîte', 'epicerie'], ['🧅', 'Oignons', 1, '', 'fruits'], ['🍛', 'Curry en poudre', 1, 'sachet', 'epicerie'], ['🍚', 'Riz basmati', 250, 'g', 'feculents'], ['🥬', 'Épinards', 200, 'g', 'fruits']] },
+  { id: 'boulettes-dinde', name: 'Boulettes de dinde & courgettes', emoji: '🧆', type: 'viande', kcal: 440, time: 35, ing: [['🦃', 'Dinde hachée', 500, 'g', 'viandes'], ['🥒', 'Courgettes', 3, '', 'fruits'], ['🥫', 'Tomates concassées', 2, 'boîte', 'epicerie'], ['🧅', 'Oignons', 1, '', 'fruits'], ['🥚', 'Œufs', 1, '', 'frais'], ['🌱', 'Herbes', 1, '', 'epicerie'], ['🍝', 'Pâtes complètes', 250, 'g', 'feculents']] },
+  { id: 'chili-con-carne', name: 'Chili con carne light', emoji: '🌶️', type: 'viande', kcal: 500, time: 35, ing: [['🥩', 'Steak haché 5%', 400, 'g', 'viandes'], ['🫘', 'Haricots rouges', 2, 'boîte', 'epicerie'], ['🥫', 'Tomates concassées', 2, 'boîte', 'epicerie'], ['🧅', 'Oignons', 1, '', 'fruits'], ['🫑', 'Poivrons', 1, '', 'fruits'], ['🍚', 'Riz', 250, 'g', 'feculents'], ['🌶️', 'Épices chili', 1, 'sachet', 'epicerie']] },
+  { id: 'wraps-poulet', name: 'Wraps poulet & crudités', emoji: '🌯', type: 'viande', kcal: 450, time: 20, ing: [['🍗', 'Poulet', 500, 'g', 'viandes'], ['🌯', 'Tortillas', 8, '', 'epicerie'], ['🥬', 'Salade', 1, '', 'fruits'], ['🍅', 'Tomates', 300, 'g', 'fruits'], ['🥣', 'Yaourt grec', 2, '', 'frais'], ['🥒', 'Concombre', 1, '', 'fruits'], ['🌶️', 'Cumin / paprika', 1, 'sachet', 'epicerie']] },
+  { id: 'dinde-haricots', name: 'Escalopes de dinde & haricots verts', emoji: '🦃', type: 'viande', kcal: 400, time: 25, ing: [['🦃', 'Escalopes de dinde', 4, '', 'viandes'], ['🫛', 'Haricots verts', 600, 'g', 'surgeles'], ['🥔', 'Pommes de terre', 500, 'g', 'fruits'], ['🍋', 'Citrons', 1, '', 'fruits'], ['🟡', 'Moutarde', 1, 'pot', 'epicerie']] },
+  { id: 'porc-chou', name: 'Sauté de porc moutarde & chou', emoji: '🐖', type: 'viande', kcal: 460, time: 35, ing: [['🐖', 'Filet mignon de porc', 500, 'g', 'viandes'], ['🥬', 'Chou vert', 1, '', 'fruits'], ['🥕', 'Carottes', 3, '', 'fruits'], ['🟡', 'Moutarde', 1, 'pot', 'epicerie'], ['🫙', 'Crème légère', 1, '', 'frais'], ['🍚', 'Riz', 250, 'g', 'feculents']] },
+  { id: 'bowl-poulet-quinoa', name: 'Bowl poulet, quinoa & avocat', emoji: '🥗', type: 'viande', kcal: 470, time: 25, ing: [['🍗', 'Poulet', 500, 'g', 'viandes'], ['🌾', 'Quinoa', 250, 'g', 'feculents'], ['🥑', 'Avocats', 2, '', 'fruits'], ['🍅', 'Tomates cerises', 250, 'g', 'fruits'], ['🥒', 'Concombre', 1, '', 'fruits'], ['🍋', 'Citrons', 1, '', 'fruits']] },
+  { id: 'lasagnes-courgettes', name: 'Lasagnes de courgettes', emoji: '🍆', type: 'viande', kcal: 450, time: 50, ing: [['🥩', 'Steak haché 5%', 500, 'g', 'viandes'], ['🥒', 'Courgettes', 4, '', 'fruits'], ['🥫', 'Tomates concassées', 2, 'boîte', 'epicerie'], ['🧅', 'Oignons', 1, '', 'fruits'], ['🧀', 'Ricotta', 250, 'g', 'fromages'], ['🇮🇹', 'Parmesan', 50, 'g', 'fromages']] },
+]
+const allMeals = () => [...MEALS, ...(S.customMeals || []).filter(m => !m.deleted)]
+const meal = id => allMeals().find(m => m.id === id)
+const planned = id => S.plan.items[id]
+const mealsPlanned = () => Object.keys(S.plan.items).map(meal).filter(Boolean)
+const repasOf = m => Math.round((planned(m.id)?.portions || 0) / PEOPLE)   // repas par personne
+const meatCount = () => mealsPlanned().filter(m => m.type === 'viande').reduce((a, m) => a + repasOf(m), 0)
+const touchPlan = () => { S.plan.updatedAt = now() }
+let mealFilter = 'all'
+const fmtQty = (q, u) => {
+  if (u === 'g' && q >= 1000) return (q / 1000).toFixed(q % 1000 ? 1 : 0).replace('.', ',') + ' kg'
+  if (u === 'kg' && q < 1) return Math.round(q * 1000) + ' g'
+  if (!u || ['boîte', 'pot', 'sachet', 'pavé', 'cube', 'tranche', 'gousse'].includes(u)) q = Math.ceil(q - 1e-9) // on n'achète pas un demi-brocoli
+  const n = Number.isInteger(q) ? q : q.toFixed(1).replace('.', ',')
+  if (!u) return '×' + n
+  if (['boîte', 'pot', 'sachet', 'pavé', 'cube', 'tranche', 'gousse'].includes(u)) return `${n} ${u}${q > 1 ? 's' : ''}`
+  return `${n} ${u}`
+}
+const scaled = (m, portions) => m.ing.map(([e, n, q, u, c]) => [e, n, q * portions / 4, u, c])
+
+function renderMeals() {
+  const sel = mealsPlanned(), meat = meatCount(), over = meat > MEAT_MAX
+  const repas = sel.reduce((a, m) => a + repasOf(m), 0)
+  const kcal = sel.length ? Math.round(sel.reduce((a, m) => a + m.kcal * repasOf(m), 0) / Math.max(1, repas)) : 0
+  $('badge-meals').classList.toggle('hidden', !sel.length); $('badge-meals').textContent = sel.length
+  $('meals-sub').textContent = sel.length ? `${plural(sel.length, 'plat')} · ${plural(repas, 'repas')} par personne` : 'Choisis tes plats de la semaine'
+  $('meals-goal').innerHTML = `<div class="goal${over ? ' over' : ''}"><div class="top"><b>🍗 Viande : ${meat} / ${MEAT_MAX} repas</b><span>${over ? 'Trop de viande cette semaine' : meat === MEAT_MAX ? 'Objectif atteint' : 'par personne et par semaine'}</span></div>
+    <div class="pips">${Array.from({ length: Math.max(MEAT_MAX, meat) }, (_, i) => `<i class="${i < meat ? (i < MEAT_MAX ? 'on' : 'over') : ''}"></i>`).join('')}</div>
+    <div class="stats"><span><b>${repas}</b> / 14 repas</span><span><b>${kcal || '–'}</b> kcal / portion</span><span><b>${sel.filter(m => m.type !== 'viande').length}</b> sans viande</span></div></div>`
+  const filters = [['all', 'Tous'], ['vege', '🥦 Végé'], ['poisson', '🐟 Poisson'], ['viande', '🍗 Viande'], ['mine', '⭐ Mes plats']]
+  $('meals-filters').innerHTML = filters.map(([k, l]) => `<button class="chip${mealFilter === k ? ' on' : ''}" onclick="setMealFilter('${k}')">${l}</button>`).join('')
+  const list = allMeals().filter(m => mealFilter === 'all' || (mealFilter === 'mine' ? m.custom : m.type === mealFilter))
+  const card = m => { const p = planned(m.id); return `<button class="meal${p ? ' on' : ''}" onclick="openSheet('meal', '${m.id}')">${p ? `<span class="n">${p.portions} portions</span>` : ''}<span class="big">${esc(m.emoji)}</span><span class="name">${esc(m.name)}</span><span class="meta"><span class="ty ${m.type}">${TYPES[m.type].name}</span><span>${m.kcal} kcal</span><span>${m.time} min</span></span></button>` }
+  $('meals').innerHTML = `<div class="meals">${list.map(card).join('')}<button class="meal add" onclick="openSheet('newmeal')"><span class="big">＋</span><span class="name">Créer un plat</span></button></div>`
+  const menu = $('menu')
+  if (!sel.length) { menu.innerHTML = ''; return }
+  menu.innerHTML = `<div class="section-title"><span>Menu de la semaine</span><button class="link" onclick="clearPlan()">Vider</button></div>` + sel.map(m => `<div class="menu-row"><span class="emoji">${esc(m.emoji)}</span><div class="body"><div class="name">${esc(m.name)}</div><div class="sub">${repasOf(m)} repas × ${PEOPLE} pers. · ${m.ing.length} ingrédients</div></div>
+    <div class="stepper"><button onclick="setPortions('${m.id}', -${PEOPLE})">−</button><span>${planned(m.id).portions}</span><button onclick="setPortions('${m.id}', ${PEOPLE})">+</button></div></div>`).join('')
+    + `<button class="cta" style="margin-top:14px" onclick="planToList()">🛒 Ajouter les ingrédients à la liste</button>
+    <div class="hint" style="text-align:center;margin-top:10px">Les quantités sont additionnées entre plats et rangées par rayon.</div>`
+}
+function setMealFilter(k) { mealFilter = k; renderMeals() }
+function setPortions(id, d) {
+  const p = planned(id); if (!p) return
+  p.portions += d
+  if (p.portions <= 0) delete S.plan.items[id]
+  touchPlan(); persist(); render(); buzz()
+  if (d > 0 && meal(id)?.type === 'viande' && meatCount() > MEAT_MAX) toast(`⚠️ ${meatCount()} repas viande, objectif ${MEAT_MAX}`)
+}
+function togglePlan(id, portions = 4) {
+  if (planned(id)) delete S.plan.items[id]
+  else { S.plan.items[id] = { portions, addedBy: ME, at: now() }; if (meal(id)?.type === 'viande' && meatCount() > MEAT_MAX) toast(`⚠️ ${meatCount()} repas viande, objectif ${MEAT_MAX}`) }
+  touchPlan(); persist(); closeSheet(); render(); buzz()
+}
+function clearPlan() { if (!confirm('Vider le menu de la semaine ?')) return; S.plan.items = {}; touchPlan(); persist(); render() }
+// Trouve ou crée le produit correspondant à un ingrédient (identifiant déterministe = même produit sur les deux téléphones)
+function ensureProduct(name, cat, emoji) {
+  const id = 'p-' + norm(name)
+  let p = S.products.find(x => x.id === id || norm(x.name) === norm(name))
+  if (!p) { p = { id, name, emoji: emoji || '🛒', cat: cat || 'autres', uses: 0 }; S.products.push(p) }
+  return p
+}
+function planToList() {
+  const need = new Map() // pid -> { unité: quantité }
+  mealsPlanned().forEach(m => scaled(m, planned(m.id).portions).forEach(([e, n, q, u, c]) => { const p = ensureProduct(n, c, e); const cur = need.get(p.id) || {}; cur[u] = (cur[u] || 0) + q; need.set(p.id, cur) }))
+  let added = 0, updated = 0
+  need.forEach((byUnit, pid) => {
+    const note = Object.entries(byUnit).map(([u, q]) => fmtQty(q, u)).join(' + ')
+    const l = inList(pid)
+    if (l) { if (l.note !== note) { l.note = note; touch(l); updated++ } }
+    else { S.list.push({ pid, qty: 1, note, done: false, addedBy: ME, assignee: null, updatedAt: now(), createdAt: now() }); const p = product(pid); p.uses = (p.uses || 0) + 1; added++ }
+  })
+  persist(); render(); buzz()
+  toast(`${plural(added, 'ingrédient')} ajouté${added > 1 ? 's' : ''}${updated ? ` · ${updated} mis à jour` : ''}`)
+  showTab('list')
+}
+// Plats perso : « 400 g poulet » par ligne → [emoji, nom, qté, unité, rayon]
+const UNIT_RE = /^\s*(\d+(?:[.,]\d+)?)?\s*(kg|g|ml|cl|l|boîtes?|boites?|pots?|sachets?|pavés?|paves?|cubes?|tranches?|gousses?|pièces?|pieces?|pcs?)?\.?\s*(?:de |d')?(.+?)\s*$/i
+const CAT_HINTS = [['viandes', /poulet|b[oœ]uf|dinde|porc|veau|agneau|steak|hach|lardon|saucisse|jambon|canard|lapin/], ['poissons', /saumon|thon|cabillaud|colin|crevette|poisson|truite|sardine|maquereau|dorade|lieu/], ['frais', /[oœ]uf|lait|cr[eè]me|yaourt|fromage blanc|beurre|tofu|skyr/], ['fromages', /feta|mozza|parmesan|emmental|comt[eé]|ch[eè]vre|ricotta|gruy[eè]re|cheddar/], ['feculents', /riz|p[aâ]tes|quinoa|lentille|semoule|boulgour|nouille|pomme de terre|patate|pain/], ['surgeles', /surgel|edamame|petits pois|haricots verts/], ['epicerie', /huile|sauce|[eé]pice|curry|cumin|paprika|bo[iî]te|conserve|pois chiche|haricot|ma[iï]s|coco|tomates concass|moutarde|bouillon|olive|graine|tortilla|farine|sucre|miel|vinaigre/], ['fruits', /tomate|courgette|poivron|oignon|ail|carotte|brocoli|salade|[eé]pinard|avocat|citron|concombre|champignon|aubergine|chou|poireau|gingembre|herbe|persil|aneth|basilic|banane|pomme|fruit|l[eé]gume/]]
+const guessCat = n => { const x = norm(n).replace(/-/g, ' '); const p = S.products.find(q => norm(q.name) === norm(n)); if (p) return p.cat; return (CAT_HINTS.find(([, re]) => re.test(x)) || ['autres'])[0] }
+const guessEmoji = n => { const p = S.products.find(q => norm(q.name) === norm(n)); if (p) return p.emoji; const x = norm(n).replace(/-/g, ' '); const hit = EMOJI_BANK.flatMap(([, l]) => l).find(([, k]) => k.split(' ').some(w => w.length > 2 && x.includes(norm(w)))); return hit ? hit[0] : '🛒' }
+function parseIngredients(text) {
+  return text.split('\n').map(line => line.trim()).filter(Boolean).map(line => {
+    const m = line.match(UNIT_RE); if (!m) return null
+    let [, q, u, name] = m; q = q ? parseFloat(q.replace(',', '.')) : 1; u = (u || '').toLowerCase()
+    u = u.replace(/s$/, '').replace('boite', 'boîte').replace('pave', 'pavé'); if (['piece', 'pièce', 'pc'].includes(u)) u = ''
+    name = name.charAt(0).toUpperCase() + name.slice(1)
+    return [guessEmoji(name), name, q, u, guessCat(name)]
+  }).filter(Boolean)
+}
+function saveMeal() {
+  const name = $('f-name').value.trim(); if (!name) { $('f-name').focus(); return }
+  const ing = parseIngredients($('f-ing').value); if (!ing.length) { $('f-ing').focus(); toast('Ajoute au moins un ingrédient'); return }
+  const kcal = parseInt($('f-kcal').value) || 0, time = parseInt($('f-time').value) || 0
+  const id = sheetState.mealId || ('m-' + norm(name) + '-' + uid().slice(0, 4))
+  const m = { id, name, emoji: sheetState.emoji, type: sheetState.type || 'vege', kcal, time, ing, custom: true, updatedAt: now() }
+  S.customMeals = (S.customMeals || []).filter(x => x.id !== id); S.customMeals.push(m)
+  persist(); closeSheet(); mealFilter = 'mine'; render(); toast(`${m.emoji} ${m.name} créé`)
+}
+function deleteMeal(id) { if (!confirm('Supprimer ce plat ?')) return; const m = S.customMeals.find(x => x.id === id); if (m) { m.deleted = true; m.updatedAt = now() } delete S.plan.items[id]; touchPlan(); persist(); closeSheet(); render() }
+function pickType(t) { sheetState.type = t; document.querySelectorAll('#f-types .chip').forEach(b => b.classList.toggle('on', b.dataset.t === t)) }
+function setSheetPortions(id, d) { sheetState.portions = Math.max(PEOPLE, sheetState.portions + d); openSheet('meal', id) }
+
+/* ═════════ SYNCHRO — Supabase (table courses_state) ═════════
+   Une ligne par foyer : { id, state jsonb, updated_at }. Chaque téléphone pousse son état après chaque
+   modification et reçoit ceux de l'autre en temps réel ; la fusion se fait ARTICLE PAR ARTICLE (le plus
+   récent gagne), donc deux personnes peuvent cocher en même temps sans s'écraser. Hors connexion, tout
+   continue de marcher en local et se rattrape au retour du réseau.                                     */
+const SB_URL = 'https://vxzjfwjxgewdqvfdsxjm.supabase.co'
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4empmd2p4Z2V3ZHF2ZmRzeGptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4MTM1MDcsImV4cCI6MjEwNDM4OTUwN30.IuIcPXXrVozPDDreB-hkY1didQoboV0pEuH8-8GaWLo'
+const sync = {
+  db: null, channel: null, online: false, lastError: null, pushT: null, applying: false,
+  status() { return this.lastError ? '⚠️ ' + this.lastError : this.online ? '✓ Connecté · les deux téléphones se voient en direct' : 'Connexion…' },
+  ui() { document.querySelectorAll('#sync .dot, #sync2 .dot').forEach(d => d.classList.toggle('on', this.online)); const i = $('sync-info'); if (i) i.textContent = this.status() },
+  async connect() {
+    try {
+      if (!window.supabase) throw new Error('librairie Supabase non chargée')
+      if (!this.db) this.db = window.supabase.createClient(SB_URL, SB_KEY)
+      if (this.channel) { this.db.removeChannel(this.channel); this.channel = null }
+      const { data, error } = await this.db.from('courses_state').select('state').eq('id', HOUSEHOLD).maybeSingle()
+      if (error) throw error
+      if (data && data.state) this.apply(data.state); else await this.pushNow()
+      this.channel = this.db.channel('coursesv2-' + HOUSEHOLD)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'courses_state', filter: 'id=eq.' + HOUSEHOLD }, payload => { if (payload.new && payload.new.state) this.apply(payload.new.state) })
+        .subscribe(st => { this.online = st === 'SUBSCRIBED'; this.ui() })
+      this.lastError = null
+    } catch (e) { this.online = false; this.lastError = /relation|does not exist|schema cache/i.test(e.message) ? 'Table courses_state absente : exécute le SQL fourni dans Supabase' : e.message; this.ui() }
+    // Présence rafraîchie toutes les 30 s pendant les courses
+    clearInterval(this._tick); this._tick = setInterval(() => { if (tab === 'shop' && S.shopping) renderPresence() }, 30000)
+  },
+  push() { clearTimeout(this.pushT); this.pushT = setTimeout(() => this.pushNow(), 400) },
+  async pushNow() {
+    if (!this.db || this.applying) return
+    try { const { error } = await this.db.from('courses_state').upsert({ id: HOUSEHOLD, state: S, updated_at: new Date().toISOString() }); if (error) throw error; this.lastError = null } catch (e) { this.lastError = e.message } finally { this.ui() }
+  },
+  // Fusion : produits (union, le plus récent par id), liste (par article, updatedAt le plus récent), suppressions, présence, historique
+  apply(remote) {
+    if (!remote || typeof remote !== 'object') return
+    this.applying = true
+    try {
+      remote = dedupe(JSON.parse(JSON.stringify(remote)))
+      // Top de fin : la liste la plus récemment terminée/vidée l'emporte, les articles antérieurs disparaissent
+      const epoch = Math.max(S.epoch || 0, remote.epoch || 0)
+      if (epoch > (S.epoch || 0)) { S.list = S.list.filter(l => (l.createdAt || 0) > epoch); S.shopping = false }
+      S.epoch = epoch
+      const byId = new Map(S.products.map(p => [p.id, p]))
+      ;(remote.products || []).forEach(p => { const mine = byId.get(p.id); if (!mine) S.products.push(p); else if ((p.uses || 0) > (mine.uses || 0)) mine.uses = p.uses })
+      const removed = { ...(remote.removed || {}), ...(S.removed || {}) }
+      Object.entries(remote.removed || {}).forEach(([pid, t]) => { if (t > (S.removed?.[pid] || 0)) removed[pid] = t })
+      const list = new Map(S.list.map(l => [l.pid, l]))
+      ;(remote.list || []).filter(r => (r.createdAt || 0) > epoch || !epoch).forEach(r => { const m = list.get(r.pid); if (!m || (r.updatedAt || 0) > (m.updatedAt || 0)) list.set(r.pid, r) })
+      S.list = [...list.values()].filter(l => !(removed[l.pid] > (l.updatedAt || 0)))
+      S.removed = removed
+      if ((remote.rev || 0) > (S.rev || 0)) { S.shopping = !!remote.shopping && S.list.length > 0; S.startedAt = remote.startedAt || S.startedAt; if (remote.categoryOrder) S.categoryOrder = remote.categoryOrder }
+      dedupe(S)
+      S.presence = { ...(S.presence || {}), ...(remote.presence || {}) }
+      Object.entries(remote.presence || {}).forEach(([k, v]) => { if (!S.presence[k] || v.at > S.presence[k].at) S.presence[k] = v })
+      const hist = new Map((S.history || []).map(h => [h.id, h])); (remote.history || []).forEach(h => { if (!hist.has(h.id)) hist.set(h.id, h) })
+      S.history = [...hist.values()].sort((a, b) => b.at - a.at).slice(0, 20)
+      if ((remote.plan?.updatedAt || 0) > (S.plan?.updatedAt || 0)) S.plan = remote.plan
+      const cm = new Map((S.customMeals || []).map(m => [m.id, m])); (remote.customMeals || []).forEach(m => { const mine = cm.get(m.id); if (!mine || (m.updatedAt || 0) > (mine.updatedAt || 0)) cm.set(m.id, m) }); S.customMeals = [...cm.values()]
+      S.rev = Math.max(S.rev || 0, remote.rev || 0)
+      repo.save(S); render()
+    } finally { this.applying = false }
+  },
+}
+
+/* ═════════ Rendu global ═════════ */
+function render() { renderMeals(); renderPrep(); renderList(); renderShop(); ['me-avatar', 'me-avatar2'].forEach(id => { const a = $(id); if (a) { a.textContent = ME ? PROFILES[ME].initial : '?'; a.className = 'avatar ' + (ME || '') } }) }
+render()
+if (!ME) { openSheet('settings'); setTimeout(() => toast('Choisis ton profil 👆'), 400) }
+sync.connect()
+// Ré-affiche la barre d'ajout rapide quand le clavier se ferme (iOS)
+window.addEventListener('resize', () => { if (tab === 'shop') $('shop-bar').classList.toggle('hidden', !S.shopping) })
+</script>
+</body>
+</html>
