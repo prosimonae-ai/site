@@ -725,6 +725,7 @@ const TYPES = { vege: { name: 'Végé', emoji: '🥦' }, poisson: { name: 'Poiss
 const MEALS = [
   // Les plats sont ajoutés à la main ici : { id, name, emoji, type: 'vege'|'poisson'|'viande', kcal, time, ing: [[emoji, nom, quantité pour 4 portions, unité ('g','kg','ml','cl','l','boîte','pot','sachet','pavé','cube' ou '' pour « à la pièce »), rayon]] }
   { id: 'bolognaise-legere', name: 'Bolognaise légère aux légumes', emoji: '🍝', type: 'viande', kcal: 530, time: 30, ing: [['🥩', 'Bœuf haché 5%', 400, 'g', 'viandes'], ['🍝', 'Pâtes complètes', 280, 'g', 'feculents'], ['🥫', 'Tomates concassées', 600, 'g', 'epicerie'], ['🥕', 'Carottes', 400, 'g', 'fruits'], ['🥒', 'Courgettes', 400, 'g', 'fruits'], ['🧅', 'Oignons', 200, 'g', 'fruits'], ['🇮🇹', 'Parmesan', 40, 'g', 'fromages']] },
+  { id: 'riz-saute-oeufs', name: 'Riz sauté aux œufs', emoji: '🍳', type: 'vege', kcal: 470, time: 25, ing: [['🍚', 'Riz', 240, 'g', 'feculents'], ['🥚', 'Œufs', 8, '', 'frais'], ['🫛', 'Petits pois', 320, 'g', 'surgeles'], ['🥕', 'Carottes', 300, 'g', 'fruits'], ['🥒', 'Courgettes', 400, 'g', 'fruits'], ['🫙', 'Sauce soja', 60, 'ml', 'epicerie'], ['🫒', 'Huile', 20, 'g', 'epicerie']] },
 ]
 const allMeals = () => [...MEALS, ...(S.customMeals || []).filter(m => !m.deleted)]
 const meal = id => allMeals().find(m => m.id === id)
