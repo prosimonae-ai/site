@@ -130,8 +130,9 @@
   /* ── Feuille (bottom sheet) ── */
   .sheet-bg { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 40; opacity: 0; pointer-events: none; transition: opacity .2s; }
   .sheet-bg.show { opacity: 1; pointer-events: all; }
-  .sheet { position: fixed; left: 0; right: 0; bottom: 0; background: var(--card); border-radius: 22px 22px 0 0; padding: 12px 20px calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 41; transform: translateY(100%); transition: transform .25s cubic-bezier(.2,.8,.2,1); max-height: 88vh; overflow-y: auto; }
+  .sheet { position: fixed; left: 0; right: 0; bottom: 0; background: var(--card); border-radius: 22px 22px 0 0; padding: 12px 20px calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 41; transform: translateY(100%); transition: transform .25s cubic-bezier(.2,.8,.2,1); max-height: 88vh; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y; }
   .sheet.show { transform: none; }
+  body.locked { overflow: hidden; position: fixed; left: 0; right: 0; }
   .sheet .grip { width: 40px; height: 5px; border-radius: 3px; background: var(--line); margin: 0 auto 16px; }
   .sheet h2 { font-size: 20px; font-weight: 700; margin-bottom: 14px; }
   .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
@@ -527,9 +528,11 @@ function openSheet(kind, pid, presetName = '', presetCat = '') {
       <div class="field"><label>Historique</label>${S.history.length ? S.history.map(h => `<div class="hist"><div class="body"><div class="d">${new Date(h.at).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</div><div class="s">${plural(h.items.length, 'article')} · ${h.taken} pris</div></div><button onclick="reuse('${h.id}')">Reprendre</button></div>`).join('') : '<div class="s" style="color:var(--muted)">Aucune course terminée pour l\'instant.</div>'}</div>
       <button class="danger" onclick="resetAll()">Réinitialiser l'application</button>`
   }
-  $('sheet').classList.add('show'); $('sheet-bg').classList.add('show')
+  $('sheet').classList.add('show'); $('sheet-bg').classList.add('show'); $('sheet').scrollTop = 0
+  // Bloque le défilement de la page derrière : sinon, sur iPhone, glisser le doigt dans la feuille fait bouger l'écran du dessous
+  document.body.dataset.scroll = window.scrollY; document.body.classList.add('locked'); document.body.style.top = -window.scrollY + 'px'
 }
-function closeSheet() { $('sheet').classList.remove('show'); $('sheet-bg').classList.remove('show'); document.activeElement && document.activeElement.blur() }
+function closeSheet() { const y = +(document.body.dataset.scroll || 0); document.body.classList.remove('locked'); document.body.style.top = ''; window.scrollTo(0, y); $('sheet').classList.remove('show'); $('sheet-bg').classList.remove('show'); document.activeElement && document.activeElement.blur() }
 function pickEmoji(e) { sheetState.emoji = e; $('f-emoji-cur').textContent = e; document.querySelectorAll('#f-bank button').forEach(b => b.classList.toggle('on', b.textContent === e)) }
 function renderEmojiBank() {
   const q = norm($('f-emoji-search')?.value || '')
