@@ -208,6 +208,24 @@
   .goal.over .top b { color: var(--danger); }
   .goal .stats { display: flex; gap: 14px; margin-top: 10px; font-size: 13px; color: var(--muted); }
   .goal .stats b { color: var(--text); font-weight: 700; }
+  .cal { background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); padding: 12px 10px 10px; margin-bottom: 14px; }
+  .cal .grid7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal .day { text-align: center; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; padding-bottom: 6px; }
+  .cal .day small { display: block; font-weight: 500; color: var(--faint); text-transform: none; letter-spacing: 0; }
+  .cal .day.today { color: var(--accent); }
+  .cal .slot { aspect-ratio: 1; border-radius: 10px; background: var(--card-2); display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--faint); border: 2px solid transparent; transition: transform .12s; }
+  .cal .slot:active { transform: scale(.9); }
+  .cal .slot.on { background: var(--accent-bg); border-color: var(--accent); }
+  .cal .slot.viande.on { background: rgba(217,83,79,.12); border-color: #d9534f; }
+  .cal .slot.poisson.on { background: rgba(47,95,191,.12); border-color: #2f5fbf; }
+  .cal .rowlbl { grid-column: 1 / -1; font-size: 10px; font-weight: 600; color: var(--faint); text-transform: uppercase; letter-spacing: .06em; margin: 6px 2px 2px; }
+  .cal .hint { text-align: center; margin-top: 8px; }
+  .pick { display: flex; align-items: center; gap: 12px; padding: 10px 4px; border-bottom: 1px solid var(--line); width: 100%; text-align: left; }
+  .pick:last-child { border-bottom: 0; }
+  .pick .emoji { font-size: 24px; width: 32px; text-align: center; }
+  .pick .name { flex: 1; font-weight: 600; font-size: 15px; }
+  .pick.on { color: var(--accent-ink); }
+  .pick-list { max-height: 50vh; overflow-y: auto; }
   .filters { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-bottom: 14px; padding: 2px; }
   .filters::-webkit-scrollbar { display: none; }
   .filters .chip { flex: 0 0 auto; }
@@ -254,6 +272,7 @@
 <section class="screen active" id="screen-meals">
   <div class="head"><div><h1>Plats</h1><div class="sub" id="meals-sub">Choisis tes plats de la semaine</div></div><button class="who" onclick="openSheet('settings')"><span class="sync" id="sync2"><span class="dot"></span></span><span class="avatar" id="me-avatar2">?</span></button></div>
   <div id="meals-goal"></div>
+  <div id="cal"></div>
   <div class="filters" id="meals-filters"></div>
   <div id="meals"></div>
   <div id="menu" style="margin-top:22px"></div>
@@ -338,7 +357,7 @@ const repo = {
   seed() {
     const products = []
     SEED.forEach(([cat, ...items]) => items.forEach(s => { const [emoji, ...rest] = s.split(' '); const name = rest.join(' '); products.push({ id: 'p-' + norm(name), name, emoji, cat, uses: 0 }) }))
-    return { products, categoryOrder: CATEGORIES.map(c => c.id), list: [], shopping: false, startedAt: null, history: [], presence: {}, rev: 0, epoch: 0, plan: { items: {}, updatedAt: 0 }, customMeals: [] }
+    return { products, categoryOrder: CATEGORIES.map(c => c.id), list: [], shopping: false, startedAt: null, history: [], presence: {}, rev: 0, epoch: 0, plan: { items: {}, slots: {}, updatedAt: 0 }, customMeals: [] }
   },
 }
 const PROFILES = { lola: { name: 'Lola', initial: 'L' }, simon: { name: 'Simon', initial: 'S' } }
@@ -354,6 +373,7 @@ if (!S.presence) S.presence = {}
 if (!S.rev) S.rev = 0
 if (!S.epoch) S.epoch = 0
 if (!S.plan) S.plan = { items: {}, updatedAt: 0 }
+if (!S.plan.slots) S.plan.slots = {}
 if (!S.customMeals) S.customMeals = []
 S.list.forEach(l => { if (!l.updatedAt) l.updatedAt = 0 })
 // Dédoublonnage : un seul produit par nom (les anciens identifiants aléatoires sont remplacés par 'p-<nom>')
@@ -591,6 +611,13 @@ function openSheet(kind, pid, presetName = '', presetCat = '') {
       <div class="ing-list">${scaled(m, portions).map(([e, n, q, u]) => `<div class="ing"><span>${icon(e)} ${esc(n)}</span><span class="q">${fmtQty(q, u)}</span></div>`).join('')}</div>
       <div class="actions">${p ? `<button class="cta ghost" onclick="togglePlan('${m.id}')">Retirer du menu</button>${p.portions !== portions ? `<button class="cta" onclick="setPortions('${m.id}', ${portions - p.portions}); closeSheet()">Mettre ${portions} portions</button>` : ''}` : `<button class="cta" onclick="togglePlan('${m.id}', ${portions})">＋ Ajouter au menu</button>`}</div>
       ${m.custom ? `<div class="actions" style="margin-top:6px"><button class="cta ghost" onclick="openSheet('newmeal', '${m.id}')">Modifier</button></div><button class="danger" onclick="deleteMeal('${m.id}')">Supprimer ce plat</button>` : ''}`
+  } else if (kind === 'slot') {
+    const key = pid, cur = S.plan.slots[key]
+    const inMenu = mealsPlanned(), others = allMeals().filter(m => !planned(m.id))
+    const row = m => `<button class="pick${cur === m.id ? ' on' : ''}" onclick="assignSlot('${key}', '${m.id}')"><span class="emoji">${esc(m.emoji)}</span><span class="name">${esc(m.name)}</span><span class="ty ${m.type}" style="font-size:11px;padding:2px 7px;border-radius:7px;font-weight:700">${TYPES[m.type].name}</span></button>`
+    body.innerHTML = `<h2>${slotLabel(key)}</h2>
+      ${cur ? `<div class="actions" style="margin:0 0 12px"><button class="cta ghost" onclick="assignSlot('${key}', null)">Libérer cette case</button></div>` : ''}
+      <div class="pick-list">${inMenu.length ? `<div class="bank-title">Dans le menu</div>${inMenu.map(row).join('')}` : ''}<div class="bank-title">Tous les plats</div>${others.map(row).join('')}</div>`
   } else if (kind === 'newmeal') {
     const m = pid ? meal(pid) : null
     sheetState = { mealId: m ? m.id : null, emoji: m ? m.emoji : '🍲', type: m ? m.type : 'vege' }
@@ -702,6 +729,7 @@ const fmtQty = (q, u) => {
 const scaled = (m, portions) => m.ing.map(([e, n, q, u, c]) => [e, n, q * portions / 4, u, c])
 
 function renderMeals() {
+  renderCal()
   const sel = mealsPlanned(), meat = meatCount(), over = meat > MEAT_MAX
   const repas = sel.reduce((a, m) => a + repasOf(m), 0)
   const kcal = sel.length ? Math.round(sel.reduce((a, m) => a + m.kcal * repasOf(m), 0) / Math.max(1, repas)) : 0
@@ -717,10 +745,38 @@ function renderMeals() {
   $('meals').innerHTML = `<div class="meals">${list.map(card).join('')}<button class="meal add" onclick="openSheet('newmeal')"><span class="big">＋</span><span class="name">Créer un plat</span></button></div>`
   const menu = $('menu')
   if (!sel.length) { menu.innerHTML = ''; return }
-  menu.innerHTML = `<div class="section-title"><span>Menu de la semaine</span><button class="link" onclick="clearPlan()">Vider</button></div>` + sel.map(m => `<div class="menu-row"><span class="emoji">${esc(m.emoji)}</span><div class="body"><div class="name">${esc(m.name)}</div><div class="sub">${repasOf(m)} repas × ${PEOPLE} pers. · ${m.ing.length} ingrédients</div></div>
-    <div class="stepper"><button onclick="setPortions('${m.id}', -${PEOPLE})">−</button><span>${planned(m.id).portions}</span><button onclick="setPortions('${m.id}', ${PEOPLE})">+</button></div></div>`).join('')
+  menu.innerHTML = `<div class="section-title"><span>Menu de la semaine</span><button class="link" onclick="clearPlan()">Vider</button></div>` + sel.map(m => `<div class="menu-row"><span class="emoji">${esc(m.emoji)}</span><div class="body"><div class="name">${esc(m.name)}</div><div class="sub">${slotsOf(m.id).length ? slotsOf(m.id).map(slotLabel).join(' · ') : `${repasOf(m)} repas × ${PEOPLE} pers.`} · ${m.ing.length} ingrédients</div></div>
+    ${slotsOf(m.id).length ? `<span style="font-weight:700;padding:0 10px">${planned(m.id).portions} p.</span>` : `<div class="stepper"><button onclick="setPortions('${m.id}', -${PEOPLE})">−</button><span>${planned(m.id).portions}</span><button onclick="setPortions('${m.id}', ${PEOPLE})">+</button></div>`}</div>`).join('')
     + `<button class="cta" style="margin-top:14px" onclick="planToList()">🛒 Ajouter les ingrédients à la liste</button>
     <div class="hint" style="text-align:center;margin-top:10px">Les quantités sont additionnées entre plats et rangées par rayon.</div>`
+}
+/* ── Calendrier de la semaine : 7 jours × (midi, soir). Un plat placé dans N cases = N repas × 2 personnes. ── */
+const DAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'], SLOTS = ['midi', 'soir']
+const slotsOf = id => Object.entries(S.plan.slots).filter(([, v]) => v === id).map(([k]) => k)
+const slotLabel = k => { const [d, t] = k.split('-'); return `${DAYS[+d]} ${t}` }
+function syncPortions(id) {
+  if (!id) return
+  const n = slotsOf(id).length
+  if (n) S.plan.items[id] = { ...(S.plan.items[id] || { addedBy: ME, at: now() }), portions: n * PEOPLE }
+  else if (S.plan.items[id]?.fromCal) delete S.plan.items[id]
+}
+function assignSlot(key, id) {
+  const prev = S.plan.slots[key]
+  if (id) { S.plan.slots[key] = id; if (!S.plan.items[id]) S.plan.items[id] = { addedBy: ME, at: now(), portions: 0, fromCal: true } } else delete S.plan.slots[key]
+  syncPortions(prev); syncPortions(id)
+  touchPlan(); persist(); closeSheet(); render(); buzz()
+  if (id && meal(id)?.type === 'viande' && meatCount() > MEAT_MAX) toast(`⚠️ ${meatCount()} repas viande, objectif ${MEAT_MAX}`)
+}
+function renderCal() {
+  const today = (new Date().getDay() + 6) % 7
+  const mon = new Date(); mon.setDate(mon.getDate() - today)
+  const dates = DAYS.map((_, i) => { const d = new Date(mon); d.setDate(mon.getDate() + i); return d.getDate() })
+  const cell = (d, t) => { const key = `${d}-${t}`, id = S.plan.slots[key], m = id && meal(id); return `<button class="slot${m ? ' on ' + m.type : ''}" onclick="openSheet('slot', '${key}')" title="${DAYS[d]} ${t}">${m ? esc(m.emoji) : '<span style="font-size:16px">＋</span>'}</button>` }
+  const filled = Object.keys(S.plan.slots).length
+  $('cal').innerHTML = `<div class="cal"><div class="grid7">${DAYS.map((d, i) => `<div class="day${i === today ? ' today' : ''}">${d}<small>${dates[i]}</small></div>`).join('')}
+    <div class="rowlbl">Midi</div>${DAYS.map((_, i) => cell(i, 'midi')).join('')}
+    <div class="rowlbl">Soir</div>${DAYS.map((_, i) => cell(i, 'soir')).join('')}</div>
+    <div class="hint">${filled ? `${filled} / 14 repas placés` : 'Touche une case pour y placer un plat'}</div></div>`
 }
 function setMealFilter(k) { mealFilter = k; renderMeals() }
 function setPortions(id, d) {
@@ -731,11 +787,11 @@ function setPortions(id, d) {
   if (d > 0 && meal(id)?.type === 'viande' && meatCount() > MEAT_MAX) toast(`⚠️ ${meatCount()} repas viande, objectif ${MEAT_MAX}`)
 }
 function togglePlan(id, portions = 4) {
-  if (planned(id)) delete S.plan.items[id]
+  if (planned(id)) { delete S.plan.items[id]; slotsOf(id).forEach(k => delete S.plan.slots[k]) }
   else { S.plan.items[id] = { portions, addedBy: ME, at: now() }; if (meal(id)?.type === 'viande' && meatCount() > MEAT_MAX) toast(`⚠️ ${meatCount()} repas viande, objectif ${MEAT_MAX}`) }
   touchPlan(); persist(); closeSheet(); render(); buzz()
 }
-function clearPlan() { if (!confirm('Vider le menu de la semaine ?')) return; S.plan.items = {}; touchPlan(); persist(); render() }
+function clearPlan() { if (!confirm('Vider le menu de la semaine ?')) return; S.plan.items = {}; S.plan.slots = {}; touchPlan(); persist(); render() }
 // Trouve ou crée le produit correspondant à un ingrédient (identifiant déterministe = même produit sur les deux téléphones)
 function ensureProduct(name, cat, emoji) {
   const id = 'p-' + norm(name)
@@ -840,7 +896,7 @@ const sync = {
       Object.entries(remote.presence || {}).forEach(([k, v]) => { if (!S.presence[k] || v.at > S.presence[k].at) S.presence[k] = v })
       const hist = new Map((S.history || []).map(h => [h.id, h])); (remote.history || []).forEach(h => { if (!hist.has(h.id)) hist.set(h.id, h) })
       S.history = [...hist.values()].sort((a, b) => b.at - a.at).slice(0, 20)
-      if ((remote.plan?.updatedAt || 0) > (S.plan?.updatedAt || 0)) S.plan = remote.plan
+      if ((remote.plan?.updatedAt || 0) > (S.plan?.updatedAt || 0)) { S.plan = remote.plan; if (!S.plan.slots) S.plan.slots = {} }
       const cm = new Map((S.customMeals || []).map(m => [m.id, m])); (remote.customMeals || []).forEach(m => { const mine = cm.get(m.id); if (!mine || (m.updatedAt || 0) > (mine.updatedAt || 0)) cm.set(m.id, m) }); S.customMeals = [...cm.values()]
       S.rev = Math.max(S.rev || 0, remote.rev || 0)
       repo.save(S); render()
