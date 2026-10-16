@@ -118,6 +118,22 @@
     font-family: 'Inter', sans-serif;
   }
   #lock-switch:hover { color: var(--text); }
+  #code-input {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 6px; color: var(--text);
+    font-family: 'Inter', sans-serif; text-align: center; width: 180px; padding: 12px 16px; outline: none;
+    font-size: 15px; letter-spacing: 0.15em; text-transform: uppercase; transition: border-color 200ms;
+  }
+  #code-input:focus { border-color: var(--text); }
+  #code-input::placeholder { color: #ccc; letter-spacing: 0.05em; text-transform: none; }
+  #lock-forgot { font-size: 11px; color: var(--muted); background: none; border: none; cursor: pointer; padding: 0; font-family: 'Inter', sans-serif; }
+  #lock-forgot:hover { color: var(--text); }
+  #lock-hint { font-size: 11px; color: var(--muted); width: 220px; text-align: center; line-height: 1.5; }
+  #rec-modal { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; padding: 16px; }
+  #rec-modal[hidden] { display: none; }
+  #rec-modal .box { background: var(--bg); border-radius: 12px; padding: 28px 24px 22px; width: 100%; max-width: 340px; text-align: center; display: flex; flex-direction: column; gap: 14px; }
+  #rec-modal .t { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  #rec-modal .code { font-family: 'SF Mono', ui-monospace, Menlo, monospace; font-size: 26px; font-weight: 600; letter-spacing: 0.12em; color: var(--text); padding: 14px 0; border: 1px dashed var(--border); border-radius: 8px; user-select: all; -webkit-user-select: all; }
+  #rec-modal p { font-size: 13px; color: var(--muted); line-height: 1.5; margin: 0; }
 
   /* ── VAULT ── */
   #the-liste { display: none; }
@@ -825,10 +841,23 @@
   <p class="lock-eyebrow" id="lock-title">The Liste</p>
   <div class="lock-field">
     <input id="name-input" type="text" placeholder="Prénom" maxlength="30" autocomplete="off" autocapitalize="none">
+    <input id="code-input" type="text" placeholder="Code de secours" maxlength="12" autocomplete="off" autocapitalize="characters" hidden>
     <input id="pwd-input" type="password" placeholder="····" maxlength="20" autocomplete="off">
+    <p id="lock-hint" hidden>Entre ton prénom, ton code de secours et choisis un nouveau mot de passe.</p>
     <p class="lock-error" id="lock-error">Identifiants incorrects</p>
     <button id="lock-btn" type="button">Entrer</button>
     <button id="lock-switch" type="button">Créer un compte</button>
+    <button id="lock-forgot" type="button">Mot de passe oublié ?</button>
+  </div>
+</div>
+
+<!-- CODE DE SECOURS -->
+<div id="rec-modal" hidden>
+  <div class="box">
+    <p class="t">Ton code de secours</p>
+    <div class="code" id="rec-code"></div>
+    <p>Note-le ou fais une capture d'écran. Il te permet de choisir un nouveau mot de passe si tu oublies le tien.</p>
+    <button class="prof-btn" id="rec-ok" type="button">C'est noté</button>
   </div>
 </div>
 
@@ -848,6 +877,12 @@
       <input class="prof-input" id="prof-pwd-new" type="password" placeholder="Nouveau mot de passe">
       <button class="prof-btn" id="prof-pwd-btn">Mettre à jour</button>
       <p class="prof-msg" id="prof-pwd-msg"></p>
+    </div>
+
+    <div class="prof-section">
+      <p class="prof-section-title">Code de secours</p>
+      <p class="prof-msg" id="prof-rec-status"></p>
+      <button class="prof-btn secondary" id="prof-rec-btn">Générer un nouveau code</button>
     </div>
 
     <div class="prof-section" id="requests-section" hidden>
@@ -1030,19 +1065,72 @@ const lockErr = document.getElementById('lock-error');
 const lockBtn = document.getElementById('lock-btn');
 const lockSwitch = document.getElementById('lock-switch');
 const lockTitle = document.getElementById('lock-title');
-let lockMode = 'login'; // 'login' | 'register'
+let lockMode = 'login'; // 'login' | 'register' | 'reset'
+const codeInput = document.getElementById('code-input');
+const lockForgot = document.getElementById('lock-forgot');
+const lockHint = document.getElementById('lock-hint');
 
-lockSwitch.addEventListener('click', () => {
-  lockMode = lockMode === 'login' ? 'register' : 'login';
-  lockTitle.textContent = lockMode === 'register' ? 'Créer un compte' : 'The Liste';
-  lockBtn.textContent = lockMode === 'register' ? 'Créer' : 'Entrer';
-  lockSwitch.textContent = lockMode === 'register' ? 'Déjà un compte' : 'Créer un compte';
+/* CODE DE SECOURS — seule l'empreinte SHA-256 (prénom + code) est enregistrée dans users.recovery */
+const REC_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const normCode = c => String(c || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+function newRecoveryCode() {
+  const a = new Uint32Array(8); crypto.getRandomValues(a);
+  const raw = Array.from(a, n => REC_ALPHABET[n % REC_ALPHABET.length]).join('');
+  return raw.slice(0, 4) + '-' + raw.slice(4);
+}
+async function hashRecovery(userId, code) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(userId + ':' + normCode(code)));
+  return Array.from(new Uint8Array(buf), b => b.toString(16).padStart(2, '0')).join('');
+}
+async function issueRecoveryCode(userId) {
+  const code = newRecoveryCode();
+  const { error } = await db.from('users').update({ recovery: await hashRecovery(userId, code) }).eq('id', userId);
+  if (error) { console.error('[liste] code de secours :', error.message); return null; }
+  if (currentUser && currentUser.id === userId) currentUser.recovery = 'set';
+  return code;
+}
+function showRecoveryCode(code) {
+  document.getElementById('rec-code').textContent = code;
+  document.getElementById('rec-modal').hidden = false;
+}
+document.getElementById('rec-ok').addEventListener('click', () => { document.getElementById('rec-modal').hidden = true; });
+
+function setLockMode(mode) {
+  lockMode = mode;
+  lockTitle.textContent = mode === 'register' ? 'Créer un compte' : mode === 'reset' ? 'Mot de passe oublié' : 'The Liste';
+  lockBtn.textContent = mode === 'register' ? 'Créer' : mode === 'reset' ? 'Changer' : 'Entrer';
+  lockSwitch.textContent = mode === 'login' ? 'Créer un compte' : 'Déjà un compte';
+  codeInput.hidden = mode !== 'reset';
+  lockHint.hidden = mode !== 'reset';
+  lockForgot.hidden = mode !== 'login';
+  pwdInput.placeholder = mode === 'reset' ? 'Nouveau' : '····';
   lockErr.classList.remove('show');
-  nameInput.value = ''; pwdInput.value = '';
+  nameInput.value = ''; pwdInput.value = ''; codeInput.value = '';
   nameInput.focus();
-});
+}
+lockForgot.addEventListener('click', () => setLockMode('reset'));
+function lockError(msg, ms = 2500) {
+  lockErr.textContent = msg; lockErr.classList.add('show');
+  setTimeout(() => lockErr.classList.remove('show'), ms);
+}
+
+async function resetPassword() {
+  const nameVal = nameInput.value.trim().toLowerCase();
+  const code = codeInput.value.trim();
+  const passVal = pwdInput.value.trim();
+  if (!nameVal || !code || !passVal) { lockError('Remplis les trois champs'); return; }
+  const { data } = await db.from('users').select('id, recovery').eq('id', nameVal).single();
+  if (!data || !data.recovery || data.recovery !== await hashRecovery(nameVal, code)) { lockError('Prénom ou code incorrect'); codeInput.focus(); return; }
+  const { error } = await db.from('users').update({ password: passVal }).eq('id', nameVal);
+  if (error) { lockError('Erreur, réessaie'); return; }
+  lockMode = 'login';
+  await loginOrRegister();
+}
+
+lockSwitch.addEventListener('click', () => setLockMode(lockMode === 'login' ? 'register' : 'login'));
 
 async function loginOrRegister() {
+  if (lockMode === 'reset') return resetPassword();
   const nameVal = nameInput.value.trim().toLowerCase();
   const passVal = pwdInput.value.trim();
   if (!nameVal || !passVal) return;
@@ -1078,11 +1166,14 @@ async function loginOrRegister() {
   await loadAllRequests();
   items = await load(currentUser.id);
   render();
+  renderRecoveryStatus();
+  if (!data.recovery) { const code = await issueRecoveryCode(data.id); if (code) { showRecoveryCode(code); renderRecoveryStatus(); } }
 }
 
 lockBtn.addEventListener('click', loginOrRegister);
 pwdInput.addEventListener('keydown', e => { if (e.key === 'Enter') loginOrRegister(); });
-nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') pwdInput.focus(); });
+nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') (lockMode === 'reset' ? codeInput : pwdInput).focus(); });
+codeInput.addEventListener('keydown', e => { if (e.key === 'Enter') pwdInput.focus(); });
 setTimeout(() => nameInput.focus(), 80);
 
 /* STATE */
@@ -2015,6 +2106,20 @@ document.getElementById('prof-pwd-btn').addEventListener('click', async () => {
   document.getElementById('prof-pwd-new').value = '';
   msg.textContent = 'Mot de passe mis à jour ✓'; msg.className = 'prof-msg ok';
   setTimeout(() => { msg.textContent = ''; msg.className = 'prof-msg'; }, 3000);
+});
+
+/* Code de secours (profil) */
+function renderRecoveryStatus() {
+  const el = document.getElementById('prof-rec-status'); if (!el || !currentUser) return;
+  el.textContent = currentUser.recovery ? 'Un code est actif. En générer un nouveau annule l\'ancien.' : 'Aucun code pour l\'instant.';
+}
+document.getElementById('prof-rec-btn').addEventListener('click', async () => {
+  if (!currentUser) return;
+  if (currentUser.recovery && !confirm('Générer un nouveau code ? L\'ancien ne marchera plus.')) return;
+  const code = await issueRecoveryCode(currentUser.id);
+  const el = document.getElementById('prof-rec-status');
+  if (!code) { el.textContent = 'Impossible de créer le code (base pas encore prête).'; el.className = 'prof-msg err'; return; }
+  el.className = 'prof-msg'; renderRecoveryStatus(); showRecoveryCode(code);
 });
 
 /* items chargés après login dans unlock() */
