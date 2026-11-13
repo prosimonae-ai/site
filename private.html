@@ -1029,25 +1029,48 @@ const SB_URL = 'https://vxzjfwjxgewdqvfdsxjm.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4empmd2p4Z2V3ZHF2ZmRzeGptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4MTM1MDcsImV4cCI6MjEwNDM4OTUwN30.IuIcPXXrVozPDDreB-hkY1didQoboV0pEuH8-8GaWLo';
 const db = window.supabase.createClient(SB_URL, SB_KEY);
 
+/* Si la base ne répond pas, on travaille sur la copie locale et on n'envoie RIEN au serveur :
+   sinon une liste vide chargée par erreur écraserait la vraie wishlist au retour de la base. */
+let remoteOk = false, dirtyOffline = false, retryT = null;
+const localItems = userId => { try { const v = JSON.parse(localStorage.getItem(`the-liste_${userId}`)); return Array.isArray(v) ? v : []; } catch { return []; } };
+function showOffline(on) {
+  let el = document.getElementById('offline-bar');
+  if (!el) { el = document.createElement('div'); el.id = 'offline-bar'; el.style.cssText = 'position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:9998;background:#c0392b;color:#fff;font:600 12px Inter,sans-serif;padding:8px 14px;border-radius:20px;box-shadow:0 4px 14px rgba(0,0,0,.2);max-width:calc(100% - 32px);text-align:center'; el.textContent = 'Serveur indisponible · tes modifications sont gardées sur ce téléphone'; document.body.appendChild(el); }
+  el.hidden = !on;
+}
 async function load(userId) {
   try {
     const { data, error } = await db.from('wishlist').select('items').eq('id', userId).single();
     if (error) {
       if (error.code === 'PGRST116') {
-        await db.from('wishlist').insert({ id: userId, items: [] });
+        const { error: insErr } = await db.from('wishlist').insert({ id: userId, items: [] });
+        if (insErr) throw new Error(insErr.message);
+        remoteOk = true; showOffline(false);
         return [];
       }
       throw new Error(error.message);
     }
+    remoteOk = true; showOffline(false);
     return Array.isArray(data?.items) ? data.items : [];
   } catch(e) {
     console.warn('[liste] load failed:', e.message);
-    return [];
+    remoteOk = false; showOffline(true);
+    clearTimeout(retryT); retryT = setTimeout(() => reconnect(userId), 20000);
+    return localItems(userId);
   }
+}
+async function reconnect(userId) {
+  if (!currentUser || currentUser.id !== userId) return;
+  const wasDirty = dirtyOffline;
+  const remote = await load(userId);
+  if (!remoteOk) return;
+  if (wasDirty) { dirtyOffline = false; await save(items); }
+  else { items = remote; render(); }
 }
 
 async function save(items) {
   try { localStorage.setItem(`the-liste_${currentUser.id}`, JSON.stringify(items)); } catch {}
+  if (!remoteOk) { dirtyOffline = true; return; }
   try {
     const { error } = await db.from('wishlist').upsert({ id: currentUser.id, items });
     if (error) throw new Error(error.message);
@@ -1119,7 +1142,8 @@ async function resetPassword() {
   const code = codeInput.value.trim();
   const passVal = pwdInput.value.trim();
   if (!nameVal || !code || !passVal) { lockError('Remplis les trois champs'); return; }
-  const { data } = await db.from('users').select('id, recovery').eq('id', nameVal).single();
+  const { data, error: rErr } = await db.from('users').select('id, recovery').eq('id', nameVal).single();
+  if (rErr && rErr.code !== 'PGRST116') { lockError('Serveur indisponible, réessaie dans quelques minutes', 4000); return; }
   if (!data || !data.recovery || data.recovery !== await hashRecovery(nameVal, code)) { lockError('Prénom ou code incorrect'); codeInput.focus(); return; }
   const { error } = await db.from('users').update({ password: passVal }).eq('id', nameVal);
   if (error) { lockError('Erreur, réessaie'); return; }
@@ -1136,7 +1160,8 @@ async function loginOrRegister() {
   if (!nameVal || !passVal) return;
 
   if (lockMode === 'register') {
-    const { data: existing } = await db.from('users').select('id').eq('id', nameVal).single();
+    const { data: existing, error: exErr } = await db.from('users').select('id').eq('id', nameVal).single();
+    if (exErr && exErr.code !== 'PGRST116') { lockError('Serveur indisponible, réessaie dans quelques minutes', 4000); return; }
     if (existing) {
       lockErr.textContent = 'Ce prénom est déjà pris';
       lockErr.classList.add('show');
@@ -1149,6 +1174,10 @@ async function loginOrRegister() {
   }
 
   const { data, error } = await db.from('users').select('*').eq('id', nameVal).eq('password', passVal).single();
+  if (error && error.code !== 'PGRST116') {
+    lockError('Serveur indisponible, réessaie dans quelques minutes', 4000);
+    return;
+  }
   if (error || !data) {
     lockErr.textContent = 'Identifiants incorrects';
     lockErr.classList.add('show');
